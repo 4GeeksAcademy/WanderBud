@@ -21,6 +21,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 				getActions().changeColor(0, "green");
 			},
 
+			// const login = async (email, password) => {
+			// 	try {
+			// 	  const response = await fetch('https://congenial-capybara-69994949r9j429gr-3001.app.github.dev/api/login', {
+			// 		method: 'POST',
+			// 		headers: {
+			// 		  'Content-Type': 'application/json'
+			// 		},
+			// 		body: JSON.stringify({ email, password })
+			// 	  });
+			  
+			// 	  if (!response.ok) {
+			// 		throw new Error('Error al iniciar sesión');
+			// 	  }
+
+
+
+
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
