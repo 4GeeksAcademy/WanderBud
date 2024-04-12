@@ -20,6 +20,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+			
+			PasswordRecoverySubmit: async (email) => {
+				console.log(email)
+				try {
+				  const resp = await fetch(process.env.BACKEND_URL + '/api/hello', {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ email }),
+					
+				  });
+				  if (resp.status == 200) {
+					return true;
+				  }
+				  
+				} catch (error) {
+				  return false;
+				}
+			  },
+
 
 			getMessage: async () => {
 				try{
