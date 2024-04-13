@@ -20,6 +20,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+			
+			PasswordRecoverySubmit: async (email) => {
+
+				let frontendUrl = 'https://silver-space-guacamole-q74ppq4pvwrf9r56-3000.app.github.dev/reset-password'; 
+				try {
+				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ email, frontend_url: frontendUrl }),
+					
+				  });
+				  if (resp.status == 200) {
+					return true;
+				  }
+				  
+				} catch (error) {
+				  return false;
+				}
+			  },
+
 
 			getMessage: async () => {
 				try{
