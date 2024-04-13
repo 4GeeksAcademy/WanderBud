@@ -12,6 +12,9 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager,create_access_token,get_jwt_identity,jwt_required
 from flask_cors import CORS
+from flask_mail import Mail
+
+
 
 
 
@@ -44,8 +47,20 @@ setup_admin(app)
 # add the admin
 setup_commands(app)
 
+#jwt_flask_extended
 app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
 jwt = JWTManager(app)
+
+# Configure Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.fastmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'wanderbud2024@fastmail.com'
+app.config['MAIL_PASSWORD'] = 'v8n5hptc8l4xgbuh'
+app.config['MAIL_DEFAULT_SENDER'] = 'wanderbud2024@fastmail.com'
+
+mail = Mail(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
