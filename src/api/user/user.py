@@ -5,6 +5,7 @@ from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
 from . import user_bp
+import urllib.parse
 
 CORS(user_bp)
 
@@ -53,10 +54,22 @@ def recover_password():
         return jsonify({"msg": "Bad Request"}), 404
 
     # Generate a token for the user
-    access_token = create_access_token(identity=email)
+    def custom_encode_token(token):
+        """Encodes the token, replacing dots with a different character."""
+        encoded_token = urllib.parse.quote(token)
+        return encoded_token.replace('.', '%2E')  # Replace dot with its percent-encoded form
 
-    # Create a password recovery link
-    password_recovery_link = f"{frontend_url}/{access_token}"
+    # ... continue with existing logic ...
+
+    access_token = create_access_token(identity=email)
+    encoded_token = custom_encode_token(access_token)  # Call the nested function
+    print(encoded_token)
+    password_recovery_link = f"{frontend_url}/{encoded_token}"
+
+    # access_token = create_access_token(identity=email)
+
+    # # Create a password recovery link
+    # password_recovery_link = f"{frontend_url}/{urllib.parse.quote(access_token)}"
 
     # Send the password recovery email
     msg = Message(

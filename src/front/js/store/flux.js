@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			auth: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -23,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://silver-space-guacamole-q74ppq4pvwrf9r56-3000.app.github.dev/reset-password'; 
+				let frontendUrl = 'https://curly-adventure-q777p7p79qxp3q75-3000.app.github.dev/password-reset'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
@@ -70,16 +71,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			validateToken: async () => {
+			validateToken: async (tuTokenDeAcceso) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
 						method: 'GET',
 						headers: {
+							"Content-Type": "application/json",
 							'Authorization': 'Bearer ' + tuTokenDeAcceso
 						}
 					});
 					const data = await response.json();
-					if (response.ok) {
+					if (response.status == 200) {
+						setStore({auth: data.is_logged})
 						
 						return data.is_logged;
 					} else {
