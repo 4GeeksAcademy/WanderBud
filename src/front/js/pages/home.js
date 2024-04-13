@@ -6,7 +6,7 @@ import "../../styles/home.css";
 	export const Home = () => {
 		const { store, actions } = useContext(Context);
 		return (
-			<div className="container" style={{ backgroundColor: '#1a237e', color: '#fff', minHeight: '100vh', paddingTop: '50px', position: 'relative' }}>
+			<div className="container" style={{ backgroundColor: '#1a1f25', color: '#fff', minHeight: '100vh', paddingTop: '50px', position: 'relative' }}>
     <div className="row justify-content-center">
         {/* Columna para el texto "WanderBud" */}
         <div className="col-md-6">
@@ -15,7 +15,7 @@ import "../../styles/home.css";
                 <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#fff' }}>WanderBud</h1>
 
                 {/* Imagen de fondo debajo de "WanderBud" (más pequeña) */}
-                <img src="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005832/Logo2_t2gs97.jpg" className="img-fluid" alt="Imagen de fondo" style={{ position: 'absolute', top: '380%', left: '75%', transform: 'translate(-50%, -50%)', maxWidth: '300px', maxHeight: '300px', objectFit: 'cover' }} />
+                <img src="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005832/Logo2_t2gs97.jpg" className="img-fluid" alt="Imagen de fondo" style={{ position: 'absolute', top: '375%', left: '75%', transform: 'translate(-50%, -50%)', maxWidth: '330px', maxHeight: '330px', objectFit: 'cover' }} />
             </div>
         </div>
 
