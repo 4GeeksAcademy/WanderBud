@@ -66,9 +66,12 @@ def valid_token():
      return jsonify({"is_logged": True}), 200
 
 
+
+#post endpoint to retrieve the user email, check if it is real, and send recovery link
 @api.route("/recover-password", methods=["POST"])
 def recover_password():
     email = request.json.get("email", None)
+    frontend_url = request.json.get("frontend_url", None)
 
     query_results = User.query.filter_by(email=email).first()
 
@@ -79,7 +82,7 @@ def recover_password():
     access_token = create_access_token(identity=email)
 
     # Create a password recovery link
-    password_recovery_link = f"{request.host_url}reset-password/{access_token}"
+    password_recovery_link = f"{frontend_url}/{access_token}"
 
     # Send the password recovery email
     msg = Message(
@@ -90,6 +93,5 @@ def recover_password():
     mail.send(msg)
 
     return jsonify({"msg": "Password recovery email sent"}), 200
-
 
 
