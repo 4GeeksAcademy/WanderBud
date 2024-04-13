@@ -1,3 +1,5 @@
+
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -21,23 +23,57 @@ const getState = ({ getStore, getActions, setStore }) => {
 				getActions().changeColor(0, "green");
 			},
 
-			// const login = async (email, password) => {
-			// 	try {
-			// 	  const response = await fetch('https://congenial-capybara-69994949r9j429gr-3001.app.github.dev/api/login', {
-			// 		method: 'POST',
-			// 		headers: {
-			// 		  'Content-Type': 'application/json'
-			// 		},
-			// 		body: JSON.stringify({ email, password })
-			// 	  });
-			  
-			// 	  if (!response.ok) {
-			// 		throw new Error('Error al iniciar sesión');
-			// 	  }
+			login: async (email, password) => {
+				console.log(email,password);
+				try {
+					const response = await fetch('https://congenial-capybara-69994949r9j429gr-3001.app.github.dev/api/login', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ 
+							"email":email, 
+						    "password":password })
+					});
+					const data = await response.json()
+					
+					if (response.status === 200) {
+						return true;
+					}
+					console.log(data);
+					
+					
+				} catch (error) {
+					console.log(error);
+					return false;
+				}
+			},
 
+			validateToken: async () => {
+				try {
+					const response = await fetch('https://congenial-capybara-69994949r9j429gr-3001.app.github.dev/api/valid-token', {
+						method: 'GET',
+						headers: {
+							'Authorization': 'Bearer ' + tuTokenDeAcceso
+						}
+					});
+					const data = await response.json();
+					if (response.ok) {
+						
+						return data.is_logged;
+					} else {
+						
+						throw new Error(data.msg);
+					}
+				} catch (error) {
+					
+					throw new Error('Error al validar el token: ' + error.message);
+				}
+			},
+			
+			
 
-
-
+		
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
