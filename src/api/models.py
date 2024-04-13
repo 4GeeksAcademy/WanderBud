@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 
+
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -15,7 +16,7 @@ class User(db.Model):
     
 
     def __repr__(self):
-        return f'<User {self.email}>'
+        return f'<User ID {self.id} {self.email}>'
 
     def serialize(self):
         return {
@@ -33,7 +34,7 @@ class User_Profile(db.Model):
     ubication = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
-        return f'<User_Profile {self.name}>'
+        return f'<User_Profile ID{self.id} {self.name}>'
 
     def serialize(self):
         return {
@@ -52,7 +53,7 @@ class Event_Type(db.Model):
     events = db.relationship('Event', primaryjoin='Event.event_type_id==Event_Type.id', backref='event_type')
 
     def __repr__(self):
-        return f'<Event_Type {self.name}>'
+        return f'<Event_Type ID {self.id} {self.name}>'
 
     def serialize(self):
         return {
@@ -68,17 +69,17 @@ class Event(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(120), nullable=False)
+    datetime = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False)
     description = db.Column(db.String(250), nullable=True)
     budget_per_person = db.Column(db.Float, nullable=True)
-    members = db.relationship('Event_Member', backref='event', lazy=True)
     event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.id'), nullable=False)
+    members = db.relationship('Event_Member', backref='event', lazy=True)
     petition_chat = db.relationship('Petition_Chat', backref='event', lazy=True, primaryjoin='Petition_Chat.event_id == Event.id')
     group_chat = db.relationship('Event_Chat', backref='event', lazy=True, primaryjoin='Event_Chat.event_id == Event.id')
 
     def __repr__(self):
-        return f'<Event {self.name}>'
+        return f'<Event Id{self.id} {self.name}>'
 
     def serialize(self):
         return {
@@ -122,8 +123,8 @@ class Petition_Chat(db.Model):
         return {
             "id": self.id,
             "id_petition": self.id_petition,
-            "owner": self.user_events_id,
             "user_id": self.user_id,
+            "event_id": self.event_id,
             "message": self.message
         }
         

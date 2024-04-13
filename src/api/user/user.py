@@ -1,39 +1,15 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
-from flask import Flask, request, redirect, jsonify, url_for, Blueprint
-from api.models import db, User
-from api.utils import generate_sitemap, APIException
-from flask_cors import CORS
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from api.models import User
 from flask_mail import Message
-from flask_mail import Mail
+from api.utils import mail
+from flask_cors import CORS
+from . import user_bp
 
-mail = Mail()
-
-
-
-
-api = Blueprint('api', __name__)
-
-# Allow CORS requests to this API
-CORS(api)
+CORS(user_bp)
 
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
-
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
-
-    return jsonify(response_body), 200
-
-
-
-@api.route("/login", methods=["POST"])
+@user_bp.route("/login", methods=["POST"])
 def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
@@ -51,7 +27,7 @@ def login():
             return jsonify({"msg": "Bad email or password. I am sorry"}), 401
 
 
-@api.route("/valid-token", methods=["GET"])
+@user_bp.route("/valid-token", methods=["GET"])
 @jwt_required()
 def valid_token():
      
@@ -65,10 +41,8 @@ def valid_token():
      
      return jsonify({"is_logged": True}), 200
 
-
-
 #post endpoint to retrieve the user email, check if it is real, and send recovery link
-@api.route("/recover-password", methods=["POST"])
+@user_bp.route("/recover-password", methods=["POST"])
 def recover_password():
     email = request.json.get("email", None)
     frontend_url = request.json.get("frontend_url", None)
@@ -93,5 +67,3 @@ def recover_password():
     mail.send(msg)
 
     return jsonify({"msg": "Password recovery email sent"}), 200
-
-
