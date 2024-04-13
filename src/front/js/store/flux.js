@@ -1,5 +1,3 @@
-
-
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -26,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			login: async (email, password) => {
 				console.log(email,password);
 				try {
-					const response = await fetch('https://congenial-capybara-69994949r9j429gr-3001.app.github.dev/api/login', {
+					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -38,9 +36,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json()
 					
 					if (response.status === 200) {
+						console.log(data);
 						return true;
 					}
-					console.log(data);
+					
 					
 					
 				} catch (error) {
@@ -51,7 +50,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			validateToken: async () => {
 				try {
-					const response = await fetch('https://congenial-capybara-69994949r9j429gr-3001.app.github.dev/api/valid-token', {
+					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
 						method: 'GET',
 						headers: {
 							'Authorization': 'Bearer ' + tuTokenDeAcceso
