@@ -10,6 +10,12 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from datetime import datetime
 import pytz
+from flask_mail import Message
+from flask_mail import Mail
+
+mail = Mail()
+
+
 
 
 api = Blueprint('api', __name__)
@@ -34,12 +40,12 @@ def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
 
-    query_results = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
 
-    if query_results is None:
+    if user is None:
             return jsonify({"msg": "Bad Request"}), 404
 
-    if email == query_results.email and password == query_results.password:
+    if email == user.email and password == user.password:
             access_token = create_access_token(identity=email)
             return jsonify(access_token=access_token), 200
     
@@ -129,3 +135,33 @@ def create_event():
     db.session.commit()
 
     return jsonify({"msg": "event created"}), 200
+
+
+#post endpoint to retrieve the user email, check if it is real, and send recovery link
+@api.route("/recover-password", methods=["POST"])
+def recover_password():
+    email = request.json.get("email", None)
+    frontend_url = request.json.get("frontend_url", None)
+
+    query_results = User.query.filter_by(email=email).first()
+
+    if query_results is None:
+        return jsonify({"msg": "Bad Request"}), 404
+
+    # Generate a token for the user
+    access_token = create_access_token(identity=email)
+
+    # Create a password recovery link
+    password_recovery_link = f"{frontend_url}/{access_token}"
+
+    # Send the password recovery email
+    msg = Message(
+        "Password Recovery",
+        recipients=[email],
+        html=f"<p>Please click the following link to reset your password:</p><a href='{password_recovery_link}'>Reset Password</a>"
+    )
+    mail.send(msg)
+
+    return jsonify({"msg": "Password recovery email sent"}), 200
+
+
