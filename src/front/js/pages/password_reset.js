@@ -28,7 +28,7 @@ export const PasswordReset = () => {
     e.preventDefault()
     if (password1 == password2) {
       setMessage("password successfully changed");
-      actions.PasswordRecoverySubmit(password1);
+      actions.resetPassword(password1);
     }
     else {
       setMessage("Something went wrong, please try again");

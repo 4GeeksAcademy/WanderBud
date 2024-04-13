@@ -57,26 +57,23 @@ def recover_password():
     def custom_encode_token(token):
         """Encodes the token, replacing dots with a different character."""
         encoded_token = urllib.parse.quote(token)
-        return encoded_token.replace('.', '%2E')  # Replace dot with its percent-encoded form
-
-    # ... continue with existing logic ...
+        return encoded_token.replace('.', '%2E')  
 
     access_token = create_access_token(identity=email)
-    encoded_token = custom_encode_token(access_token)  # Call the nested function
+    encoded_token = custom_encode_token(access_token)  
     print(encoded_token)
     password_recovery_link = f"{frontend_url}/{encoded_token}"
-
-    # access_token = create_access_token(identity=email)
-
-    # # Create a password recovery link
-    # password_recovery_link = f"{frontend_url}/{urllib.parse.quote(access_token)}"
 
     # Send the password recovery email
     msg = Message(
         "Password Recovery",
         recipients=[email],
-        html=f"<p>Please click the following link to reset your password:</p><a href='{password_recovery_link}'>Reset Password</a>"
+        html=f"<p>Please click the following link to reset your password:</p><a href='{password_recovery_link}\\r\\n.\\r\\n'>Reset Password</a>"
     )
     mail.send(msg)
 
     return jsonify({"msg": "Password recovery email sent"}), 200
+
+
+# @user_bp.route('/reset-password', methods=['PUT'])
+# @jwt_required()
