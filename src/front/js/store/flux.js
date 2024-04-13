@@ -22,14 +22,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			PasswordRecoverySubmit: async (email) => {
-				console.log(email)
+
+				let frontendUrl = 'https://silver-space-guacamole-q74ppq4pvwrf9r56-3000.app.github.dev/reset-password'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
 					headers: {
 					  'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ email }),
+					body: JSON.stringify({ email, frontend_url: frontendUrl }),
 					
 				  });
 				  if (resp.status == 200) {
