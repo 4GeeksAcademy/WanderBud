@@ -1,4 +1,8 @@
 from flask import jsonify, url_for
+from flask_mail import Mail
+
+mail = Mail()
+
 
 class APIException(Exception):
     status_code = 400
