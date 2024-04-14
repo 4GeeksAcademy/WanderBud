@@ -27,11 +27,11 @@ export const PasswordReset = () => {
   function handleResetPassword(e) {
     e.preventDefault()
     if (password1 == password2) {
-      setMessage("password successfully changed");
-      actions.resetPassword(password1);
+      actions.resetPassword(password1, token);
+      setMessage(store.message)
     }
     else {
-      setMessage("Something went wrong, please try again");
+      setMessage("passwords don't match, try again");
     }
   };
 

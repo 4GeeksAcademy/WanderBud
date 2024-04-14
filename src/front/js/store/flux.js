@@ -95,7 +95,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			
-			
+			resetPassword: async (password, token) => {
+				try{
+					const response = await fetch(process.env.BACKEND_URL +'/api/reset-password', {
+						method: 'PUT',
+						headers: {
+							"Content-Type": "application/json",
+							'Authorization': 'Bearer ' + token
+						},
+						body: JSON.stringify({password})
+					});
+
+					if (response.status == 200){
+						setStore({message: "password successfully changed"})
+					} else {
+						setStore({message: "something went wrong, try again"})
+					}
+					return data; 
+				} catch (error){
+					setStore({message: "something went wrong, try again"})
+				}
+			},
 
 		
 			getMessage: async () => {
