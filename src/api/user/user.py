@@ -75,5 +75,4 @@ def recover_password():
     return jsonify({"msg": "Password recovery email sent"}), 200
 
 
-# @user_bp.route('/reset-password', methods=['PUT'])
-# @jwt_required()
+

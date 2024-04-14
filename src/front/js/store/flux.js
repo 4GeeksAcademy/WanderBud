@@ -103,7 +103,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Content-Type": "application/json",
 							'Authorization': 'Bearer ' + token
 						},
-						body: JSON.stringify({password})
+						body: JSON.stringify({"password":password})
 					});
 
 					if (response.status == 200){
