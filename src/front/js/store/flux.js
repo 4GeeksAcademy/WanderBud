@@ -13,8 +13,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			auth: false
 		},
+		
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -44,7 +46,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			login: async (email, password) => {
-				console.log(email,password);
+			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
 						method: 'POST',
@@ -58,37 +60,43 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json()
 					
 					if (response.status === 200) {
-						console.log(data);
+						localStorage.setItem("token",data.access_token)
+						
 						return true;
 					}
 					
 					
 					
 				} catch (error) {
-					console.log(error);
 					return false;
 				}
 			},
 
-			validateToken: async () => {
+			validToken: async () => {
+				let Token = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
 						method: 'GET',
 						headers: {
-							'Authorization': 'Bearer ' + tuTokenDeAcceso
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + Token
 						}
 					});
-					const data = await response.json();
-					if (response.ok) {
+					let data = await response.json()
+					if (response.status === 200) {
+						setStore({auth: data.is_logged});
 						
-						return data.is_logged;
 					} else {
 						
-						throw new Error(data.msg);
+						localStorage.removeItem("token");
+						setStore({ auth: false }); // Opcional: actualiza el estado de autenticación en el store
+						
+            		
 					}
+					
+				
 				} catch (error) {
 					
-					throw new Error('Error al validar el token: ' + error.message);
 				}
 			},
 			
