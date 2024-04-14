@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.models import User
+from api.models import db, User
 from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
@@ -67,3 +67,51 @@ def recover_password():
     mail.send(msg)
 
     return jsonify({"msg": "Password recovery email sent"}), 200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@user_bp.route('/create-user', methods=['POST'])
+def create_user():
+      data = request.json
+      user_exists = User.query.filter_by(email=data["email"]).first()
+      if user_exists is None: 
+            new_user = User(
+                  email= data['email'],
+                  password= data['password'],
+                  is_active= data['is_active']
+                )
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({
+                  "msg": "new user successfully created"
+            }), 200
+      else: 
+            return jsonify({
+                  "msg": "this email is already used by a user"
+            }), 400
+
+
+
+
+
+
+
+
+
