@@ -31,7 +31,9 @@ class User_Profile(db.Model):
     name = db.Column(db.String(120), nullable=False)
     last_name = db.Column(db.String(120), nullable=False)
     birthdate = db.Column(db.Date, nullable=False)
-    ubication = db.Column(db.String(250), nullable=False)
+    location = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    profile_image = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
         return f'<User_Profile ID{self.id} {self.name}>'
@@ -41,7 +43,9 @@ class User_Profile(db.Model):
             "name": self.name,
             "last_name": self.last_name,
             "birthdate": self.birthdate,
-            "ubication": self.ubication
+            "location": self.location,
+            "description": self.description,
+            "profile_image": self.profile_image
         }
 
 

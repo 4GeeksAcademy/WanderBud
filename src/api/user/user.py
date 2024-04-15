@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.models import User, db
+from api.models import db, User, User_Profile
 from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
@@ -33,9 +33,9 @@ def valid_token():
      
      current_user = get_jwt_identity()
 
-     querty_results = User.query.filter_by(email=current_user).first()
+     user = User.query.filter_by(email=current_user).first()
 
-     if querty_results is None:
+     if user is None:
             return jsonify({"msg": "user does not exist",
                            "is_logged": False}), 404
      
@@ -69,6 +69,83 @@ def recover_password():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@user_bp.route("/user-profile", methods=["POST"])
+@jwt_required()
+def create_user_profile():
+     current_user = get_jwt_identity()
+     data = request.json
+     user = User.query.filter_by(email=current_user).first()
+     if user is None:
+            return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+            
+     else: 
+            
+            new_user_profile = User_Profile(
+                    user_id=user.id,
+                    name= data["name"],
+                    last_name= data["last_name"],
+                    birthdate= data["birthdate"],
+                    location= data["location"],
+                    description= data["description"],
+                    profile_image= data["profile_image"]
+            )
+            db.session.add(new_user_profile)
+            db.session.commit()
+            return jsonify({"msg": "user profile successfully created"}), 200
+     
 
 @user_bp.route('/create-user', methods=['POST'])
 def create_user():
