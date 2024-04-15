@@ -43,3 +43,50 @@ def generate_sitemap(app):
         <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
         <p>Remember to specify a real endpoint path like: </p>
         <ul style="text-align: left;">"""+links_html+"</ul></div>"
+
+def get_currency_symbol(location):
+    currency_symbols = {
+        'USA': '$',
+        'UK': '£',
+        'Germany': '€',
+        'France': '€',
+        'Italy': '€',
+        'Spain': '€',
+        'Canada': '$',
+        'Australia': '$',
+        'Japan': '¥',
+        'China': '¥',
+        'India': '₹',
+        'Brazil': 'R$',
+        'Mexico': '$',
+        'South Africa': 'R',
+        'Argentina': '$',
+        'Bangladesh': '৳',
+        'Belgium': '€',
+        'Chile': '$',
+        'Colombia': '$',
+        'Egypt': '£',
+        'Greece': '€',
+        'Indonesia': 'Rp',
+        'Ireland': '€',
+        'Netherlands': '€',
+        'New Zealand': '$',
+        'Nigeria': '₦',
+        'Pakistan': '₨',
+        'Philippines': '₱',
+        'Portugal': '€',
+        'Saudi Arabia': '﷼',
+        'Singapore': '$',
+        'South Korea': '₩',
+        'Sweden': 'kr',
+        'Switzerland': 'CHF',
+        'Thailand': '฿',
+        'Turkey': '₺',
+        'United Arab Emirates': 'د.إ',
+        'Vietnam': '₫',
+        
+        
+    }
+    country = location.split(",")[-1].strip()
+    
+    return currency_symbols.get(country, 'Unknown')
