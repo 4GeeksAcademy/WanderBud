@@ -74,60 +74,6 @@ def recover_password():
     return jsonify({"msg": "Password recovery email sent"}), 200
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @user_bp.route("/user-profile", methods=["POST"])
 @jwt_required()
 def create_user_profile():

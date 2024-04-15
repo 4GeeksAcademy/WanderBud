@@ -14,6 +14,8 @@ export const PasswordReset = () => {
   console.log(password1);
   console.log(password2);
   console.log(token);
+  console.log(store.message);
+  console.log(message);
 
 
 
@@ -21,6 +23,10 @@ export const PasswordReset = () => {
     actions.validateToken(token);
   }, [token])
 
+  useEffect(() => {
+    // Update message state when store.message changes
+    setMessage(store.message);
+  }, [store.message]);
 
 
 
@@ -28,7 +34,6 @@ export const PasswordReset = () => {
     e.preventDefault()
     if (password1 == password2) {
       actions.resetPassword(password1, token);
-      setMessage(store.message)
     }
     else {
       setMessage("passwords don't match, try again");

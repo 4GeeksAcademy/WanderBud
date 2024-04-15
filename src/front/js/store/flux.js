@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://curly-adventure-q777p7p79qxp3q75-3000.app.github.dev/password-reset'; 
+				let frontendUrl = 'https://cuddly-waffle-9777j7j7qqxrcxjwp-3000.app.github.dev/password-reset'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
@@ -96,26 +96,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			resetPassword: async (password, token) => {
-				try{
-					const response = await fetch(process.env.BACKEND_URL +'/api/reset-password', {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/reset-password', {
 						method: 'PUT',
 						headers: {
 							"Content-Type": "application/json",
 							'Authorization': 'Bearer ' + token
 						},
-						body: JSON.stringify({"password":password})
+						body: JSON.stringify({"password": password})
 					});
-
-					if (response.status == 200){
-						setStore({message: "password successfully changed"})
+			
+					if (response.status === 200) {
+						setStore({message: "Password successfully changed"})
 					} else {
-						setStore({message: "something went wrong, try again"})
+						setStore({message: "Something went wrong, try again"})
 					}
-					return data; 
-				} catch (error){
-					setStore({message: "something went wrong, try again"})
+				} catch (error) {
+					console.error("Network error:", error);
+					setStore({message: "Network error, please try again"})
 				}
 			},
+			
 
 		
 			getMessage: async () => {
