@@ -65,9 +65,30 @@ def recover_password():
         html=f"<p>Please click the following link to reset your password:</p><a href='{password_recovery_link}'>Reset Password</a>"
     )
     mail.send(msg)
-
     return jsonify({"msg": "Password recovery email sent"}), 200
 
+
+
+
+@user_bp.route('/create-user', methods=['POST'])
+def create_user():
+      data = request.json
+      user_exists = User.query.filter_by(email=data["email"]).first()
+      if user_exists is None: 
+            new_user = User(
+                  email= data['email'],
+                  password= data['password'],
+                  is_active= data['is_active']
+                )
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({
+                  "msg": "new user successfully created"
+            }), 200
+      else: 
+            return jsonify({
+                  "msg": "this email is already used by a user"
+            }), 400
 
 @user_bp.route('/reset-password', methods=['PUT'])
 @jwt_required()
@@ -82,6 +103,3 @@ def reset_password():
         user.password = data["password"]
         db.session.commit()
         return ({"msg": "ok, the password has been updated in the database"}), 200
-
-
-      
