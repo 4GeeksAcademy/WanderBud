@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.models import db, User
+from api.models import User, db
 from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
@@ -47,9 +47,9 @@ def recover_password():
     email = request.json.get("email", None)
     frontend_url = request.json.get("frontend_url", None)
 
-    query_results = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
 
-    if query_results is None:
+    if user is None:
         return jsonify({"msg": "Bad Request"}), 404
 
     # Generate a token for the user
@@ -65,24 +65,7 @@ def recover_password():
         html=f"<p>Please click the following link to reset your password:</p><a href='{password_recovery_link}'>Reset Password</a>"
     )
     mail.send(msg)
-
     return jsonify({"msg": "Password recovery email sent"}), 200
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -107,11 +90,16 @@ def create_user():
                   "msg": "this email is already used by a user"
             }), 400
 
-
-
-
-
-
-
-
-
+@user_bp.route('/reset-password', methods=['PUT'])
+@jwt_required()
+def reset_password():
+    current_user = get_jwt_identity()
+    data = request.json
+    user = User.query.filter_by(email=current_user).first()
+    if user is None: 
+        return jsonify({"msg": "user does not exist",
+                            "is_logged": False}), 404
+    else: 
+        user.password = data["password"]
+        db.session.commit()
+        return ({"msg": "ok, the password has been updated in the database"}), 200
