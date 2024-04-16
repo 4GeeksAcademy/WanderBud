@@ -72,13 +72,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			validateToken: async (tuTokenDeAcceso) => {
+			validateToken: async () => {
+				let accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
 						method: 'GET',
 						headers: {
 							"Content-Type": "application/json",
-							'Authorization': 'Bearer ' + tuTokenDeAcceso
+							'Authorization': 'Bearer ' + accessToken
 						}
 					});
 					const data = await response.json();

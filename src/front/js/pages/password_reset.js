@@ -22,7 +22,8 @@ export const PasswordReset = () => {
 
 
   useEffect(() => {
-    actions.validateToken(token);
+    localStorage.setItem("token", token)
+    actions.validateToken();
   }, [token])
 
   useEffect(() => {
