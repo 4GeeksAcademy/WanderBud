@@ -58,9 +58,9 @@ app.config['MAIL_SERVER'] = 'smtp.fastmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'wanderbud2024@fastmail.com'
-app.config['MAIL_PASSWORD'] = 'v8n5hptc8l4xgbuh'
-app.config['MAIL_DEFAULT_SENDER'] = 'wanderbud2024@fastmail.com'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
 
 mail = Mail(app)
 

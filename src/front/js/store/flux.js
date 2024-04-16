@@ -14,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			
+			auth: false,
+			auth2: false
 		},
 		
 		actions: {
@@ -25,7 +26,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://silver-space-guacamole-q74ppq4pvwrf9r56-3000.app.github.dev/reset-password'; 
+				let frontendUrl = 'https://cuddly-waffle-9777j7j7qqxrcxjwp-3000.app.github.dev/password-reset'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
@@ -73,18 +74,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			validateToken: async () => {
-				let Token = localStorage.getItem("token")
+				let accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
 						method: 'GET',
 						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': 'Bearer ' + Token
+							"Content-Type": "application/json",
+							'Authorization': 'Bearer ' + accessToken
 						}
 					});
-					let data = await response.json()
-					if (response.status === 200) {
-						setStore({auth: data.is_logged});
+					const data = await response.json();
+					if (response.status == 200) {
+						setStore({auth: data.is_logged})
 						
 					} else {
 						
@@ -97,9 +98,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 				
 				} catch (error) {
 					
+					throw new Error('Error al validar el token: ' + error.message);
 				}
 			},
 			
+			resetPassword: async (password, token) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/reset-password', {
+						method: 'PUT',
+						headers: {
+							"Content-Type": "application/json",
+							'Authorization': 'Bearer ' + token
+						},
+						body: JSON.stringify({"password": password})
+					});
+			
+					if (response.status === 200) {
+						setStore({message: "Password successfully changed"})
+						setStore({auth2:true})
+					} else {
+						setStore({message: "Something went wrong, try again"})
+					}
+				} catch (error) {
+					console.error("Network error:", error);
+					setStore({message: "Network error, please try again"})
+				}
+			},
 			
 
 		
