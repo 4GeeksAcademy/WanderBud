@@ -123,4 +123,3 @@ def get_address_in_radius(ubication, radius_in_km, list_of_ubications):
     
     return ubication_in_radius
 
-    

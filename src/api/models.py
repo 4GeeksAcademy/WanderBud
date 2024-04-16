@@ -120,7 +120,7 @@ class Event_Member(db.Model):
 
 class Petition_Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_petition = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    chat_id_petition = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
     message = db.Column(db.String(250), nullable=False)
@@ -129,7 +129,7 @@ class Petition_Chat(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "id_petition": self.id_petition,
+            "chat_id_petition": self.chat_id_petition,
             "user_id": self.user_id,
             "event_id": self.event_id,
             "message": self.message
@@ -137,7 +137,7 @@ class Petition_Chat(db.Model):
         
 class Event_Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    chat_event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.String(250), nullable=False)
     def __repr__(self):
@@ -145,7 +145,7 @@ class Event_Chat(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "event_id": self.event_id,
+            "chat_event_id": self.chat_event_id,
             "user_id": self.user_id,
             "message": self.message
         }
