@@ -97,9 +97,9 @@ def calculate_distance(coords1, coords2):
     lon1 = math.radians(coords1["lng"])
     lat2 = math.radians(coords2["lat"])
     lon2 = math.radians(coords2["lng"])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) * math.sin(dlon / 2)
+    distance_latitude = lat2 - lat1
+    distamce_longitude = lon2 - lon1
+    a = math.sin(distance_latitude / 2) * math.sin(distance_latitude / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(distamce_longitude / 2) * math.sin(distamce_longitude / 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = 6378 * c
     return distance

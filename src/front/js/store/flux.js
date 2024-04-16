@@ -13,8 +13,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			auth: false,
+			auth2: false
 		},
+		
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -23,7 +26,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://silver-space-guacamole-q74ppq4pvwrf9r56-3000.app.github.dev/reset-password'; 
+				let frontendUrl = 'https://cuddly-waffle-9777j7j7qqxrcxjwp-3000.app.github.dev/password-reset'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
@@ -44,7 +47,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			login: async (email, password) => {
-				console.log(email,password);
+			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
 						method: 'POST',
@@ -58,40 +61,69 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json()
 					
 					if (response.status === 200) {
-						console.log(data);
+						localStorage.setItem("token",data.access_token)
+						
 						return true;
 					}
 					
 					
 					
 				} catch (error) {
-					console.log(error);
 					return false;
 				}
 			},
 
 			validateToken: async () => {
+				let accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
 						method: 'GET',
 						headers: {
-							'Authorization': 'Bearer ' + tuTokenDeAcceso
+							"Content-Type": "application/json",
+							'Authorization': 'Bearer ' + accessToken
 						}
 					});
 					const data = await response.json();
-					if (response.ok) {
+					if (response.status == 200) {
+						setStore({auth: data.is_logged})
 						
-						return data.is_logged;
 					} else {
 						
-						throw new Error(data.msg);
+						localStorage.removeItem("token");
+						setStore({ auth: false }); // Opcional: actualiza el estado de autenticación en el store
+						
+            		
 					}
+					
+				
 				} catch (error) {
 					
 					throw new Error('Error al validar el token: ' + error.message);
 				}
 			},
 			
+			resetPassword: async (password, token) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/reset-password', {
+						method: 'PUT',
+						headers: {
+							"Content-Type": "application/json",
+							'Authorization': 'Bearer ' + token
+						},
+						body: JSON.stringify({"password": password})
+					});
+			
+					if (response.status === 200) {
+						setStore({message: "Password successfully changed"})
+						setStore({auth2:true})
+					} else {
+						setStore({message: "Something went wrong, try again"})
+					}
+				} catch (error) {
+					console.error("Network error:", error);
+					setStore({message: "Network error, please try again"})
+				}
+			},
 			
 
 		
