@@ -21,6 +21,7 @@ typing-extensions = "*"
 flask-jwt-extended = "*"
 pytz = "*"
 flask-mail = "*"
+googlemaps = "*"
 
 [requires]
 python_version = "3.10"

@@ -1,10 +1,12 @@
+import random
+
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 
 
 db = SQLAlchemy()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, default=random.randint(100000000, 999999999))
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
@@ -14,10 +16,10 @@ class User(db.Model):
     petition_chat = db.relationship('Petition_Chat', backref='user', lazy=True, primaryjoin='Petition_Chat.user_id==User.id')
     group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.user_id==User.id')
     
-
     def __repr__(self):
         return f'<User ID {self.id} {self.email}>'
 
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -88,6 +90,7 @@ class Event(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "owner": self.owner_id,
             "name": self.name,
             "location": self.location,
             "date": self.date,
@@ -102,7 +105,7 @@ class Event_Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    status = db.Column(db.String(120), nullable=False)
+    status = db.Column(db.Enum("Joined","Rejected","Applied","Owner","Abandoned", name="status"), nullable=False)
 
     def __repr__(self):
         return f'<Event_Member {self.id}>'

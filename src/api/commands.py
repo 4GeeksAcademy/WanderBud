@@ -33,69 +33,19 @@ def setup_commands(app):
     @app.cli.command("insert-test-data")
     def insert_test_data():
         print("Inserting test data for event types.")
-        
         event_types = [
-            {"name": "Birthday"},
-            {"name": "Wedding"},
-            {"name": "Graduation"},
-            {"name": "Baby Shower"},
-            {"name": "Bachelor Party"},
-            {"name": "Bachelorette Party"},
-            {"name": "Anniversary"},
-            {"name": "Retirement Party"},
-            {"name": "Engagement Party"},
-            {"name": "Reunion"},
-            {"name": "Corporate Event"},
-            {"name": "Religious Event"},
-            {"name": "Holiday Party"},
-            {"name": "Sporting Event"},
+            {"name": "Cine"},
+            {"name": "Bar"},
+            {"name": "Surf"},
             {"name": "Concert"},
-            {"name": "Festival"},
-            {"name": "Fundraiser"},
-            {"name": "Expo"},
+            {"name": "Exhibition"},
+            {"name": "Sports"},
+            {"name": "Party"},
+            {"name": "Theater"},
             {"name": "Conference"},
-            {"name": "Seminar"},
-            {"name": "Workshop"},
-            {"name": "Networking Event"},
-            {"name": "Trade Show"},
-            {"name": "Product Launch"},
-            {"name": "Fashion Show"},
-            {"name": "Art Show"},
-            {"name": "Film Screening"},
-            {"name": "Theater Show"},
-            {"name": "Comedy Show"},
-            {"name": "Dance Show"},
-            {"name": "Magic Show"},
-            {"name": "Circus Show"},
-            {"name": "Carnival"},
-            {"name": "Fair"},
-            {"name": "Parade"},
-            {"name": "Street Festival"},
-            {"name": "Block Party"},
-            {"name": "Picnic"},
-            {"name": "BBQ"},
-            {"name": "Cookout"},
-            {"name": "Potluck"},
-            {"name": "Dinner Party"},
-            {"name": "Brunch"},
-            {"name": "Lunch"},
-            {"name": "Breakfast"},
-            {"name": "Happy Hour"},
-            {"name": "Cocktail Party"},
-            {"name": "Wine Tasting"},
-            {"name": "Beer Tasting"},
-            {"name": "Whiskey Tasting"},
-            {"name": "Wine and Paint"},
-            {"name": "Craft Night"},
-            {"name": "DIY Night"},
-            {"name": "Game Night"},
-            {"name": "Trivia Night"},
-            {"name": "Karaoke Night"},
-            {"name": "Open Mic Night"},
-            {"name": "Poetry Night"},
-            {"name": "Book Club"},
-            {"name": "Cinema"},
+            {"name": "Workshop"}
         ]
+        print("Inserting test data for users")
 
         for event_type_data in event_types:
             event_type = Event_Type(**event_type_data)
@@ -103,3 +53,5 @@ def setup_commands(app):
             db.session.commit()
 
         print("Test data for event types inserted.")
+    
+    

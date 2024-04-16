@@ -6,6 +6,7 @@ from flask_cors import CORS
 from . import event_bp
 import pytz
 from api.utils import get_currency_symbol
+from api.utils_map import get_address_in_radius, coordinates_to_timezone
 
 CORS(event_bp)
 
@@ -29,7 +30,6 @@ def create_event():
                 "location": "New York, NY 10001, USA",
                 "date": "2022-12-31",
                 "time": "23:59:59",
-                "timezone": "America/New_York",
                 "status": "planned",
                 "description": "A description of my event",
                 "event_type_id": 1,
@@ -46,7 +46,7 @@ def create_event():
         
         date_str = request.json.get("date", None)
         time_str = request.json.get("time", None)
-        timezone_str = request.json.get("timezone", None)
+        timezone_str = coordinates_to_timezone(request.json.get("location", None))
         datetime_str = f"{date_str} {time_str}"
         datetime_without_tz = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
         
@@ -72,7 +72,6 @@ def create_event():
             event_type_id=event_type_id,
             budget_per_person=budget_per_person
         )
-        print(new_event)
 
         db.session.add(new_event)
         db.session.commit()
@@ -82,38 +81,6 @@ def create_event():
         return jsonify({"msg": "error creating event",
                         "error": str(e)}), 500
         
-@event_bp.route("/get-all-timezones", methods=["GET"])
-def get_all_timezones():
-    """
-    Retrieve all timezones.
-
-    This function retrieves all timezones from the pytz module and returns them as a list
-    of JSON objects.
-
-    Returns:
-        A JSON response containing a list of all timezones.
-
-    Example JSON response:
-        [
-            {
-                "location": "Africa/Abidjan",
-                "gmt": "+0000"
-            },
-            {
-                "location": "Africa/Accra",
-                "gmt": "+0000"
-            }
-        ]
-    """
-    timezones = pytz.all_timezones
-    timezones_list = []
-    for timezone in timezones:
-        timezones_list.append({
-            "location": timezone,
-            "gmt": pytz.timezone(timezone).localize(datetime.now()).strftime('%z')
-        })
-    return jsonify(timezones_list), 200
-
 @event_bp.route("/get-event-types", methods=["GET"])
 def get_event_types():
     """
@@ -145,3 +112,270 @@ def get_event_types():
             "name": event_type.name
         })
     return jsonify(event_types_list), 200
+
+@event_bp.route("/get-all-events", methods=["GET"])
+@jwt_required()
+def get_all_events():
+    try:
+        """
+        Retrieve all events.
+
+        This function retrieves all events from the database and returns them as a list
+        of JSON objects.
+
+        Returns:
+            A JSON response containing a list of all events.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "name": "My Event",
+                    "location": "New York",
+                    "datetime": "2022-12-31 23:59:59",
+                    "status": "planned",
+                    "description": "A description of my event",
+                    "event_type_id": 1,
+                    "budget_per_person": 100
+                }
+            ]
+        Example JSON request:
+            {
+                "timezone": "America/New_York"
+            }
+        """
+        timezone = request.json.get("timezone", None)
+        events = Event.query.all()
+        events_list = []
+        for event in events:
+            event_datetime = event.datetime
+            event_datetime = event_datetime.astimezone(pytz.timezone(timezone))
+            event_date = event_datetime.strftime("%Y-%m-%d")
+            event_time = event_datetime.strftime("%H:%M:%S")
+            event_timezone = event_datetime.strftime("%Z")
+            
+            events_list.append({
+                "id": event.id,
+                "name": event.name,
+                "owner": event.owner_id,
+                "location": event.location,
+                "date": event_date,
+                "time": event_time,
+                "timezone": event_timezone,
+                "status": event.status,
+                "description": event.description,
+                "event_type_id": event.event_type_id,
+                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+            })
+            
+        return jsonify(events_list), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving events",
+                        "error": str(e)}), 500
+
+@event_bp.route("/get-event/<int:event_id>", methods=["GET"])
+@jwt_required()
+def get_event(event_id):
+    try:
+        """
+        Retrieve a specific event.
+
+        This function retrieves a specific event from the database and returns it as a JSON
+        object.
+
+        Args:
+            event_id (int): The ID of the event to retrieve.
+
+        Returns:
+            A JSON response containing the event details.
+
+        Example JSON response:
+            {
+                "id": 1,
+                "name": "My Event",
+                "location": "New York",
+                "datetime": "2022-12-31 23:59:59",
+                "status": "planned",
+                "description": "A description of my event",
+                "event_type_id": 1,
+                "budget_per_person": 100
+            }
+        """
+        event = Event.query.filter_by(id=event_id).first()
+        event_datetime = event.datetime
+        event_date = event_datetime.strftime("%Y-%m-%d")
+        event_time = event_datetime.strftime("%H:%M:%S")
+        event_timezone = event_datetime.strftime("%Z")
+        
+        event_details = {
+            "id": event.id,
+            "name": event.name,
+            "owner": event.owner_id,
+            "location": event.location,
+            "date": event_date,
+            "time": event_time,
+            "timezone": event_timezone,
+            "status": event.status,
+            "description": event.description,
+            "event_type_id": event.event_type_id,
+            "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+        }
+        
+        return jsonify(event_details), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving event",
+                        "error": str(e)}), 500
+        
+@event_bp.route("/get-my-events", methods=["GET"])
+@jwt_required()
+def get_my_events():
+    try:
+        """
+        Retrieve the current user's events.
+
+        This function retrieves the current user's events from the database and returns them
+        as a list of JSON objects.
+
+        Returns:
+            A JSON response containing a list of the current user's events.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "name": "My Event",
+                    "location": "New York",
+                    "datetime": "2022-12-31 23:59:59",
+                    "status": "planned",
+                    "description": "A description of my event",
+                    "event_type_id": 1,
+                    "budget_per_person": 100
+                }
+            ]
+        """
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(email=current_user).first()
+        events = Event.query.filter_by(owner_id=user.id).all()
+        events_list = []
+        for event in events:
+            event_datetime = event.datetime
+            event_date = event_datetime.strftime("%Y-%m-%d")
+            event_time = event_datetime.strftime("%H:%M:%S")
+            event_timezone = event_datetime.strftime("%Z")
+            
+            events_list.append({
+                "id": event.id,
+                "name": event.name,
+                "owner": event.owner_id,
+                "location": event.location,
+                "date": event_date,
+                "time": event_time,
+                "timezone": event_timezone,
+                "status": event.status,
+                "description": event.description,
+                "event_type_id": event.event_type_id,
+                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+            })
+            
+        return jsonify(events_list), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving events",
+                        "error": str(e)}), 500
+
+@event_bp.route("/get-event-by-radius", methods=["GET"])
+@jwt_required()
+def get_event_by_radius():
+    try:
+        """
+        Retrieve events within a given radius.
+
+        This function retrieves events within a given radius of the current user's location
+        from the database and returns them as a list of JSON objects.
+
+        Returns:
+            A JSON response containing a list of events within the given radius.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "name": "My Event",
+                    "location": "New York",
+                    "datetime": "2022-12-31 23:59:59",
+                    "status": "planned",
+                    "description": "A description of my event",
+                    "event_type_id": 1,
+                    "budget_per_person": 100
+                }
+            ]
+        Example JSON request:
+            {
+                "radius": 100
+                "location": "Carrer de Simancas 50, Hospitalet de Llobregat, Spain"
+                    
+            }
+        """
+        user_location = request.json.get("location", None)
+        radius = request.json.get("radius", None)
+        events = Event.query.all()
+        events_address = [event.location for event in events]
+        events_list_address = get_address_in_radius(user_location, radius, events_address)
+        events_list = []
+        for event in events:
+            if event.location in events_list_address:
+                event_datetime = event.datetime
+                event_date = event_datetime.strftime("%Y-%m-%d")
+                event_time = event_datetime.strftime("%H:%M:%S")
+                event_timezone = event_datetime.strftime("%Z")
+                
+                events_list.append({
+                    "id": event.id,
+                    "name": event.name,
+                    "owner": event.owner_id,
+                    "location": event.location,
+                    "date": event_date,
+                    "time": event_time,
+                    "timezone": event_timezone,
+                    "status": event.status,
+                    "description": event.description,
+                    "event_type_id": event.event_type_id,
+                    "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+                })
+        
+            
+        return jsonify(events_list), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving events",
+                        "error": str(e)}), 500
+
+
+@event_bp.route("/get-current-user", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    try:
+        """
+        Retrieve the current user's information.
+
+        This function retrieves the current user's information from the database and returns
+        it as a JSON object.
+
+        Returns:
+            A JSON response containing the current user's information.
+
+        Example JSON response:
+            {
+                "id": 1,
+                "email": "
+            }
+        """
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(email=current_user).first()
+        user_info = {
+            "id": user.id,
+            "email": user.email
+        }
+        return jsonify(user_info), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving user",
+                        "error": str(e)}), 500
+        
