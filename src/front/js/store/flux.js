@@ -17,6 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			auth: false,
 			auth2: false
 		},
+		
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -46,7 +47,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			login: async (email, password) => {
-				console.log(email,password);
+			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
 						method: 'POST',
@@ -60,14 +61,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json()
 					
 					if (response.status === 200) {
-						console.log(data);
+						localStorage.setItem("token",data.access_token)
+						
 						return true;
 					}
 					
 					
 					
 				} catch (error) {
-					console.log(error);
 					return false;
 				}
 			},
@@ -86,11 +87,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status == 200) {
 						setStore({auth: data.is_logged})
 						
-						return data.is_logged;
 					} else {
 						
-						throw new Error(data.msg);
+						localStorage.removeItem("token");
+						setStore({ auth: false }); // Opcional: actualiza el estado de autenticación en el store
+						
+            		
 					}
+					
+				
 				} catch (error) {
 					
 					throw new Error('Error al validar el token: ' + error.message);

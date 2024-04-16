@@ -1,11 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
 
 	export const Home = () => {
 		const { store, actions } = useContext(Context);
-		return (
+		useEffect(()=>{
+            actions.validToken()
+        },[])
+        
+        return (
 			<div className="container" style={{ backgroundColor: '#1a1f25', color: '#fff', minHeight: '100vh', paddingTop: '50px', position: 'relative' }}>
     <div className="row justify-content-center">
         {/* Columna para el texto "WanderBud" */}
