@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import "../../styles/password.css"
+import { Link } from 'react-router-dom';
 
 export const PasswordReset = () => {
   const [password1, setPassword1] = useState('');
@@ -10,6 +11,7 @@ export const PasswordReset = () => {
   const [message, setMessage] = useState('');
   const { actions, store } = useContext(Context);
   const { token } = useParams();
+ 
 
   console.log(password1);
   console.log(password2);
@@ -65,6 +67,7 @@ export const PasswordReset = () => {
             />
             <button type="submit">Submit</button>
             {message && <p className="message">{message}</p>}
+            {store.auth2 ? <Link to={"/login"} style={{ textDecoration: 'none', color: "white"}} ><button type="submit">Go to Log In</button></Link> : null}
           </form>
         </div>
 

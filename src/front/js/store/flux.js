@@ -14,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			auth: false
+			auth: false,
+			auth2: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -108,6 +109,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 					if (response.status === 200) {
 						setStore({message: "Password successfully changed"})
+						setStore({auth2:true})
 					} else {
 						setStore({message: "Something went wrong, try again"})
 					}
