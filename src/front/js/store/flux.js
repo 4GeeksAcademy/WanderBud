@@ -14,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			auth: false
+			
 		},
 		
 		actions: {
@@ -72,7 +72,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			validToken: async () => {
+			validateToken: async () => {
 				let Token = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL +'/api/valid-token', {
