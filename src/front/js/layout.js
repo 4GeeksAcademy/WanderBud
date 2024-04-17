@@ -11,9 +11,7 @@ import { PasswordReset } from "./pages/password_reset";
 import { PasswordRecoveryForm } from "./pages/password_recovery_form"
 import injectContext from "./store/appContext";
 import { FeedLayout } from "./pages/FeedLayout";
-
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
+import { CreateEvent } from "./component/createEvent";
 
 //create your first component
 const Layout = () => {
@@ -35,7 +33,7 @@ const Layout = () => {
                         <Route element={<PasswordReset />} path="/password-reset/:token/*" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<FeedLayout />} path="/feed" />
-                        <Route element={<FeedLayout />} path="/create-event" />
+                        <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<h1>Not found!</h1>} />
