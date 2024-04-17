@@ -10,9 +10,12 @@ import Login from "./pages/Login";
 import { PasswordReset } from "./pages/password_reset";
 import { PasswordRecoveryForm } from "./pages/password_recovery_form"
 import injectContext from "./store/appContext";
+import NavbarRight from "./component/NavbarRight.js";
+
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
 
 //create your first component
 const Layout = () => {
@@ -34,6 +37,7 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Login />} path="/login" />
+                        <Route element={<NavbarRight />} path="/navbar-right" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}
