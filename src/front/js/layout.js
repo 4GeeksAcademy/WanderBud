@@ -10,8 +10,7 @@ import Login from "./pages/Login";
 import { PasswordReset } from "./pages/password_reset";
 import { PasswordRecoveryForm } from "./pages/password_recovery_form"
 import injectContext from "./store/appContext";
-import NavbarRight from "./component/NavbarRight.js";
-
+import { FeedLayout } from "./pages/FeedLayout";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -23,7 +22,8 @@ const Layout = () => {
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
 
-    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+
+    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
     return (
         <div>
@@ -35,6 +35,8 @@ const Layout = () => {
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token/*" />
                         <Route element={<Demo />} path="/demo" />
+                        <Route element={<FeedLayout />} path="/feed" />
+                        <Route element={<FeedLayout />} path="/create-event" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<NavbarRight />} path="/navbar-right" />
