@@ -14,7 +14,7 @@ class User(db.Model):
     user_event = db.relationship('Event', backref='owner', lazy=True)
     event_member = db.relationship('Event_Member', backref='user', lazy=True)
     petition_chat = db.relationship('Petition_Chat', backref='user', lazy=True, primaryjoin='Petition_Chat.user_id==User.id')
-    group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.user_id==User.id')
+    group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.chat_user_id==User.id')
     
     def __repr__(self):
         return f'<User ID {self.id} {self.email}>'
