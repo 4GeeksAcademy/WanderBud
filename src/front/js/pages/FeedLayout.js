@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Demo } from "../component/Demo";
+import { NavbarRight } from "../component/NavbarRight";
 
 import { Context } from "../store/appContext";
+
 const Demo = () => {
     return (
         <div className="main-feed">
@@ -36,7 +37,7 @@ export const FeedLayout = ({ children }) => {
                     {children ? children : <Demo />}
                 </div>
                 <div className="col-md-3 p-0 border border-5  border-danger">
-                    <Demo />
+                    <NavbarRight />
                 </div>
             </div>
         </div>

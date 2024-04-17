@@ -82,7 +82,7 @@ class Event(db.Model):
     event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.id'), nullable=False)
     members = db.relationship('Event_Member', backref='event', lazy=True)
     petition_chat = db.relationship('Petition_Chat', backref='event', lazy=True, primaryjoin='Petition_Chat.event_id == Event.id')
-    group_chat = db.relationship('Event_Chat', backref='event', lazy=True, primaryjoin='Event_Chat.event_id == Event.id')
+    group_chat = db.relationship('Event_Chat', backref='event', lazy=True, primaryjoin='Event_Chat.chat_event_id == Event.id')
 
     def __repr__(self):
         return f'<Event Id{self.id} {self.name}>'

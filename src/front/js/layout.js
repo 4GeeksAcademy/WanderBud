@@ -39,7 +39,6 @@ const Layout = () => {
                         <Route element={<FeedLayout />} path="/create-event" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Login />} path="/login" />
-                        <Route element={<NavbarRight />} path="/navbar-right" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e5569023bbcf
+Revision ID: 7347f28c2d7d
 Revises: 
-Create Date: 2024-04-15 09:47:58.463039
+Create Date: 2024-04-17 10:54:45.146784
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e5569023bbcf'
+revision = '7347f28c2d7d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -58,10 +58,10 @@ def upgrade():
     )
     op.create_table('event__chat',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.Column('chat_event_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('message', sa.String(length=250), nullable=False),
-    sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
+    sa.ForeignKeyConstraint(['chat_event_id'], ['event.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -76,12 +76,12 @@ def upgrade():
     )
     op.create_table('petition__chat',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('id_petition', sa.Integer(), nullable=False),
+    sa.Column('chat_id_petition', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=True),
     sa.Column('message', sa.String(length=250), nullable=False),
+    sa.ForeignKeyConstraint(['chat_id_petition'], ['user.id'], ),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
-    sa.ForeignKeyConstraint(['id_petition'], ['user.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
