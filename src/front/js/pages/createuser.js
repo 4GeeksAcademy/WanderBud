@@ -1,26 +1,31 @@
-import React, { useState, useContext } from 'react'; // Importa useState para manejar el estado local en React
-import { Context } from '../store/appContext';
-
+import React, { useState, useContext } from 'react';
+import { Context } from '../store/appContext'; // Importa el contexto desde appContext
 
 const CreateUser = () => {
+  const { actions } = useContext(Context); // Obtén las acciones desde el contexto
+
   const [userData, setUserData] = useState({
     email: '',
     password: '',
-    confirmpassword:'',
+    confirmpassword: ''
   });
-  const { store, actions}= useContext(Context)
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Verifica si las contraseñas coinciden
+    if (userData.password !== userData.confirmpassword) {
+      alert('Error: Las contraseñas no coinciden');
+      return;
+    }
+
     try {
-      const success = await actions.createUser(userData); // Llama a la acción createUser del store con los datos del usuario
+      const success = await actions.createUser(userData); // Llama a la acción createUser del contexto
       if (success) {
         alert('Usuario creado correctamente');
         // Aquí puedes redirigir al usuario a otra página, actualizar el estado, etc.
@@ -32,7 +37,6 @@ const CreateUser = () => {
       alert('Error al crear el usuario');
     }
   };
-
 
   return (
     <div>
@@ -59,15 +63,15 @@ const CreateUser = () => {
           />
         </div>
         <div>
-          <label>First Name:</label>
-          <input
-            type="confirmpassword"
-            name="confirmpassword"
-            value={userData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
+  <label>Confirm Password:</label>
+  <input
+    type="password" // Utiliza el tipo "password" para campos de contraseña
+    name="confirmpassword"
+    value={userData.confirmpassword}
+    onChange={handleChange}
+    required
+  />
+</div>
         <button type="submit">Register</button>
       </form>
     </div>

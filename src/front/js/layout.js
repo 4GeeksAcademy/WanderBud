@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import { PasswordReset } from "./pages/password_reset";
 import { PasswordRecoveryForm } from "./pages/password_recovery_form"
 import injectContext from "./store/appContext";
+import Createuser from "./pages/createuser"
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -29,6 +30,7 @@ const Layout = () => {
                     {/* <Navbar /> */}
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<Createuser />} path="/create-user" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token/*" />
                         <Route element={<Demo />} path="/demo" />

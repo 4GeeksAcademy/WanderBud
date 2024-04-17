@@ -149,7 +149,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 				body: JSON.stringify(userData)
 			  });
-   
+	
 			  if (resp.ok) {
 				const newUser = await resp.json();
 				const store = getStore();
@@ -164,8 +164,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			  return false; // Indicar fallo al crear el usuario
 			}
 		  },
-  
-	};
-};
+		}
+	  };
 
 export default getState;
