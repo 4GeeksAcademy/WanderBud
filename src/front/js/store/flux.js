@@ -26,7 +26,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://cuddly-waffle-9777j7j7qqxrcxjwp-3000.app.github.dev/password-reset'; 
+				let frontendUrl = 'https://ominous-enigma-v666q6q6gg5w27p7-3000.app.github.dev/password-reset'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
@@ -62,6 +62,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					
 					if (response.status === 200) {
 						localStorage.setItem("token",data.access_token)
+						console.log(data)
 						
 						return true;
 					}

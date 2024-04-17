@@ -11,6 +11,8 @@ import { Container, Row, Col, Form, Button } from 'react-bootstrap';
   const[password, setPassword]= useState("")
   const { store, actions}= useContext(Context)
   const navigate= useNavigate()
+  console.log(email);
+  console.log(password);
 
   
   
