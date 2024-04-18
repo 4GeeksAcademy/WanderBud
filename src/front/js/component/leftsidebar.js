@@ -9,7 +9,7 @@ const LeftSidebar = ({ changeContent }) => {
         <div className="w-100 p-0 border border-1 border-light sidenav left">
             <ul className="nav flex-column">
                 <li className="nav-item">
-                    <a href="#" className="nav-link" onClick={() => handleItemClick('feed')}>
+                    <a href="/feed" className="nav-link" onClick={() => handleItemClick('feed')}>
                         Feed
                     </a>
                 </li>
