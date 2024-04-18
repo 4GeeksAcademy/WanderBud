@@ -59,3 +59,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Exportar la función changeContent para usar en otros archivos
 export { changeContent };
+
+
+
+
+/* import React from 'react';
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import FeedPage from './FeedPage';
+import ProfilePage from './ProfilePage';
+import SettingsPage from './SettingsPage';
+
+const App = () => {
+    return (
+        <BrowserRouter>
+            <div>
+                <nav>
+                    <ul>
+                        <li>
+                            <Link to="/feed">Feed</Link>
+                        </li>
+                        <li>
+                            <Link to="/profile">Profile</Link>
+                        </li>
+                        <li>
+                            <Link to="/settings">Settings</Link>
+                        </li>
+                    </ul>
+                </nav>
+                <Switch>
+                    <Route path="/feed" component={FeedPage} />
+                    <Route path="/profile" component={ProfilePage} />
+                    <Route path="/settings" component={SettingsPage} />
+                </Switch>
+            </div>
+        </BrowserRouter>
+    );
+};
+
+export default App; */
