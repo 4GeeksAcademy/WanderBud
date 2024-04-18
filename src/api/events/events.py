@@ -1,14 +1,33 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint # type: ignore
 from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Event_Chat
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity # type: ignore # type: ignore
 from datetime import datetime
-from flask_cors import CORS
+from flask_cors import CORS # type: ignore
 from . import event_bp
-import pytz
-from api.utils import get_currency_symbol
-from api.utils_map import get_address_in_radius, coordinates_to_timezone
+import pytz # type: ignore
+from api.utils_map import get_address_in_radius, coordinates_to_timezone, get_currency_symbol
 
 CORS(event_bp)
+
+def get_datetime_with_timezone(date_str, time_str, location):
+    timezone_str = coordinates_to_timezone(location)
+    datetime_str = f"{date_str} {time_str}"
+    datetime_without_tz = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+    timezone = pytz.timezone(timezone_str['timezone'])
+    datetime_with_tz = datetime_without_tz.astimezone(timezone)
+    
+    return datetime_with_tz
+def actualize_event_status():
+    events = Event.query.all()
+    for event in events:
+        if event.end_datetime < datetime.now():
+            event.status = "Finished"
+        elif event.start_datetime < datetime.now() < event.end_datetime:
+            event.status = "In Progress"
+        else:
+            event.status = "Planned"
+    db.session.commit()
+
 
 @event_bp.route("/create-event", methods=["POST"])
 @jwt_required()
@@ -27,47 +46,41 @@ def create_event():
         Example JSON request:
             {
                 "name": "My Event",
-                "location": "New York, NY 10001, USA",
-                "date": "2022-12-31",
-                "time": "23:59:59",
-                "status": "Planned",
+                "location": "New York",
+                "start_date": "2022-12-31",
+                "start_time": "23:59:59",
+                "end_date": "2023-01-01",
+                "end_time": "01:00:00",
                 "description": "A description of my event",
                 "event_type_id": 1,
                 "budget_per_person": 100
             }
         """
+        print("Creating event")
         current_user = get_jwt_identity()
+        print(current_user)
 
         querty_results = User.query.filter_by(email=current_user).first()
+        print(querty_results)
 
         if querty_results is None:
             return jsonify({"msg": "user does not exist",
                             "is_logged": False}), 404
-        
-        date_str = request.json.get("date", None)
-        time_str = request.json.get("time", None)
-        timezone_str = coordinates_to_timezone(request.json.get("location", None))
-        datetime_str = f"{date_str} {time_str}"
-        datetime_without_tz = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
-        
-        timezone = pytz.timezone(timezone_str)
-        datetime_with_tz = timezone.localize(datetime_without_tz)
-
         name = request.json.get("name", None)
         owner_id = querty_results.id
         location = request.json.get("location", None)
-        date_and_time = datetime_with_tz
-        status = request.json.get("status", None)
+        start_datetime = get_datetime_with_timezone(request.json.get("start_date", None),request.json.get("start_time", None),location)
+        end_datetime = get_datetime_with_timezone(request.json.get("end_date", None), request.json.get("end_time", None),location)
         description = request.json.get("description", None)
         event_type_id = request.json.get("event_type_id", None)
         budget_per_person = request.json.get("budget_per_person", None)
-
+        
         new_event = Event(
             name=name,
             owner_id=owner_id,
             location=location,
-            datetime=date_and_time,
-            status=status,
+            start_datetime=start_datetime,
+            end_datetime=end_datetime,
             description=description,
             event_type_id=event_type_id,
             budget_per_person=budget_per_person
@@ -132,40 +145,35 @@ def get_all_events():
                     "id": 1,
                     "name": "My Event",
                     "location": "New York",
-                    "datetime": "2022-12-31 23:59:59",
-                    "status": "planned",
+                    "start_datetime": "2022-12-31 23:59:59",
+                    "end_datetime": "2023-01-01 01:00:00",
+                    "status": "Planned",
+                    "timezone": "America/New_York",
                     "description": "A description of my event",
                     "event_type_id": 1,
                     "budget_per_person": 100
                 }
             ]
-        Example JSON request:
-            {
-                "timezone": "America/New_York"
-            }
         """
-        timezone = request.json.get("timezone", None)
         events = Event.query.all()
         events_list = []
         for event in events:
-            event_datetime = event.datetime
-            event_datetime = event_datetime.astimezone(pytz.timezone(timezone))
-            event_date = event_datetime.strftime("%Y-%m-%d")
-            event_time = event_datetime.strftime("%H:%M:%S")
-            event_timezone = event_datetime.strftime("%Z")
+            event_timezone = coordinates_to_timezone(event.location)['timezone']
             
             events_list.append({
                 "id": event.id,
                 "name": event.name,
                 "owner": event.owner_id,
                 "location": event.location,
-                "date": event_date,
-                "time": event_time,
+                "start_date": event.start_datetime.strftime("%Y-%m-%d"),
+                "start_time": event.start_datetime.strftime("%H:%M:%S"),
+                "end_date": event.end_datetime.strftime("%Y-%m-%d"),
+                "end_time": event.end_datetime.strftime("%H:%M:%S"),
                 "timezone": event_timezone,
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
-                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+                "budget_per_person": str(event.budget_per_person) +" "+ str(get_currency_symbol(event.location))
             })
             
         return jsonify(events_list), 200
@@ -194,26 +202,26 @@ def get_event(event_id):
                 "id": 1,
                 "name": "My Event",
                 "location": "New York",
-                "datetime": "2022-12-31 23:59:59",
-                "status": "planned",
+                "start_datetime": "2022-12-31 23:59:59",
+                "end_datetime": "2023-01-01 01:00:00",
+                "status": "Planned",
                 "description": "A description of my event",
+                "timezone": "America/New_York",
                 "event_type_id": 1,
                 "budget_per_person": 100
             }
         """
         event = Event.query.filter_by(id=event_id).first()
-        event_datetime = event.datetime
-        event_date = event_datetime.strftime("%Y-%m-%d")
-        event_time = event_datetime.strftime("%H:%M:%S")
-        event_timezone = event_datetime.strftime("%Z")
+        event_timezone = coordinates_to_timezone(event.location)['timezone']
         
         event_details = {
             "id": event.id,
             "name": event.name,
-            "owner": event.owner_id,
             "location": event.location,
-            "date": event_date,
-            "time": event_time,
+            "start_date": event.start_datetime.strftime("%Y-%m-%d"),
+            "start_time": event.start_datetime.strftime("%H:%M:%S"),
+            "end_date": event.end_datetime.strftime("%Y-%m-%d"),
+            "end_time": event.end_datetime.strftime("%H:%M:%S"),
             "timezone": event_timezone,
             "status": event.status,
             "description": event.description,
@@ -245,11 +253,13 @@ def get_my_events():
                     "id": 1,
                     "name": "My Event",
                     "location": "New York",
-                    "datetime": "2022-12-31 23:59:59",
-                    "status": "planned",
+                    "start_date": "2022-12-31",
+                    "start_time": "23:59:59",
+                    "timezone": "America/New_York",
+                    "status": "Planned",
                     "description": "A description of my event",
                     "event_type_id": 1,
-                    "budget_per_person": 100
+                    "budget_per_person": "100 USD"
                 }
             ]
         """
@@ -258,18 +268,17 @@ def get_my_events():
         events = Event.query.filter_by(owner_id=user.id).all()
         events_list = []
         for event in events:
-            event_datetime = event.datetime
-            event_date = event_datetime.strftime("%Y-%m-%d")
-            event_time = event_datetime.strftime("%H:%M:%S")
-            event_timezone = event_datetime.strftime("%Z")
+            event_timezone = coordinates_to_timezone(event.location)['timezone']
             
             events_list.append({
                 "id": event.id,
                 "name": event.name,
                 "owner": event.owner_id,
                 "location": event.location,
-                "date": event_date,
-                "time": event_time,
+                "start_date": event.start_datetime.strftime("%Y-%m-%d"),
+                "start_time": event.start_datetime.strftime("%H:%M:%S"),
+                "end_date": event.end_datetime.strftime("%Y-%m-%d"),
+                "end_time": event.end_datetime.strftime("%H:%M:%S"),
                 "timezone": event_timezone,
                 "status": event.status,
                 "description": event.description,
@@ -322,32 +331,29 @@ def get_event_by_radius():
         events_list_address = get_address_in_radius(user_location, radius, events_address)
         events_list = []
         for event in events:
-            if event.location in events_list_address:
-                event_datetime = event.datetime
-                event_date = event_datetime.strftime("%Y-%m-%d")
-                event_time = event_datetime.strftime("%H:%M:%S")
-                event_timezone = event_datetime.strftime("%Z")
-                
-                events_list.append({
-                    "id": event.id,
-                    "name": event.name,
-                    "owner": event.owner_id,
-                    "location": event.location,
-                    "date": event_date,
-                    "time": event_time,
-                    "timezone": event_timezone,
-                    "status": event.status,
-                    "description": event.description,
-                    "event_type_id": event.event_type_id,
-                    "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
-                })
-        
+            event_timezone = coordinates_to_timezone(event.location)['timezone']
+            
+            events_list.append({
+                "id": event.id,
+                "name": event.name,
+                "owner": event.owner_id,
+                "location": event.location,
+                "start_date": event.start_datetime.strftime("%Y-%m-%d"),
+                "start_time": event.start_datetime.strftime("%H:%M:%S"),
+                "end_date": event.end_datetime.strftime("%Y-%m-%d"),
+                "end_time": event.end_datetime.strftime("%H:%M:%S"),
+                "timezone": event_timezone,
+                "status": event.status,
+                "description": event.description,
+                "event_type_id": event.event_type_id,
+                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+            })
             
         return jsonify(events_list), 200
     except Exception as e:
         return jsonify({"msg": "error retrieving events",
                         "error": str(e)}), 500
-
+        
 @event_bp.route("/update-event/<int:event_id>", methods=["PUT"])
 @jwt_required()
 def update_event(event_id):
@@ -367,9 +373,10 @@ def update_event(event_id):
             {
                 "name": "My Updated Event",
                 "location": "New York",
-                "date": "2022-12-31",
-                "time": "23:59:59",
-                "status": "planned",
+                "start_date": "2022-12-31",
+                "start_time": "23:59:59",
+                "end_date": "2023-01-01",
+                "end_time": "01:00:00",
                 "description": "An updated description of my event",
                 "event_type_id": 1,
                 "budget_per_person": 100
@@ -382,19 +389,10 @@ def update_event(event_id):
         if event.owner_id != current_user:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
-        date_str = request.json.get("date", None)
-        time_str = request.json.get("time", None)
-        timezone_str = coordinates_to_timezone(request.json.get("location", None))
-        datetime_str = f"{date_str} {time_str}"
-        datetime_without_tz = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
-        
-        timezone = pytz.timezone(timezone_str)
-        datetime_with_tz = timezone.localize(datetime_without_tz)
-        
         event.name = request.json.get("name", event.name)
         event.location = request.json.get("location", event.location)
-        event.datetime = datetime_with_tz
-        event.status = request.json.get("status", event.status)
+        event.start_datetime = get_datetime_with_timezone(request.json.get("start_date", event.start_datetime.strftime("%Y-%m-%d")), request.json.get("start_time", event.start_datetime.strftime("%H:%M:%S")), event.location)
+        event.end_datetime = get_datetime_with_timezone(request.json.get("end_date", event.end_datetime.strftime("%Y-%m-%d")), request.json.get("end_time", event.end_datetime.strftime("%H:%M:%S")), event.location)
         event.description = request.json.get("description", event.description)
         event.event_type_id = request.json.get("event_type_id", event.event_type_id)
         event.budget_per_person = request.json.get("budget_per_person", event.budget_per_person)
@@ -497,8 +495,12 @@ def get_joined_events():
                     "name": "My Event",
                     "owner_id": 1,
                     "location": "New York",
-                    "datetime": "2022-12-31 23:59:59",
+                    "start_date": "2022-12-31",
+                    "start_time": "23:59:59",
+                    "end_date": "2023-01-01",
+                    "end_time": "01:00:00",
                     "status": "planned",
+                    "timezone": "America/New_York",
                     "description": "A description of my event",
                     "event_type_id": 1,
                     "budget_per_person": 100
@@ -510,16 +512,21 @@ def get_joined_events():
         joined_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id).all()
         joined_events_list = []
         for event in joined_events:
+            event_timezone = event.start_datetime.strftime("%Z")
             event_details = {
                 "id": event.id,
-                "owner_id": event.owner_id,
                 "name": event.name,
+                "owner": event.owner_id,
                 "location": event.location,
-                "datetime": event.datetime.strftime("%Y-%m-%d %H:%M:%S"),
+                "start_date": event.start_datetime.strftime("%Y-%m-%d"),
+                "start_time": event.start_datetime.strftime("%H:%M:%S"),
+                "end_date": event.end_datetime.strftime("%Y-%m-%d"),
+                "end_time": event.end_datetime.strftime("%H:%M:%S"),
+                "timezone": event_timezone,
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
-                "budget_per_person": event.budget_per_person
+                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
             }
             joined_events_list.append(event_details)
                 
