@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: bdcc15ab3f97
+Revision ID: 2ba3e9591f8d
 Revises: 
-Create Date: 2024-04-16 18:34:31.695000
+Create Date: 2024-04-18 14:44:20.174098
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bdcc15ab3f97'
+revision = '2ba3e9591f8d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,7 +36,8 @@ def upgrade():
     sa.Column('owner_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=120), nullable=False),
     sa.Column('location', sa.String(length=250), nullable=False),
-    sa.Column('datetime', sa.DateTime(), nullable=False),
+    sa.Column('start_datetime', sa.DateTime(), nullable=False),
+    sa.Column('end_datetime', sa.DateTime(), nullable=False),
     sa.Column('status', sa.Enum('Planned', 'Completed', 'Canceled', 'In Progress', name='status'), nullable=False),
     sa.Column('description', sa.String(length=250), nullable=True),
     sa.Column('budget_per_person', sa.Float(), nullable=True),
@@ -58,10 +59,10 @@ def upgrade():
     )
     op.create_table('event__chat',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.Column('chat_event_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('message', sa.String(length=250), nullable=False),
-    sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
+    sa.ForeignKeyConstraint(['chat_event_id'], ['event.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -69,19 +70,19 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.String(length=120), nullable=False),
+    sa.Column('status', sa.Enum('Joined', 'Rejected', 'Applied', 'Owner', 'Abandoned', name='status'), nullable=False),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('petition__chat',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('id_petition', sa.Integer(), nullable=False),
+    sa.Column('chat_id_petition', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=True),
     sa.Column('message', sa.String(length=250), nullable=False),
+    sa.ForeignKeyConstraint(['chat_id_petition'], ['user.id'], ),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
-    sa.ForeignKeyConstraint(['id_petition'], ['user.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
