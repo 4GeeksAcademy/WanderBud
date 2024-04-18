@@ -1,3 +1,15 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+body{
+    background-color: rgb(26, 31, 37);
+    margin: 0;
+    padding: 0;
+
+}
+.title-feed{
+    font-size: 20px;
+    color: white;
+}
+.title-container{
+    position: sticky;
+    top: 0px;
+    background-color: rgb(26, 31, 37);
+}

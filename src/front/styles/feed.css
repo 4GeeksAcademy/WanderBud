@@ -1,0 +1,19 @@
+body{
+    background-color: rgb(26, 31, 37);
+    margin: 0;
+    padding: 0;
+    color: white
+}
+.sidenav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    top: 0; /* Stay at the top */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+  }
+.leftnav{
+    left: 0;
+}
+.rightnav{
+    right: 0;
+}

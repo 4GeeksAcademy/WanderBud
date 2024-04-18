@@ -35,8 +35,7 @@ def addres_to_coordinates(address):
         return None
     
 def coordinates_to_timezone(coordinates):
-    
-    timezone = gmaps.timezone(coordinates)
+    timezone = gmaps.timezone(addres_to_coordinates(coordinates))
     timezone = {
         "timezone": timezone["timeZoneId"],
         "timezone_name": timezone["timeZoneName"],
@@ -123,3 +122,52 @@ def get_address_in_radius(ubication, radius_in_km, list_of_ubications):
     
     return ubication_in_radius
 
+def get_currency_symbol(location):
+    currency_symbols = {
+        'United States': '$',
+        'United Kingdom': '£',
+        'Germany': '€',
+        'France': '€',
+        'Italy': '€',
+        'Spain': '€',
+        'Canada': '$',
+        'Australia': '$',
+        'Japan': '¥',
+        'China': '¥',
+        'India': '₹',
+        'Brazil': 'R$',
+        'Mexico': '$',
+        'South Africa': 'R',
+        'Argentina': '$',
+        'Bangladesh': '৳',
+        'Belgium': '€',
+        'Chile': '$',
+        'Colombia': '$',
+        'Egypt': '£',
+        'Greece': '€',
+        'Indonesia': 'Rp',
+        'Ireland': '€',
+        'Netherlands': '€',
+        'New Zealand': '$',
+        'Nigeria': '₦',
+        'Pakistan': '₨',
+        'Philippines': '₱',
+        'Portugal': '€',
+        'Saudi Arabia': '﷼',
+        'Singapore': '$',
+        'South Korea': '₩',
+        'Sweden': 'kr',
+        'Switzerland': 'CHF',
+        'Thailand': '฿',
+        'Turkey': '₺',
+        'United Arab Emirates': 'د.إ',
+        'Vietnam': '₫',
+    }
+    print(location)
+    country = gmaps.geocode(location)[0]['address_components'][-1]['long_name']
+    print(country)
+    
+    currency_symbol = currency_symbols.get(country)
+    print(currency_symbols)
+    
+    return currency_symbol

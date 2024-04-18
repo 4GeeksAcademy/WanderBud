@@ -1,4 +1,5 @@
 import random
+import datetime
 
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 
@@ -75,14 +76,15 @@ class Event(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
-    datetime = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False)
+    start_datetime = db.Column(db.DateTime, nullable=False)
+    end_datetime = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False, default="Planned")
     description = db.Column(db.String(250), nullable=True)
     budget_per_person = db.Column(db.Float, nullable=True)
     event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.id'), nullable=False)
     members = db.relationship('Event_Member', backref='event', lazy=True)
     petition_chat = db.relationship('Petition_Chat', backref='event', lazy=True, primaryjoin='Petition_Chat.event_id == Event.id')
-    group_chat = db.relationship('Event_Chat', backref='event', lazy=True, primaryjoin='Event_Chat.event_id == Event.id')
+    group_chat = db.relationship('Event_Chat', backref='event', lazy=True, primaryjoin='Event_Chat.chat_event_id == Event.id')
 
     def __repr__(self):
         return f'<Event Id{self.id} {self.name}>'

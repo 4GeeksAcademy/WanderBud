@@ -5,7 +5,6 @@ import "../../styles/home.css";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importa el archivo CSS de Bootstrap
 
 
-
     export const Home = () => {
         const { store, actions } = useContext(Context);
         return (
