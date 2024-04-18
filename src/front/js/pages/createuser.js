@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Context } from '../store/appContext'; // Importa el contexto desde appContext
+import { Context } from '../store/appContext';
+
 
 const CreateUser = () => {
   const { actions } = useContext(Context); // Obtén las acciones desde el contexto
@@ -39,41 +40,46 @@ const CreateUser = () => {
   };
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={userData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={userData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-  <label>Confirm Password:</label>
-  <input
-    type="password" // Utiliza el tipo "password" para campos de contraseña
-    name="confirmpassword"
-    value={userData.confirmpassword}
-    onChange={handleChange}
-    required
-  />
-</div>
-        <button type="submit">Register</button>
-      </form>
+    <div className="container-fluid" style={{ backgroundColor: '#1a1f25', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="p-4 bg-light rounded shadow" style={{ width: '300px' }}>
+        <h2 className="text-center mb-4" style={{ color: '#007bff' }}>Sign Up</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="email"
+              name="email"
+              value={userData.email}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="password"
+              name="password"
+              value={userData.password}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="password"
+              name="confirmpassword"
+              value={userData.confirmpassword}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Confirm Password"
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary btn-block">Register</button>
+        </form>
+      </div>
     </div>
   );
 };
