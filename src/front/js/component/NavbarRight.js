@@ -1,18 +1,29 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-export const NavbarRight = ({ onCreateEvent }) => {
+export const NavbarRight = () => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/login"); //agregar ruta de create-event
+    console.log("Creando nuevo evento...");
+  };
+
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black text-white">
-      <div className="flex items-center">
-        <span className="text-lg font-semibold mr-2">Create New Event</span>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" onClick={onCreateEvent}>
-          Create
-        </button>
-      </div>
+    <div style={{ position: "absolute", top: 0, right: 0, left: 0, padding: "0px", backgroundColor: "black", color: "white", display: "flex", alignItems: "center" }}>
+      <span style={{ fontSize: "1rem", fontWeight: "normal", marginLeft: "30px" }}>Create New Event</span>
+      <button style={{ backgroundColor: "#0C0C0C", 
+                      color: "white", 
+                      fontWeight: "normal", 
+                      borderRadius: "20px", 
+                      padding: "6px 18px", 
+                      marginLeft: "40px", 
+                      border: "none", width: "auto", 
+                      marginTop: "20px", }} onClick={handleClick}>
+        Create
+      </button>
     </div>
   );
 };
-
 
 
 

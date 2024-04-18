@@ -23,6 +23,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+			onCreateEvent: () => {
+				console.log(sirve);
+                // Redirige al usuario a la ruta '/create-event'
+                // window.location.href = '/create-event';
+			},
 			
 			PasswordRecoverySubmit: async (email) => {
 

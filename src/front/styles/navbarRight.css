@@ -1,0 +1,38 @@
+.navbar-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+  }
+  
+  .create-event-text {
+    font-size: 1rem;
+    font-weight: normal;
+    margin-left: 30px;
+  }
+  
+  .link {
+    text-decoration: none;
+  }
+  
+  .create-button {
+    background-color: #0c0c0c;
+    color: white;
+    font-weight: normal;
+    border-radius: 20px;
+    padding: 6px 18px;
+    margin-left: 40px;
+    border: none;
+    width: auto;
+    margin-top: 20px;
+  }
+  
+  .create-button:hover {
+    background-color: #333;
+  }
+  
