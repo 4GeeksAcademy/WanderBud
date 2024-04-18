@@ -1,4 +1,5 @@
 import random
+import datetime
 
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 
@@ -14,7 +15,7 @@ class User(db.Model):
     user_event = db.relationship('Event', backref='owner', lazy=True)
     event_member = db.relationship('Event_Member', backref='user', lazy=True)
     petition_chat = db.relationship('Petition_Chat', backref='user', lazy=True, primaryjoin='Petition_Chat.user_id==User.id')
-    group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.chat_user_id==User.id')
+    group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.user_id==User.id')
     
     def __repr__(self):
         return f'<User ID {self.id} {self.email}>'
@@ -75,8 +76,9 @@ class Event(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
-    datetime = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False)
+    start_datetime = db.Column(db.DateTime, nullable=False)
+    end_datetime = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False, default="Planned")
     description = db.Column(db.String(250), nullable=True)
     budget_per_person = db.Column(db.Float, nullable=True)
     event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.id'), nullable=False)
