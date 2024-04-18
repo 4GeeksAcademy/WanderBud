@@ -73,9 +73,11 @@
 		]
 	},
 	"dependencies": {
+		"axios": "^1.6.8",
 		"bootstrap": "^5.3.3",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
+		"react-axios": "^2.0.6",
 		"react-bootstrap": "^2.10.2",
 		"react-dom": "^16.8.4",
 		"react-polyfills": "0.0.1",
