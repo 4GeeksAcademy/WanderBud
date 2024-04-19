@@ -1,24 +1,16 @@
 .card2-event{
     color: white; 
     background-color: blue;
-    width: 600px;
     height: 300px;
     padding: 30px 0px 30px 30px;
 }
 
 .boton-join{
-    width: 100px;
+    width: 20%;
     cursor: pointer;
+    height: 50px;
    
 }
 
-button :hover {
-    cursor: pointer; 
-}
-
-.card-top{
-    display: flex; 
-    justify-content: space-between;
-}
 
 
