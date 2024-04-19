@@ -17,3 +17,52 @@ body{
 .rightnav{
     right: 0;
 }
+.select-text{
+    color: rgb(26, 31, 37);
+}
+.input-background{
+    text-align: start;
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border: none;
+    z-index: 1000 !important;
+    outline: none; /* Add this line to remove the border on focus */
+}
+
+.input-background:hover, .input-background:focus{
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    z-index: 1000 !important;
+    outline: none; /* Add this line to remove the border on focus */
+}
+.input-range{
+    -webkit-appearance: none; /* Remove default styles */
+    appearance: none; /* Add standard property for compatibility */
+    width: 100%; /* Full-width */
+    height: 8px; /* Set the height */
+    background-color: #ddd; /* Set the background color */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set initial opacity */
+    transition: opacity 0.2s; /* Add transition for smooth effect */
+
+    /* Customize the slider thumb */
+    ::-webkit-slider-thumb {
+        -webkit-appearance: none; /* Remove default styles */
+        appearance: none;
+        width: 16px; /* Set the width */
+        height: 16px; /* Set the height */
+        background-color: #4CAF50; /* Set the background color */
+        cursor: pointer; /* Add cursor pointer */
+        border-radius: 50%; /* Make it round */
+    }
+
+    /* Change the thumb color on hover */
+    ::-webkit-slider-thumb:hover {
+        background-color: #45a049;
+    }
+
+    /* Change the thumb color when active */
+    ::-webkit-slider-thumb:active {
+        background-color: #3e8e41;
+    }
+}
