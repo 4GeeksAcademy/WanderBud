@@ -14,7 +14,7 @@ const Demo = () => {
             </div>
             <div className="row vh-100 border-bottom border-1 border-light p-0 px-2">
                 <div className="col-md-12">
-                    <p>Feed content goes here...</p>
+                    <p></p>
                     <EventPublicView />
                 </div>
             </div>
