@@ -3,6 +3,7 @@ import LeftSidebar from '../component/leftsidebar';
 import { Context } from '../store/appContext';
 import { NavbarRight } from "../component/NavbarRight";
 
+import { EventPublicView } from "../component/eventPublicView";
 const Demo = () => {
     return (
         <div className="main-feed">
@@ -13,7 +14,8 @@ const Demo = () => {
             </div>
             <div className="row vh-100 border-bottom border-1 border-light p-0 px-2">
                 <div className="col-md-12">
-                    <p>Feed content goes here...</p>
+                    <p></p>
+                    <EventPublicView />
                 </div>
             </div>
         </div>
