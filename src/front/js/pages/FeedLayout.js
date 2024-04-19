@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-import "../../styles/feed.css"
+import React, { useContext } from 'react';
+import LeftSidebar from '../component/leftsidebar';
+import { Context } from '../store/appContext';
+import { NavbarRight } from "../component/NavbarRight";
 
-import { Context } from "../store/appContext";
+import { EventPublicView } from "../component/eventPublicView";
 const Demo = () => {
     return (
         <div className="main-feed">
@@ -13,7 +14,8 @@ const Demo = () => {
             </div>
             <div className="row vh-100 border-bottom border-1 border-light p-0 px-2">
                 <div className="col-md-12">
-                    <p>Feed content goes here...</p>
+                    <p></p>
+                    <EventPublicView />
                 </div>
             </div>
         </div>
@@ -23,20 +25,23 @@ const Demo = () => {
 export const FeedLayout = ({ children }) => {
     const { store, actions } = useContext(Context);
 
+    const changeContent = (option) => {
+        // Aquí puedes actualizar el estado o hacer cualquier acción necesaria
+        console.log('Changing content to:', option);
+    };
+
     return (
         <div className="container-fluid">
             <div className="row vh-100">
                 <div className="col-md-3 p-0">
-                    <div className="w-100 p-0 border border-1 border-light sidenav left">
-                        {/* Left Sidebar */}
-                        This is the left sidebar
-                    </div>
+                    <LeftSidebar changeContent={changeContent} />
                 </div>
                 <div className="col-md-6 border border border-1 border-light">
                     {children ? children : <Demo />}
                 </div>
                 <div className="col-md-3 p-0 border border-1 border-light sidenav rightnav">
-                    This is the right sidebar
+                    {<NavbarRight/>}
+                    
                 </div>
             </div>
         </div>
