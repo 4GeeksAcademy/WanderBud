@@ -149,43 +149,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 	
 		
-				
-	
-				// try using FormData
-				// createUserProfile : async (name, lastName, location, birthdate, description, image, accessToken) => {
-				// 	const formData = new FormData();
-				// 	formData.append('name', name);
-				// 	formData.append('last_name', lastName);
-				// 	formData.append('location', location);
-				// 	formData.append('birthdate', birthdate);
-				// 	formData.append('description', description);
-				// 	// formData.append('profile_image', image);
-				// 	console.log(formData)
-				  
-				// 	try {
-				// 	  const response = await fetch(`${process.env.BACKEND_URL}/api/user-profile`, {
-				// 		method: 'POST',
-				// 		headers: {
-				// 		  'Authorization': `Bearer ${accessToken}`,
-				// 		  'Content-Type': 'multipart/form-data'
-				// 		},
-				// 		body: formData
-				// 	  });
-				  
-				// 	  const data = await response.json();
-				  
-				// 	  if (response.status === 200) {
-				// 		setStore({ message: data.msg });
-				// 		console.log(data);
-				// 		return true;
-				// 	  }
-				// 	} catch (error) {
-				// 	  console.error(error);
-				// 	  return false;
-				// 	}
-				//   },
-	
-		
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
