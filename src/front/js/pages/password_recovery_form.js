@@ -47,22 +47,5 @@ export const PasswordRecoveryForm = () => {
   );
 };
 
-//   return (
-//     <div className='container' id='password-container'>
-//     <form className='recovery-password-form' onSubmit={handleEmailChange}>
-//       <input
-//         className='recovery-password-input'
-//         type="email"
-//         placeholder="Enter your email"
-//         onChange={e => setEmail(e.target.value)}
-//         value={email}
-//         required
-//       />
-//       <button className='recovery-password-button' type="submit">Submit</button>
-//       {message && <p className="message">{message}</p>} {/* Mensaje en línea */}
-//     </form>
-//     </div>
-//   );
-// };
 
 
