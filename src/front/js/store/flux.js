@@ -1,23 +1,8 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
-			auth: false,
-			auth2: false
-		},
-		
+			users: [] // Aquí puedes mantener una lista de usuarios creados
+      },
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
@@ -227,8 +212,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			}
+		},
+		createUser: async (userData) => {
+			try {
+			  const resp = await fetch(process.env.BACKEND_URL + '/api/create-user', {
+				method: 'POST',
+				headers: {
+				  'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(userData)
+			  });
+	
+			  if (resp.ok) {
+				const newUser = await resp.json();
+				const store = getStore();
+				const updatedUsers = [...store.users, newUser];
+				setStore({ users: updatedUsers });
+				return true; // Indicar éxito al crear el usuario
+			  } else {
+				throw new Error('Error al crear el usuario');
+			  }
+			} catch (error) {
+			  console.error('Error al crear el usuario:', error);
+			  return false; // Indicar fallo al crear el usuario
+			}
+		  },
 		}
-	};
-};
+	  };
 
 export default getState;
