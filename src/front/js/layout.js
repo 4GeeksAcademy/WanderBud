@@ -14,8 +14,10 @@ import Createuser from "./pages/createuser"
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { FeedLayout } from "./pages/FeedLayout";
+//import { CreateEvent } from "./component/createEvent";
 import { CreateUserProfile } from "./pages/createUserProfile";
 import { CreateEvent } from "./component/createEvent";
+
 
 
 //create your first component
