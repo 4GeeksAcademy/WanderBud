@@ -1,7 +1,8 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			users: [] // Aquí puedes mantener una lista de usuarios creados
+			users: [], // Aquí puedes mantener una lista de usuarios creados
+			publicEvents: []
       },
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -11,7 +12,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://ominous-enigma-v666q6q6gg5w27p7-3000.app.github.dev/password-reset'; 
+				let frontendUrl = 'https://urban-giggle-g4447474xggph96pg-3000.app.github.dev/password-reset'; 
 				try {
 				  const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 					method: 'POST',
@@ -111,7 +112,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			
+			getPublicEvents: async (token) => {
+				console.log(token)
+				try{
+					const response = await fetch (process.env.BACKEND_URL + "/api/get-all-events", {
+						headers: {
+							'Authorization': `Bearer ${token}` 
+						}
+					});
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
 
+					const data = await response.json()
+					setStore({publicEvents: data})
+					
+				}
+				catch(error){
+					console.error("Network error:", error);
+					setStore({message: "Network error, please try again"})
+				}
+
+			},
 		
 			getMessage: async () => {
 				try{

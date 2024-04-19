@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../../styles/feed.css"
 
 import { Context } from "../store/appContext";
+import { EventPublicView } from "../component/eventPublicView";
 const Demo = () => {
     return (
         <div className="main-feed">
@@ -14,6 +15,7 @@ const Demo = () => {
             <div className="row vh-100 border-bottom border-1 border-light p-0 px-2">
                 <div className="col-md-12">
                     <p>Feed content goes here...</p>
+                    <EventPublicView />
                 </div>
             </div>
         </div>
