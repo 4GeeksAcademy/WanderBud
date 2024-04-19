@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 export const NavbarRight = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/login"); //agregar ruta de create-event
-    console.log("Creando nuevo evento...");
+    navigate("/create-event"); 
   };
 
   return (
