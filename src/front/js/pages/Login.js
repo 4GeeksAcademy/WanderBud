@@ -2,7 +2,7 @@ import React, {useState, useContext} from 'react';
 import { Context } from "../store/appContext";
 import { useNavigate} from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-// import '../styles/Login.css'
+import { Link } from 'react-router-dom';
 
 
  export const Login = () => {
@@ -45,7 +45,7 @@ import { Container, Row, Col, Form, Button } from 'react-bootstrap';
                 </Form.Group>
 
                 <Form.Text className="text-muted" style={{ marginLeft: '10px', fontSize: '10px', marginBottom: '80px' }}>
-                  <a href="#" style={{ color: '#fff' }}>Forgot Password?</a>
+                <Link to="/password-recovery" style={{ color: '#fff' }}>Forgot Password?</Link>
                 </Form.Text>
 
                 <Button variant="light" type="submit" style={{ borderRadius: '20px', backgroundColor: 'EEEDED', color: 'EEEDED', width: '100%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto', display: 'block', marginTop: '30px' }}> 
