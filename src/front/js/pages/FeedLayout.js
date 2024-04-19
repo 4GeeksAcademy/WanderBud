@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import LeftSidebar from '../component/leftsidebar';
 import { Context } from '../store/appContext';
+import { NavbarRight } from "../component/NavbarRight";
 
 const Demo = () => {
     return (
@@ -37,7 +38,8 @@ export const FeedLayout = ({ children }) => {
                     {children ? children : <Demo />}
                 </div>
                 <div className="col-md-3 p-0 border border-1 border-light sidenav rightnav">
-                    This is the right sidebar
+                    {<NavbarRight/>}
+                    
                 </div>
             </div>
         </div>
