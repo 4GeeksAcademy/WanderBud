@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import "../../styles/profile.css"
 import ImageUploader from '../component/imageUploader';
@@ -15,12 +16,7 @@ export const CreateUserProfile = () => {
   const [image, setImage] = useState('');
   const [message, setMessage] = useState(null);
   const { actions, store } = useContext(Context);
-  console.log(name);
-  console.log(lastName);
-  console.log(location);
-  console.log(birthdate);
-  console.log(description);
-  console.log(image);
+  const navigate = useNavigate()
 
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
@@ -30,9 +26,10 @@ export const CreateUserProfile = () => {
     e.preventDefault()
     let accessToken = localStorage.getItem("token")
     let new_profile = await actions.createUserProfile(name, lastName, location, birthdate, description, image, accessToken);
-    console.log(new_profile);
+
     if (new_profile) {
       setMessage(store.message);
+      // navigate("/")
     }
     else {
       setMessage("Failed to create profile, please try again");
@@ -43,12 +40,10 @@ export const CreateUserProfile = () => {
 
   return (
     <div className="recover-page">
-
-      <div className="justify-content-center align-items-center" style={{ height: '100vh' }}>
-
+      <div className="justify-content-center align-items-center" >
         <div className="recover-form">
           <h2>Create Profile</h2>
-          <div className="image" style={{width: "200px", height: "200px"}}>
+          <div className="image">
           <ImageUploader onImageUpload={handleImageChange}/>
           </div>
           <div className='div-form'>
@@ -74,7 +69,7 @@ export const CreateUserProfile = () => {
               value={location}
               required
             />
-            <label>Birthdate</label>
+            <label style={{fontSize:"15px", marginLeft:"10px"}}>Birthdate</label>
             <input
               type="date"
               onChange={e => setBirthdate(e.target.value)}
@@ -93,9 +88,7 @@ export const CreateUserProfile = () => {
           </form>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 };
