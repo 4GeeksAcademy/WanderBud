@@ -9,6 +9,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+			onCreateEvent: () => {
+				console.log(sirve);
+                // Redirige al usuario a la ruta '/create-event'
+                // window.location.href = '/create-event';
+			},
 			
 			PasswordRecoverySubmit: async (email) => {
 
@@ -134,6 +139,43 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 
 			},
+			createUserProfile: async (name, lastName, location, birthdate, description, image, accessToken) => {
+				console.log(image);
+				console.log(accessToken);
+			
+	
+					try {
+						const response = await fetch(process.env.BACKEND_URL + "/api/user-profile", {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': 'Bearer ' + accessToken
+							},
+							body: JSON.stringify({ 
+								"name": name,
+								"last_name":lastName,
+								"birthdate":birthdate,
+								"location": location,
+								"description": description,
+								"profile_image": image })
+						});
+						const data = await response.json()
+						
+						if (response.status === 200) {
+							setStore({message: data.msg})
+							console.log(data)
+							
+							return true;
+						}
+						
+						
+						
+					} catch (error) {
+						console.log(error)
+						return false;
+					}
+				},
+	
 		
 			getMessage: async () => {
 				try{
