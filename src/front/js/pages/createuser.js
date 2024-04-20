@@ -1,15 +1,20 @@
 import React, { useState, useContext } from 'react';
 import { Context } from '../store/appContext';
+import { useNavigate } from 'react-router-dom';
 
 
 const CreateUser = () => {
   const { actions } = useContext(Context); // Obtén las acciones desde el contexto
-
+  const navigate = useNavigate();
+  const[confirmpassword, setConfirmpassword] = useState("")
   const [userData, setUserData] = useState({
     email: '',
     password: '',
-    confirmpassword: ''
+    is_active: true
   });
+
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +25,7 @@ const CreateUser = () => {
     e.preventDefault();
 
     // Verifica si las contraseñas coinciden
-    if (userData.password !== userData.confirmpassword) {
+    if (userData.password !== confirmpassword) {
       alert('Error: Las contraseñas no coinciden');
       return;
     }
@@ -28,6 +33,7 @@ const CreateUser = () => {
     try {
       const success = await actions.createUser(userData); // Llama a la acción createUser del contexto
       if (success) {
+        navigate("/login")
         alert('Usuario creado correctamente');
         // Aquí puedes redirigir al usuario a otra página, actualizar el estado, etc.
       } else {
@@ -70,8 +76,8 @@ const CreateUser = () => {
             <input
               type="password"
               name="confirmpassword"
-              value={userData.confirmpassword}
-              onChange={handleChange}
+              value={confirmpassword}
+              onChange={e => setConfirmpassword(e.target.value)}
               className="form-control"
               placeholder="Confirm Password"
               required

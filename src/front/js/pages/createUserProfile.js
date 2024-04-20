@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import "../../styles/profile.css"
 import ImageUploader from '../component/imageUploader';
+import { Link } from 'react-router-dom';
 
 
 
@@ -85,6 +86,7 @@ export const CreateUserProfile = () => {
             />
             <button type="submit">Submit</button>
             {message && <p className="message">{message}</p>}
+            {message && <Link to={"/feed"} style={{ textDecoration: 'none', color: "white"}} ><button type="submit">Go to Feed</button></Link>}
           </form>
           </div>
         </div>

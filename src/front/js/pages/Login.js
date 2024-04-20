@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom';
     console.log(email,password);
      let logged = await actions.login(email,password)
      if (logged) {
-      navigate("/")
+      navigate("/create-profile")
       
      }
   }
