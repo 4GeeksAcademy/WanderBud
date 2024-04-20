@@ -1,6 +1,7 @@
 # Description: This file contains the utility functions for the Google Maps API. It uses the googlemaps library to interact with the Google Maps API. The geocode_result function takes an address as input and returns the geocode result for that address. The geocode result contains information such as the latitude and longitude of the address. The Google Maps API key is loaded from the environment variable GOOGLE_MAPS_API_KEY using the dotenv library.
 #
 import googlemaps
+import requests
 from datetime import datetime
 from dotenv import load_dotenv
 import os
@@ -122,6 +123,7 @@ def get_address_in_radius(ubication, radius_in_km, list_of_ubications):
     
     return ubication_in_radius
 
+    
 def get_currency_symbol(location):
     currency_symbols = {
         'United States': '$',
@@ -163,11 +165,19 @@ def get_currency_symbol(location):
         'United Arab Emirates': 'د.إ',
         'Vietnam': '₫',
     }
-    print(location)
-    country = gmaps.geocode(location)[0]['address_components'][-1]['long_name']
+    
+    location = addres_to_coordinates(location)
+    location = gmaps.reverse_geocode((location["lat"], location["lng"]))
+    country = None
+    for result in location:
+        for component in result["address_components"]:
+            if "country" in component["types"]:
+                country = component["long_name"]
+                break
+        if country:
+            break
     print(country)
     
     currency_symbol = currency_symbols.get(country)
-    print(currency_symbols)
     
     return currency_symbol

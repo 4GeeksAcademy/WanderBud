@@ -4,6 +4,7 @@ import { Context } from '../store/appContext';
 import { NavbarRight } from "../component/NavbarRight";
 
 import { EventPublicView } from "../component/eventPublicView";
+import "../../styles/feed.css";
 const Demo = () => {
     return (
         <div className="main-feed">
@@ -39,9 +40,9 @@ export const FeedLayout = ({ children }) => {
                 <div className="col-md-6 border border border-1 border-light">
                     {children ? children : <Demo />}
                 </div>
-                <div className="col-md-3 p-0 border border-1 border-light sidenav rightnav">
-                    {<NavbarRight/>}
-                    
+                <div className="col-md-3 p-0">
+                    {<NavbarRight />}
+
                 </div>
             </div>
         </div>
