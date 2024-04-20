@@ -40,7 +40,7 @@ export const FeedLayout = ({ children }) => {
                 <div className="col-md-6 border border border-1 border-light">
                     {children ? children : <Demo />}
                 </div>
-                <div className="col-md-3 p-0 border border-1 border-light sidenav rightnav">
+                <div className="col-md-3 p-0">
                     {<NavbarRight />}
 
                 </div>

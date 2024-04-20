@@ -18,11 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			PasswordRecoverySubmit: async (email) => {
 
-<<<<<<< HEAD
-				let frontendUrl = process.env.FRONT_EMD_URL + '/password-reset';
-=======
-				let frontendUrl = 'https://super-journey-9777j7j7qj67cwpp-3000.app.github.dev/password-reset';
->>>>>>> 71fe6ed61e3fa016aca2ede085a3681b9bdc9462
+				let frontendUrl = process.env.FRONT_END_URL + '/password-reset';
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 						method: 'POST',
@@ -210,10 +206,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
-<<<<<<< HEAD
-=======
-
->>>>>>> 71fe6ed61e3fa016aca2ede085a3681b9bdc9462
 			createUser: async (userData) => {
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/create-user', {
@@ -223,28 +215,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(userData)
 					});
-<<<<<<< HEAD
-=======
-
-					if (resp.ok) {
-						const newUser = await resp.json();
-						const store = getStore();
-						const updatedUsers = [...store.users, newUser];
-						setStore({ users: updatedUsers });
-						return true; // Indicar éxito al crear el usuario
-					} else {
-						throw new Error('Error al crear el usuario');
-					}
-				} catch (error) {
-					console.error('Error al crear el usuario:', error);
-					return false; // Indicar fallo al crear el usuario
-				}
-			},
-		},
-
-	}
-};
->>>>>>> 71fe6ed61e3fa016aca2ede085a3681b9bdc9462
 
 					if (resp.ok) {
 						const newUser = await resp.json();
@@ -323,7 +293,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					"end_date": endDate,
 					"end_time": endTime,
 					"description": eventData.description,
-					"event_type_id": parseInt(eventData.event_type_id + 1),
+					"event_type_id": parseInt(eventData.event_type_id) + 1,
 					"budget_per_person": parseInt(eventData.budget),
 				};
 				console.log(eventDataForBackend);

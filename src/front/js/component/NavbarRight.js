@@ -4,22 +4,17 @@ import { useNavigate } from "react-router-dom";
 export const NavbarRight = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/create-event"); 
+    navigate("/create-event");
   };
 
   return (
-    <div style={{ position: "absolute", top: 0, right: 0, left: 0, padding: "0px", color: "white", display: "flex", alignItems: "center" }}>
-      <span style={{ fontSize: "1rem", fontWeight: "helvetica", marginLeft: "15px",fontSize:"20px" }}>Create New Event</span>
-      <button style={{ backgroundColor: "#1a1f25", 
-                      color: "white", 
-                      fontWeight: "helvetica", 
-                      borderRadius: "20px", 
-                      padding: "4px 10px", 
-                      marginLeft: "40px", 
-                      border: "1px solid white", width: "auto", 
-                      marginTop: "12px",fontSize:"20px" }} onClick={handleClick}>
-        Create
-      </button>
+    <div className="vh-100 border border-1 border-light sidenav rightnav">
+      <div className="d-flex flex-row justify-content-between">
+        <span style={{ fontSize: "24px", fontWeight: "helvetica", marginLeft: "15px" }}>Create New Event</span>
+        <button className="btn btn-outline-dark rounded-pill text-white border-white w-25 m-2" onClick={handleClick}>
+          Create
+        </button>
+      </div>
     </div>
   );
 };

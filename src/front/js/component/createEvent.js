@@ -82,6 +82,7 @@ export const CreateEvent = () => {
             };
             await actions.createEvent(data);
             alert("Event created successfully!");
+            window.location.href = process.env.FRONT_END_URL + "/feed";
         } catch (error) {
             console.error("Error creating event:", error);
             alert("An error occurred while creating the event. Please try again later.");

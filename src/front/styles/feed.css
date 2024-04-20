@@ -6,7 +6,7 @@ body{
 }
 .sidenav {
     height: 100%; /* Full-height: remove this if you want "auto" height */
-    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    position: sticky; /* Fixed Sidebar (stay in place on scroll) */
     top: 0; /* Stay at the top */
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 20px;

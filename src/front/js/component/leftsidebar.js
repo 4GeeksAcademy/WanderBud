@@ -8,8 +8,8 @@ const LeftSidebar = ({ changeContent }) => {
     };
 
     return (
-        <div className="d-flex flex-column h-100">
-            <div className="w-100 p-0 border border-1 border-light sidenav left">
+        <div className="d-flex flex-column justify-content-between vh-100 sidenav p-0">
+            <div className="p-0 border border-1 border-light left">
                 <ul className="nav flex-column">
                     <li className="nav-item border-bottom">
                         <a href="/feed" className="nav-link" onClick={() => handleItemClick('feed')} style={{ fontSize: '24px', color: 'white', fontFamily: 'Helvetica' }}>
@@ -27,7 +27,7 @@ const LeftSidebar = ({ changeContent }) => {
                     </li>
                 </ul>
             </div>
-            <div className="mt-auto">
+            <div className="m-0">
                 <ul className="nav flex-column">
                     <li className="nav-item border-top border-1 border-light">
                         <a href="#" className="nav-link" onClick={() => handleItemClick('settings')} style={{ fontSize: '24px', color: 'white', fontFamily: 'Helvetica' }}>
