@@ -27,6 +27,7 @@ body{
     border: none;
     z-index: 1000 !important;
     outline: none; /* Add this line to remove the border on focus */
+    color-scheme: white;
 }
 
 .input-background:hover, .input-background:focus{

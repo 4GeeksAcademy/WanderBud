@@ -1,3 +1,4 @@
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -17,7 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = 'https://ominous-enigma-v666q6q6gg5w27p7-3000.app.github.dev/password-reset';
+				let frontendUrl = process.env.FRONT_EMD_URL + '/password-reset';
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 						method: 'POST',
@@ -261,8 +262,65 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return {}; // Devolver un objeto vacío en caso de error
 				}
 			},
-		}
-	}
-};
+			coordinatesToAddress: async (coordinates) => {
+				try {
+					const resp = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + coordinates.lat + ',' + coordinates.lng + '&key=' + process.env.GOOGLE_API);
+					if (resp.ok) {
+						const data = await resp.json();
+						if (data.status === 'OK') {
+							return data.results[0].formatted_address;
+						}
+					}
+				} catch (error) {
+					console.error('Error al convertir coordenadas a dirección:', error);
+				}
+				return null; // Devolver null en caso de error
+			},
+			createEvent: async (eventData) => {
 
+				const startDate = eventData.startDate.split('T')[0];
+				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
+				const endDate = eventData.endDate.split('T')[0];
+				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
+				const location = await getActions().coordinatesToAddress(eventData.location);
+				console.log(location);
+
+				const eventDataForBackend = {
+					"name": eventData.name,
+					"location": location,
+					"start_date": startDate,
+					"start_time": startTime,
+					"end_date": endDate,
+					"end_time": endTime,
+					"description": eventData.description,
+					"event_type_id": parseInt(eventData.event_type_id + 1),
+					"budget_per_person": parseInt(eventData.budget),
+				};
+				console.log(eventDataForBackend);
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/create-event', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + localStorage.getItem('token')
+						},
+						body: JSON.stringify(eventDataForBackend)
+					});
+					if (resp.ok) {
+						const newEvent = await resp.json();
+						console.log(newEvent);
+						return true; // Indicar éxito al crear el evento
+					} else {
+						throw new Error('Error al crear el evento');
+					}
+
+				}
+				catch (error) {
+					console.error('Error al crear el evento:', error);
+					return false; // Indicar fallo al crear el evento
+				}
+			},
+		}
+	};
+}
 export default getState;

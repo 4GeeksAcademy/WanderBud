@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
 
-const MapContainer = () => {
+const MapContainer = ({ selectedLocation, onLocationSelect }) => {
     const mapStyles = {
-        height: "200px",
+        height: "400px",
         width: "100%"
     };
 
@@ -43,10 +43,12 @@ const MapContainer = () => {
                 console.error("Place not found");
                 return;
             }
-            setCurrentPosition({
+            const location = {
                 lat: place.geometry.location.lat(),
                 lng: place.geometry.location.lng()
-            });
+            };
+            setCurrentPosition(location);
+            onLocationSelect(location); // Llama a la función proporcionada por el formulario para actualizar el estado con la ubicación seleccionada
         } else {
             console.error("Autocomplete is not loaded yet!");
         }
@@ -60,12 +62,12 @@ const MapContainer = () => {
             <GoogleMap
                 mapContainerStyle={mapStyles}
                 zoom={13}
-                center={currentPosition || { lat: 0, lng: 0 }} // Usamos currentPosition si está disponible, de lo contrario, el centro es (0,0)
+                center={selectedLocation || currentPosition || { lat: 0, lng: 0 }} // Usa la ubicación seleccionada si está disponible, de lo contrario, la ubicación actual o (0,0)
             >
-                {currentPosition && (
+                {selectedLocation && (
                     <Marker
-                        position={currentPosition}
-                        title="Tu ubicación"
+                        position={selectedLocation}
+                        title="Ubicación seleccionada"
                     />
                 )}
                 <Autocomplete
@@ -74,7 +76,7 @@ const MapContainer = () => {
                 >
                     <input
                         type="text"
-                        placeholder="Search for a place"
+                        placeholder="Buscar lugares cerca..."
                         style={{
                             boxSizing: `border-box`,
                             border: `1px solid transparent`,

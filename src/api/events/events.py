@@ -56,12 +56,9 @@ def create_event():
                 "budget_per_person": 100
             }
         """
-        print("Creating event")
         current_user = get_jwt_identity()
-        print(current_user)
 
         querty_results = User.query.filter_by(email=current_user).first()
-        print(querty_results)
 
         if querty_results is None:
             return jsonify({"msg": "user does not exist",
