@@ -6,8 +6,19 @@ from api.utils import mail
 from flask_cors import CORS
 from . import user_bp
 import urllib.parse
+import random
+import string
 
 CORS(user_bp)
+
+def generar_id_unico():
+    while True:
+        # Genera un número aleatorio de 9 dígitos
+        id_aleatorio = ''.join(random.choices(string.digits, k=9))
+        
+        # Verifica si el número ya existe en la base de datos
+        if not User.query.get(id_aleatorio):
+            return id_aleatorio
 
 
 @user_bp.route("/login", methods=["POST"])
@@ -104,10 +115,12 @@ def create_user():
       data = request.json
       user_exists = User.query.filter_by(email=data["email"]).first()
       if user_exists is None: 
+            id_unico = generar_id_unico()
             new_user = User(
-                  email= data['email'],
-                  password= data['password'],
-                  is_active= data['is_active']
+                    id= id_unico,
+                    email= data['email'],
+                    password= data['password'],
+                    is_active= data['is_active']
                 )
             db.session.add(new_user)
             db.session.commit()

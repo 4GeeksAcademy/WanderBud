@@ -1,23 +1,26 @@
 import React from "react";
+import { Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { FaPlusCircle } from 'react-icons/fa'
 
-export const NavbarRight = () => {
+const NavbarRight = () => {
   const navigate = useNavigate();
+
   const handleClick = () => {
     navigate("/create-event");
   };
 
   return (
-    <div className="vh-100 border border-1 border-light sidenav rightnav">
-      <div className="d-flex flex-row justify-content-between">
-        <span style={{ fontSize: "24px", fontWeight: "helvetica", marginLeft: "15px" }}>Create New Event</span>
-        <button className="btn btn-outline-dark rounded-pill text-white border-white w-25 m-2" onClick={handleClick}>
-          Create
-        </button>
-      </div>
-    </div>
+    <Container fluid className="h-100 d-flex align-items-start justify-content-center sidenav sidenav-right pt-3">
+      <Button
+        variant="primary"
+        className="d-flex align-items-center justify-content-center rounded-pill"
+        onClick={handleClick}
+      >Create New Event
+        <FaPlusCircle className="ms-2" />
+      </Button>
+    </Container>
   );
 };
 
-
-
+export default NavbarRight;

@@ -1,51 +1,48 @@
 import React, { useState } from 'react';
 import { useContext } from 'react';
 import { Context } from '../store/appContext';
-import "../../styles/password.css"
+import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
 
 export const PasswordRecoveryForm = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState(null);
-  const { actions, store } = useContext(Context);
-
+  const { actions } = useContext(Context);
 
   async function handleEmailChange(e) {
-    e.preventDefault()
-    let email_sent = await actions.PasswordRecoverySubmit(email);
-    console.log(email_sent);
-    if (email_sent) {
+    e.preventDefault();
+    let emailSent = await actions.PasswordRecoverySubmit(email);
+    console.log(emailSent);
+    if (emailSent) {
       setMessage("Check your email inbox");
-    }
-    else {
+    } else {
       setMessage("Failed to send email, please try again");
     }
-  };
+  }
 
   return (
-    <div className="recover-page">
-
-      <div className="justify-content-center align-items-center" style={{ height: '100vh' }}>
-
-        <div className="recover-form">
-          <h2>Forgot Your Password?</h2>
-          <form onSubmit={handleEmailChange}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              onChange={e => setEmail(e.target.value)}
-              value={email}
-              required
-            />
-            <button type="submit">Submit</button>
-            {message && <p className="message">{message}</p>}
-          </form>
-        </div>
-
-      </div>
-
-    </div>
+    <Container fluid className="container-fluid" >
+      <Row className="vh-100 justify-content-center align-items-center">
+        <Col md={5}>
+          <Card className="p-4 justify-content-center w-100 card container-card container-shadow">
+            <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Recover Password</h4></Card.Title>
+            <Form onSubmit={handleEmailChange} className="p-4 py-0">
+              <Form.Group controlId="formEmail" className='mb-3'>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  onChange={e => setEmail(e.target.value)}
+                  value={email}
+                  required
+                />
+              </Form.Group>
+              <Button variant="secondary" type="submit" className="w-100">
+                Send Email
+              </Button>
+              {message && <Alert variant="info">{message}</Alert>}
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+    </Container >
   );
 };
-
-
-

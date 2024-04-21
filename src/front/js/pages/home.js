@@ -1,50 +1,39 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importa el archivo CSS de Bootstrap
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import img from "../../img/WanderBud.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 
-    export const Home = () => {
-        const { store, actions } = useContext(Context);
-        return (
-            <div className="container-fluid" style={{ backgroundColor: '#1a1f25', color: '#fff', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="row justify-content-center">
-                {/* Columna para el texto "WanderBud" */}
-                <div className="col-md-6 text-right">
-                    <div>
-                        {/* Texto "WanderBud" centrado y desplazado hacia la derecha */}
-                        <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#fff', marginBottom: '20px' }}>WanderBud</h1>
+export const Home = () => {
+    const { store, actions } = useContext(Context);
 
 
-                        {/* Imagen de fondo debajo de "WanderBud" (más pequeña) */}
-                        <img src="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005832/Logo2_t2gs97.jpg" className="img-fluid" alt="Imagen de fondo" style={{ maxWidth: '330px', maxHeight: '330px', objectFit: 'cover' }} />
-                    </div>
-                </div>
-
-
-                {/* Columna para el formulario de inicio de sesión */}
-                <div className="col-md-4">
-                    <div className="card p-4" style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)' }}>
-                        <h4 className="text-center mb-4">Connect. Create. Celebrate.</h4>
-                        <Link to="/login" className="btn btn-primary btn-block rounded-pill mb-3">
-                                Login
-                            </Link>
-                        {/* Botón de inicio de sesión con Google */}
-                        <form>
-                            <button type="submit" className="btn btn-danger btn-block rounded-pill mb-3">Google</button>
-                        </form>
-                        {/* Línea horizontal con texto */}
-                        <div className="text-center mb-3" style={{ borderBottom: '1px solid #000', lineHeight: '0.1em' }}>
-                            <span style={{ background: '#fff', padding: '0 10px', fontSize: '12px' }}>If you don't have one</span>
+    return (
+        <Container fluid className="container-fluid">
+            <Row className="justify-content-center align-items-center min-vh-100">
+                <Col md={6} className="d-flex flex-column align-items-center py-5">
+                    <h1 className="home-title mb-4">WanderBud</h1>
+                    <img src={img} className="img-fluid home-logo" alt="Logo de WanderBud" />
+                </Col>
+                <Col md={5} className="d-flex flex-column justify-content-center py-5">
+                    <Card className="p-4 d-flex flex-column justify-content-between align-items-center card h-100 container-card container-shadow">
+                        <Card.Title className="text-center mb-4 subtitle subtitle-bold">Connect. Create. Celebrate.</Card.Title>
+                        <Link to="/login" className="btn btn-secondary btn-block rounded-pill mb-3 w-75">Login</Link>
+                        <Button type="submit" className="btn-block btn-google rounded-pill mb-3 w-75">Google</Button>
+                        <div className="d-flex w-75 mb-3 justify-content-center ">
+                            <hr className="w-25 me-2" />
+                            <span className="text-center align-content-center">If you don't have one</span>
+                            <hr className="w-25 ms-2 " />
                         </div>
-                        {/* Botón de registro */}
-                        <Link to="/create-user" className="btn btn-light btn-block rounded-pill border" style={{ textDecoration: 'none' }}>
-                        Sign Up
-                            </Link>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <Link to="/signup/user" className="btn btn-primary btn-block rounded-pill border w-75">Sign Up</Link>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+
     );
 };

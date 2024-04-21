@@ -18,7 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = process.env.FRONT_END_URL + '/password-reset';
+				let frontendUrl = process.env.FRONTEND_URL + '/password-reset';
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 						method: 'POST',

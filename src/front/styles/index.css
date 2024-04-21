@@ -1,15 +1,187 @@
-body{
-    background-color: rgb(26, 31, 37);
-    margin: 0;
-    padding: 0;
+/* Importar las fuentes de Google Fonts */
+@import url("https://fonts.googleapis.com/css?family=Patua+One&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 
+/* Estilos generales */
+body {
+  background-color: #05445e; /* Navy Blue */
+  color: #f3f6f6; /* Porcelain */
+  font-family: "Roboto", sans-serif;
 }
-.title-feed{
-    font-size: 20px;
-    color: white;
+
+/* Encabezados con Patua One */
+h1,
+h2,
+h3 {
+  font-family: "Patua One", cursive;
 }
-.title-container{
-    position: sticky;
-    top: 0px;
-    background-color: rgb(26, 31, 37);
+
+/* Subtítulos con Lato */
+h4,
+h5,
+.subtitle {
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+}
+
+.subtitle-bold {
+  color: #05445e; /* Navy Blue */
+  font-weight: 700; /* Peso bold para mayor énfasis */
+}
+
+/* Estilos para inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  background-color: #f3f6f6; /* Baby Blue */
+  border-color: #189ab4 solid 1px; /* Blue Grotto */
+  color: #05445e; /* Navy Blue */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  border-color: #3e9ee8; /* Picton Blue */
+}
+
+/* Estilos para botones */
+
+/* Estilos para los botones primarios */
+.button-primary,
+.btn-primary {
+  background-color: #ff7f50; /* Coral */
+  border: none;
+  color: #f3f6f6; /* Porcelain */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-primary:hover,
+.btn-primary:hover {
+  background-color: #ff6347; /* Tomato */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-primary:active,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: #e9967a !important; /* Dark Salmon */
+  outline: #ff6347 !important;
+  border: none !important;
+  transform: scale(0.98); /* Efecto de presión */
+}
+
+/* Estilos para los botones secundarios */
+.button-secondary,
+.btn-secondary {
+  background-color: #4997d0; /* Celestial Blue */
+  border: none;
+  color: #f3f6f6; /* Santas Gray */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-secondary:hover,
+.btn-secondary:hover {
+  background-color: #7bc8f6; /* Sky Blue */
+  color: #f3f6f6; /* Navy Blue */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-secondary:active,
+.btn-secondary:active {
+  background-color: #b0e0e6; /* Powder Blue */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra interna para efecto de hundimiento */
+  color: #f3f6f6; /* Navy Blue */
+}
+.btn-google {
+  background-color: #db4437; /* Google Red */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-google:hover {
+  background-color: #c1351d; /* Google Red Dark */
+}
+.btn-google:active {
+  background-color: #a52714; /* Google Red Darker */
+}
+/* Estilos para el botón Upload */
+.btn-upload {
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+
+.btn-upload:hover {
+  background-color: #107c91; /* Darker Blue Grotto */
+  border: 2px solid #f3f6f6; /* Porcelain */
+}
+
+.btn-upload:active {
+  background-color: #0e6c7d; /* Even Darker Blue Grotto */
+  border: 2px solid #107c91; /* Darker Blue Grotto */
+}
+
+/* Sign Up Image */
+.card-img-top {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  padding: 5px;
+  border: #189ab4 solid 2px; /* Blue Grotto */
+}
+
+/* Estilos para links */
+a {
+  color: #75e6da; /* Blue Green */
+}
+
+/* Contenedores y sidebars */
+.container-card {
+  background-color: #f3f6f6;
+  border: #189ab4;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Sombra suave para contenedores con fondo Navy Blue */
+.container-shadow {
+  box-shadow: 10px 10px 0px 0 rgba(24, 154, 180, 1); /* Blue Grotto con baja opacidad */
+}
+
+.home-title {
+  text-align: end;
+  color: #d4f1f4;
+  font-size: 5rem;
+  font-weight: bold;
+  margin: 0;
+}
+.home-logo {
+  width: auto;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  aspect-ratio: 1/1;
+}
+.sidenav {
+  position: sticky; /* Fixed Sidebar (stay in place on scroll) */
+  top: 0; /* Stay at the top */
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
+.sidenav-right {
+  background-color: #05445e; /* Navy Blue */
+  color: #f3f6f6; /* Porcelain */
+}
+.sidenav-left {
+  background-color: #4997d0; /* Porcelain */
+  color: #f3f6f6; /* Porcelain */
+  border-right: #4072a0 solid 1px; /* Blue Grotto */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.nav-link {
+  color: #f3f6f6 !important; /* Porcelain */
+  font-size: 1.4rem;
+  border-bottom: #4072a0 solid 1px; /* Blue Grotto */
+}
+.navbar-brand {
+  border-bottom: #4072a0 solid 1px; /* Blue Grotto */
 }

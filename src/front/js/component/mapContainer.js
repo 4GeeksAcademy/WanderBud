@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
+import { Form } from 'react-bootstrap';
+
+const libraries = ["places"];
 
 const MapContainer = ({ selectedLocation, onLocationSelect }) => {
-    const mapStyles = {
-        height: "400px",
-        width: "100%"
-    };
-
     const [currentPosition, setCurrentPosition] = useState(null);
     const [autocomplete, setAutocomplete] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Función para obtener la ubicación actual del usuario
         const getCurrentLocation = () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -21,14 +19,15 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
                     },
                     error => {
                         console.error('Error getting user location:', error);
+                        setError('Error obteniendo la ubicación del usuario.');
                     }
                 );
             } else {
                 console.error('Geolocation is not supported by this browser.');
+                setError('La geolocalización no es compatible con este navegador.');
             }
         };
 
-        // Llamamos a la función para obtener la ubicación actual
         getCurrentLocation();
     }, []);
 
@@ -40,7 +39,7 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
         if (autocomplete !== null) {
             const place = autocomplete.getPlace();
             if (!place.geometry) {
-                console.error("Place not found");
+                setError('Lugar no encontrado.');
                 return;
             }
             const location = {
@@ -48,55 +47,67 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
                 lng: place.geometry.location.lng()
             };
             setCurrentPosition(location);
-            onLocationSelect(location); // Llama a la función proporcionada por el formulario para actualizar el estado con la ubicación seleccionada
+            onLocationSelect(location);
         } else {
-            console.error("Autocomplete is not loaded yet!");
+            setError('Autocompletado aún no cargado.');
         }
     };
 
     return (
         <LoadScript
             googleMapsApiKey={process.env.GOOGLE_API}
-            libraries={["places"]}
+            libraries={libraries}
         >
             <GoogleMap
                 mapContainerStyle={mapStyles}
                 zoom={13}
-                center={selectedLocation || currentPosition || { lat: 0, lng: 0 }} // Usa la ubicación seleccionada si está disponible, de lo contrario, la ubicación actual o (0,0)
+                center={selectedLocation || currentPosition || { lat: 0, lng: 0 }}
+                options={mapOptions}
             >
-                {selectedLocation && (
-                    <Marker
-                        position={selectedLocation}
-                        title="Ubicación seleccionada"
-                    />
-                )}
-                <Autocomplete
-                    onLoad={handleAutocompleteLoad}
-                    onPlaceChanged={handlePlaceChanged}
-                >
-                    <input
-                        type="text"
-                        placeholder="Buscar lugares cerca..."
-                        style={{
-                            boxSizing: `border-box`,
-                            border: `1px solid transparent`,
-                            width: `240px`,
-                            height: `32px`,
-                            padding: `0 12px`,
-                            borderRadius: `3px`,
-                            boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                            fontSize: `14px`,
-                            outline: `none`,
-                            textOverflow: `ellipses`,
-                            position: "absolute",
-                            left: "50%",
-                            marginLeft: "-120px"
-                        }}
-                    />
+                {selectedLocation && <Marker position={selectedLocation} />}
+                <Autocomplete onLoad={handleAutocompleteLoad} onPlaceChanged={handlePlaceChanged}>
+                    <Form.Control type="text" placeholder="Buscar lugares cerca..." style={searchStyles} />
                 </Autocomplete>
             </GoogleMap>
+            {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
         </LoadScript>
     );
+};
+
+const mapStyles = { height: "400px", width: "100%", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" };
+const mapOptions = {
+    styles: [
+        { elementType: "geometry", stylers: [{ color: "#2C408A" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
+        { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#ffffff" }] },
+        { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
+        { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#ffffff" }] },
+        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
+        { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
+        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+        { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#2C408A" }] }
+    ],
+    disableDefaultUI: true
+};
+const searchStyles = {
+    position: "absolute",
+    top: "10px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: "240px",
+    borderRadius: "5px",
+    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+    backgroundColor: "#ffffff",
+    color: "#000000"
 };
 
 export default MapContainer;

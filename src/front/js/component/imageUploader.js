@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from "axios";
-import "../../styles/profile.css"
-
+import { Card, Button } from 'react-bootstrap';
 
 function ImageUploader({ onImageUpload }) {
     const [urlImage, setUrlImage] = useState("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
@@ -20,28 +19,17 @@ function ImageUploader({ onImageUpload }) {
         onImageUpload(response.data.secure_url);
     }
 
-
-    // const handleDeleteImage = () => {
-    //     setUrlImage("");
-    //     onImageUpload("");
-    // }
-
     return (
-        <div className='uploader-container'>
-            <div className="card" style={{ width: "200px" }}>
-                <div className='profile-img'>
-                    <img src={urlImage} />
-                    {/* <button onClick={() => handleDeleteImage()}>Delete Image</button> */}
-                </div>
-            </div>
-            <div className="card-body">
-                <button className='btn-pic_profile mt-3'>
-                    <label htmlFor="image-upload">
+        <div className='d-flex flex-column align-items-center py-0 my-0'>
+            <Card.Img variant="top" className="rounded-circle w-50" src={urlImage} />
+            <Card.Body>
+                <Button className='mt-3' variant="upload">
+                    <label htmlFor="image-upload" className='m-0'>
                         Choose your picture
-                        <input id="image-upload" type='file' accept='image/*' onChange={handleImageChange} style={{ display: "none" }} />
+                        <input id="image-upload" type='file' accept='image/*' onChange={handleImageChange} className='d-none' />
                     </label>
-                </button>
-            </div>
+                </Button>
+            </Card.Body>
         </div>
     )
 };
