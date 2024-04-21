@@ -11,10 +11,10 @@ const NavbarRight = () => {
   };
 
   return (
-    <Container fluid className="h-100 d-flex align-items-start justify-content-center sidenav sidenav-right pt-3">
+    <Container fluid className="h-100 d-flex align-items-start justify-content-center sidenav sidenav-right p-4">
       <Button
-        variant="primary"
-        className="d-flex align-items-center justify-content-center rounded-pill"
+        variant="create"
+        className="d-flex align-items-center justify-content-center w-75"
         onClick={handleClick}
       >Create New Event
         <FaPlusCircle className="ms-2" />

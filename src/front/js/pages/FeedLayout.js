@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import LeftSidebar from '../component/leftsidebar';
 import { Context } from '../store/appContext';
 import NavbarRight from "../component/NavbarRight";
-import { EventPublicView } from "../component/eventPublicView";
+import { FeedMain } from '../component/feedMain';
 
 export const FeedLayout = ({ children }) => {
     const { store, actions } = useContext(Context);
@@ -14,15 +14,15 @@ export const FeedLayout = ({ children }) => {
     };
 
     return (
-        <Container fluid>
+        <Container fluid className='feed-container'>
             <Row className="vh-100">
                 <Col md={3} className="p-0 vh-100">
                     <LeftSidebar changeContent={changeContent} />
                 </Col>
-                <Col md={6} className="p-0 h-100">
+                <Col md={5} className="p-0 h-100">
                     {children ? children : null}
                 </Col>
-                <Col md={3} className="p-0 vh-100">
+                <Col md={4} className="p-0 vh-100">
                     <NavbarRight />
                 </Col>
             </Row>

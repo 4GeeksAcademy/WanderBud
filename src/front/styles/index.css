@@ -9,6 +9,50 @@ body {
   color: #f3f6f6; /* Porcelain */
   font-family: "Roboto", sans-serif;
 }
+.feed-container {
+  background-color: #05445e; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+}
+.sidenav {
+  position: sticky; /* Fixed Sidebar (stay in place on scroll) */
+  top: 0; /* Stay at the top */
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
+.sidenav-left {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Porcelain */
+  border-right: #05445e0f solid 1px; /* Navy Blue con baja opacidad */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.sidenav-right {
+  background-color: #05445e; /* Porcelain */
+  color: #05445e; /* Porcelain */
+  border-left: #f3f6f60e solid 1px; /* Navy Blue con baja opacidad */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.navtabs {
+  background: #189ab42e;
+  border-radius: 0.5rem;
+  color: #05445e;
+  box-shadow: 0px 0px 12px 4px #189ab42e;
+}
+.sidenav-left h1,
+.sidenav-left h2,
+.sidenav-left h3 {
+  color: #05445e; /* Porcelain */
+}
+.main-feed h1,
+.main-feed h2,
+.main-feed h3 {
+  font-size: 28px;
+  font-family: "Roboto", sans-serif;
+}
 
 /* Encabezados con Patua One */
 h1,
@@ -121,6 +165,108 @@ textarea:focus {
   background-color: #0e6c7d; /* Even Darker Blue Grotto */
   border: 2px solid #107c91; /* Darker Blue Grotto */
 }
+.btn-sidenav {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+  text-decoration: none;
+  align-items: center;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-sidenav:hover,
+.btn-sidenav:active,
+.btn-sidenav:focus,
+.btn-sidenav:visited,
+.btn-sidenav:link,
+.btn-sidenav.active {
+  background-color: #f5fffa; /* Light Blue Green */
+  color: #05445e; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 2px 2px #189ab4;
+}
+.setting-container {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+}
+.setting-container:hover,
+.setting-container:active,
+.setting-container:focus,
+.setting-container:visited,
+.setting-container:link,
+.setting-container.active {
+  background-color: #f5fffa; /* Light Blue Green */
+  color: #05445e; /* Navy Blue */
+  box-shadow: 0px 0px 2px 2px #189ab4;
+}
+.btn-navtab {
+  background-color: #189ab4; /* Porcelain */
+  color: #f3f6f6; /* Navy Blue */
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  align-items: center;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-navtab:hover,
+.btn-navtab:active,
+.btn-navtab:focus,
+.btn-navtab:visited,
+.btn-navtab:link,
+.btn-navtab.active {
+  background-color: #f5fffa; /* Light Blue Green */
+  color: #05445e; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 2px 2px #189ab4;
+}
+.btn-logout {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  text-align: start;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-logout:hover,
+.btn-logout:active,
+.btn-logout:focus,
+.btn-logout:visited,
+.btn-logout:link {
+  background-color: #ff0000; /* Tomato */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 2px 2px #f8b88b;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-create {
+  background-color: #ff7f50; /* Coral */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-create:hover,
+.btn-create:active,
+.btn-create:focus,
+.btn-create:visited,
+.btn-create:link {
+  background-color: #ff6347; /* Tomato */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+}
 
 /* Sign Up Image */
 .card-img-top {
@@ -133,6 +279,7 @@ textarea:focus {
 /* Estilos para links */
 a {
   color: #75e6da; /* Blue Green */
+  text-decoration: none;
 }
 
 /* Contenedores y sidebars */
@@ -160,29 +307,4 @@ a {
   max-height: 300px;
   object-fit: contain;
   aspect-ratio: 1/1;
-}
-.sidenav {
-  position: sticky; /* Fixed Sidebar (stay in place on scroll) */
-  top: 0; /* Stay at the top */
-  overflow-x: hidden; /* Disable horizontal scroll */
-}
-.sidenav-right {
-  background-color: #05445e; /* Navy Blue */
-  color: #f3f6f6; /* Porcelain */
-}
-.sidenav-left {
-  background-color: #4997d0; /* Porcelain */
-  color: #f3f6f6; /* Porcelain */
-  border-right: #4072a0 solid 1px; /* Blue Grotto */
-  font-family: "Lato", sans-serif;
-  font-weight: 400; /* Peso normal para subtítulos */
-  font-size: 1rem;
-}
-.nav-link {
-  color: #f3f6f6 !important; /* Porcelain */
-  font-size: 1.4rem;
-  border-bottom: #4072a0 solid 1px; /* Blue Grotto */
-}
-.navbar-brand {
-  border-bottom: #4072a0 solid 1px; /* Blue Grotto */
 }
