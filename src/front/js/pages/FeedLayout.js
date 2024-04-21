@@ -20,7 +20,7 @@ export const FeedLayout = ({ children }) => {
                     <LeftSidebar changeContent={changeContent} />
                 </Col>
                 <Col md={6} className="p-0 h-100">
-
+                    {children ? children : null}
                 </Col>
                 <Col md={3} className="p-0 vh-100">
                     <NavbarRight />

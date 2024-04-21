@@ -34,7 +34,7 @@ const Layout = () => {
                         <Route element={<SignUp />} path="/signup/user" />
                         <Route element={<SignUpProfile />} path="/signup/profile" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
-                        <Route element={<PasswordReset />} path="/password-reset/:token/*" />
+                        <Route element={<PasswordReset />} path="/password-reset/:token" />
                         <Route element={<FeedLayout />} path="/feed" />
                         <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
                         <Route element={<Login />} path="/login" />

@@ -23,6 +23,7 @@ pytz = "*"
 flask-mail = "*"
 googlemaps = "*"
 requests = "*"
+itsdangerous = "*"
 
 [requires]
 python_version = "3.10"

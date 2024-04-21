@@ -46,7 +46,8 @@ setup_admin(app)
 setup_commands(app)
 
 #jwt_flask_extended
-app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY").encode('utf-8')
+app.config['SECURITY_PASSWORD_SALT'] = os.getenv('SECURITY_PASSWORD_SALT').encode('utf-8')
 jwt = JWTManager(app)
 
 # Configure Flask-Mail

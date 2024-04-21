@@ -18,7 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			PasswordRecoverySubmit: async (email) => {
 
-				let frontendUrl = process.env.FRONTEND_URL + '/password-reset';
+				let frontendUrl = process.env.FRONTEND_URL;
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/recover-password', {
 						method: 'POST',
@@ -98,18 +98,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			resetPassword: async (password, token) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + '/api/reset-password', {
+					const response = await fetch(process.env.BACKEND_URL + '/api/reset-password/' + token, {
 						method: 'PUT',
 						headers: {
 							"Content-Type": "application/json",
-							'Authorization': 'Bearer ' + token
 						},
 						body: JSON.stringify({ "password": password })
 					});
 
 					if (response.status === 200) {
 						setStore({ message: "Password successfully changed" })
-						setStore({ auth2: true })
+					} else if (response.status === 401) {
+						setStore({ message: "Unauthorized, Token is not valid" })
 					} else {
 						setStore({ message: "Something went wrong, try again" })
 					}

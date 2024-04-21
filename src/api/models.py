@@ -1,5 +1,7 @@
 import random
 import datetime
+from flask import current_app # type: ignore
+from itsdangerous import URLSafeTimedSerializer as Serializer # type: ignore
 
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 
@@ -17,6 +19,25 @@ class User(db.Model):
     petition_chat = db.relationship('Petition_Chat', backref='user', lazy=True, primaryjoin='Petition_Chat.user_id==User.id')
     group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.user_id==User.id')
     
+    def generate_reset_token(self):
+        serializer = Serializer(secret_key=current_app.config['JWT_SECRET_KEY'], salt=current_app.config['SECURITY_PASSWORD_SALT'])
+        return serializer.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(current_app.config['JWT_SECRET_KEY'])
+        try:
+            data = s.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=84600)
+            user_id = data.get('id')
+            if user_id:
+                user = User.query.get(user_id)
+                return user
+        
+        except:
+            pass
+        return None
+    
+        
     def __repr__(self):
         return f'<User ID {self.id} {self.email}>'
 
