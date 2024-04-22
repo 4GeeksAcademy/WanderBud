@@ -132,3 +132,23 @@ def reset_password():
         user.password = data["password"]
         db.session.commit()
         return ({"msg": "ok, the password has been updated in the database"}), 200
+
+
+
+@user_bp.route("/profile-view", methods=["GET"])
+@jwt_required()
+def get_profile_view():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    query_results = User_Profile.query.filter_by(user_id=user.id)
+    results = list(map(lambda item: item.serialize(), query_results))
+
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+            
+     
+    response_body = {
+        "msg": "ok",
+        "results": results
+    }
+    return jsonify(response_body), 200
