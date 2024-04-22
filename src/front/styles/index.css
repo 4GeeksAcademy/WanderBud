@@ -28,6 +28,18 @@ body {
   font-weight: 400; /* Peso normal para subtítulos */
   font-size: 1rem;
 }
+.card-header {
+  border-bottom: none;
+}
+.request-container {
+  width: 100%;
+  border-top: 1px solid #05445e0f;
+  overflow: hidden;
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+}
 .sidenav-right {
   background-color: #05445e; /* Porcelain */
   color: #05445e; /* Porcelain */
@@ -189,22 +201,20 @@ textarea:focus {
   border: none;
   box-shadow: 0px 0px 2px 2px #189ab4;
 }
-.setting-container {
-  background-color: #f3f6f6; /* Porcelain */
-  color: #05445e; /* Navy Blue */
+.settingbtn.active {
+  background-color: #189ab4; /* Light Blue Green */
+  color: #f3f6f6; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 0px 1px #189ab4;
 }
-.setting-container:hover,
-.setting-container:active,
-.setting-container:focus,
-.setting-container:visited,
-.setting-container:link,
 .setting-container.active {
-  background-color: #f5fffa; /* Light Blue Green */
-  color: #05445e; /* Navy Blue */
-  box-shadow: 0px 0px 2px 2px #189ab4;
+  background-color: #08546d; /* Light Blue Green */
+  color: #f5fffa; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 2px 5px #08546d;
 }
 .btn-navtab {
-  background-color: #189ab4; /* Porcelain */
+  background-color: #189ab42e; /* Porcelain */
   color: #f3f6f6; /* Navy Blue */
   display: flex;
   justify-content: center;
@@ -212,6 +222,7 @@ textarea:focus {
   text-decoration: none;
   align-items: center;
   width: 100%;
+  box-shadow: 0px 0px 12px 4px #189ab42e;
   font-family: "Lato", sans-serif;
   font-weight: 400; /* Peso normal para subtítulos */
   font-size: 1rem;
@@ -228,8 +239,9 @@ textarea:focus {
   box-shadow: 0px 0px 2px 2px #189ab4;
 }
 .btn-logout {
-  background-color: #f3f6f6; /* Porcelain */
-  color: #05445e; /* Navy Blue */
+  background-color: #189ab42e; /* Porcelain */
+  color: #f3f6f6; /* Navy Blue */
+  box-shadow: 0px 0px 12px 4px #189ab42e;
   text-align: start;
   width: 100%;
   font-family: "Lato", sans-serif;
@@ -241,10 +253,9 @@ textarea:focus {
 .btn-logout:focus,
 .btn-logout:visited,
 .btn-logout:link {
-  background-color: #ff0000; /* Tomato */
+  background-color: #dc3545; /* Tomato */
   color: #f3f6f6; /* Porcelain */
   border: none;
-  box-shadow: 0px 0px 2px 2px #f8b88b;
   font-family: "Lato", sans-serif;
   font-weight: 400; /* Peso normal para subtítulos */
   font-size: 1rem;
