@@ -3,7 +3,6 @@ import { Container, Row, Col } from 'react-bootstrap';
 import LeftSidebar from '../component/leftsidebar';
 import { Context } from '../store/appContext';
 import NavbarRight from "../component/NavbarRight";
-import { FeedMain } from '../component/feedMain';
 
 export const FeedLayout = ({ children }) => {
     const { store, actions } = useContext(Context);

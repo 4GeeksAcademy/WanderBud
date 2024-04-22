@@ -1,3 +1,4 @@
+from enum import Enum
 from flask import request, jsonify, Blueprint # type: ignore
 from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Event_Chat
 from flask_jwt_extended import jwt_required, get_jwt_identity # type: ignore # type: ignore
@@ -211,6 +212,10 @@ def get_event(event_id):
             }
         """
         event = Event.query.filter_by(id=event_id).first()
+        
+        if event is None:
+            return jsonify({"msg": "event not found"}), 404
+        
         event_timezone = coordinates_to_timezone(event.location)['timezone']
         
         event_details = {
@@ -285,6 +290,9 @@ def get_my_events():
                 "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
             })
             
+            if events_list == []:
+                return jsonify({"msg": "You have no events"}), 404
+            
         return jsonify(events_list), 200
     except Exception as e:
         return jsonify({"msg": "error retrieving events",
@@ -347,6 +355,8 @@ def get_event_by_radius():
                 "event_type_id": event.event_type_id,
                 "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
             })
+            if events_list == []:
+                return jsonify({"msg": "No events found in the radius of "+radius+" Km"}), 404
             
         return jsonify(events_list), 200
     except Exception as e:
@@ -382,6 +392,9 @@ def update_event(event_id):
             }
         """
         event = Event.query.filter_by(id=event_id).first()
+        
+        if event is None:
+            return jsonify({"msg": "event not found"}), 404
         
         # Check if the current user is the owner of the event
         current_user = get_jwt_identity()
@@ -419,6 +432,9 @@ def delete_event(event_id):
             A JSON response indicating the success or failure of the event deletion.
         """
         event = Event.query.filter_by(id=event_id).first()
+        if event is None:
+            return jsonify({"msg": "event does not exist"}), 404
+        
         
         # Check if the current user is the owner of the event
         current_user = get_jwt_identity()
@@ -460,14 +476,18 @@ def get_event_members(event_id):
             ]
         """
         event = Event.query.filter_by(id=event_id).first()
-        members = event.members
+        members = Event_Member.query.filter_by(event_id=event.id).all()
         members_list = []
         for member in members:
+            member_profile = User_Profile.query.filter_by(user_id=member.user_id).first()
             members_list.append({
-                "id": member.id,
                 "user_id": member.user_id,
+                "name": member_profile.name,
+                "last_name": member_profile.last_name,
+                "profile_image": member_profile.profile_image,
+                "email": User.query.filter_by(id=member.user_id).first().email,
                 "event_id": member.event_id,
-                "status": member.status
+                "status": member.member_status
             })
         return jsonify(members_list), 200
     except Exception as e:
@@ -508,7 +528,7 @@ def get_joined_events():
         """
         current_user = get_jwt_identity()
         user = User.query.filter_by(email=current_user).first()
-        joined_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id).all()
+        joined_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id, Event_Member.member_status == "Joined").all()
         joined_events_list = []
         for event in joined_events:
             event_timezone = event.start_datetime.strftime("%Z")
@@ -528,11 +548,140 @@ def get_joined_events():
                 "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
             }
             joined_events_list.append(event_details)
+            
+            if joined_events_list == []:
+                return jsonify({"msg": "No joined events found"}), 404
+            
                 
         return jsonify(joined_events_list)
     except Exception as e:
         return jsonify({"error": str(e)})
     
+@event_bp.route("/get-user-request", methods=["GET"])
+@jwt_required()
+def get_applied_events():
+    try:
+        """
+        Retrieve the events that the current user has applied to join.
+
+        This function retrieves the events that the current user has applied to join from the
+        database and returns them as a list of JSON objects.
+
+        Returns:
+            A JSON response containing a list of the applied events.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "name": "My Event",
+                    "owner_id": 1,
+                    "location": "New York",
+                    "start_date": "2022-12-31",
+                    "start_time": "23:59:59",
+                    "end_date": "2023-01-01",
+                    "end_time": "01:00:00",
+                    "status": "planned",
+                    "timezone": "America/New_York",
+                    "description": "A description of my event",
+                    "event_type_id": 1,
+                    "budget_per_person": 100
+                }
+            ]
+        """
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(email=current_user).first()
+        applied_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id, Event_Member.member_status == "Applied").all()
+        applied_events_list = []
+        for event in applied_events:
+            owner_profile = User_Profile.query.filter_by(user_id=event.owner.id).first()
+            event_details = {
+                "id": event.id,
+                "name": event.name,
+                "owner": event.owner_id,
+                "owner_name": owner_profile.name,
+                "owner_last_name": owner_profile.last_name,
+                "owner_img": owner_profile.profile_image,
+                "location": event.location,
+                "event_type_id": event.event_type_id,
+            }
+            applied_events_list.append(event_details)
+        
+        if applied_events_list == []:
+            return jsonify({"msg": "No applied events found"}), 404
+        
+                
+        return jsonify(applied_events_list)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+@event_bp.route("/get-owner-request", methods=["GET"])
+@jwt_required()
+def get_owner_requests():
+    try:
+        """
+        Retrieve the events that the current user has applied to join.
+
+        This function retrieves the events that the current user has applied to join from the
+        database and returns them as a list of JSON objects.
+
+        Returns:
+            A JSON response containing a list of the applied events.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "name": "My Event",
+                    "owner_id": 1,
+                    "location": "New York",
+                    "start_date": "2022-12-31",
+                    "start_time": "23:59:59",
+                    "end_date": "2023-01-01",
+                    "end_time": "01:00:00",
+                    "status": "planned",
+                    "timezone": "America/New_York",
+                    "description": "A description of my event",
+                    "event_type_id": 1,
+                    "budget_per_person": 100
+                }
+            ]
+        """
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(email=current_user).first()
+        my_events = Event.query.filter_by(owner_id=user.id).all()
+        my_events_members = []
+        for event in my_events:
+            event_members = Event_Member.query.filter_by(event_id=event.id, member_status="Applied").all()
+            for member in event_members:
+                event_member = {
+                    "event_id": event.id,
+                    "member_id": member.user_id
+                }
+                my_events_members.append(event_member)
+        join_requests = []
+        for event_member in my_events_members:
+            event = Event.query.filter_by(id=event_member["event_id"]).first()
+            member = User.query.filter_by(id=event_member["member_id"]).first()
+            print(member)
+            member_profile = User_Profile.query.filter_by(user_id=member.id).first()
+            event_details = {
+                "id": event.id,
+                "name": event.name,
+                "member_id": member.id,
+                "member_name": member_profile.name,
+                "member_last_name": member_profile.last_name,
+                "member_img": member_profile.profile_image,
+                "location": event.location,
+                "event_type_id": event.event_type_id,
+            }
+            join_requests.append(event_details)
+        if join_requests == []:
+            return jsonify({"msg": "No join requests found"}), 404
+        return jsonify(join_requests)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 @event_bp.route("/join-event/<int:event_id>", methods=["POST"])
 @jwt_required()
 def join_event(event_id):
@@ -552,8 +701,12 @@ def join_event(event_id):
         current_user = get_jwt_identity()
         user = User.query.filter_by(email=current_user).first()
         event = Event.query.filter_by(id=event_id).first()
+        event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
         
-        event_member = Event_Member(user_id=user.id, event_id=event.id, status="Applied")
+        if event_member is not None:
+            return jsonify({"msg": "You have already joined this event"}), 403
+        
+        event_member = Event_Member(user_id=user.id, event_id=event.id, member_status="Applied")
         db.session.add(event_member)
         db.session.commit()
         
@@ -583,6 +736,9 @@ def leave_event(event_id):
         event = Event.query.filter_by(id=event_id).first()
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
+        if event_member is None:
+            return jsonify({"msg": "You are not a member of this event"}), 403
+        
         db.session.delete(event_member)
         db.session.commit()
         
@@ -591,7 +747,7 @@ def leave_event(event_id):
         return jsonify({"msg": "error leaving event",
                         "error": str(e)}), 500
 
-@event_bp.route("/reject-member/<int:event_id>", methods=["POST"])
+@event_bp.route("/reject-member/<int:event_id>", methods=["PUT"])
 @jwt_required()
 def reject_member(event_id):
     try:
@@ -616,7 +772,16 @@ def reject_member(event_id):
         
         member_id = request.json.get("member_id", None)
         event_member = Event_Member.query.filter_by(user_id=member_id, event_id=event.id).first()
-        event_member.status = "Rejected"
+        
+        if event_member is None:
+            return jsonify({"msg": "This user is not a member of the event"}), 403
+        elif event_member.member_status == "Rejected":
+            return jsonify({"msg": "This user has already been rejected from the event"}), 403
+        elif event_member.member_status == "Accepted":
+            return jsonify({"msg": "This user has already been accepted to the event"}), 403
+        elif event_member.member_status == "Applied":
+            event_member.member_status = "Rejected"
+            
         
         db.session.commit()
         
@@ -625,7 +790,7 @@ def reject_member(event_id):
         return jsonify({"msg": "error rejecting member",
                         "error": str(e)}), 500
         
-@event_bp.route("/accept-member/<int:event_id>", methods=["POST"])
+@event_bp.route("/accept-member/<int:event_id>", methods=["PUT"])
 @jwt_required()
 def accept_member(event_id):
     try:
@@ -650,7 +815,15 @@ def accept_member(event_id):
         
         member_id = request.json.get("member_id", None)
         event_member = Event_Member.query.filter_by(user_id=member_id, event_id=event.id).first()
-        event_member.status = "Accepted"
+        if  event_member.member_status == "Joined":
+            return jsonify({"msg": "This user is already a member of the event"}), 403
+        elif event_member.member_status == "Rejected":
+            return jsonify({"msg": "This user has been rejected from the event"}), 403
+        elif event_member.member_status == "Applied":
+            event_member.member_status = "Accepted"
+        elif event_member is None:
+            return jsonify({"msg": "This user has not applied to join the event"}), 403
+        
         
         db.session.commit()
         

@@ -60,7 +60,7 @@ class User_Profile(db.Model):
     profile_image = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
-        return f'<User_Profile ID{self.id} {self.name}>'
+        return f'<User_Profile ID{self.user_id} {self.name}>'
 
     def serialize(self):
         return {
@@ -128,7 +128,7 @@ class Event_Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    status = db.Column(db.Enum("Joined","Rejected","Applied","Owner","Abandoned", name="status"), nullable=False)
+    member_status = db.Column(db.Enum("Applied","Owner","Accepted","Rejected", name="member_status"), nullable=False)
 
     def __repr__(self):
         return f'<Event_Member {self.id}>'
