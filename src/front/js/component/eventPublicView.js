@@ -1,15 +1,22 @@
-import React, { useContext, useEffect } from "react";
-import { Row, Col, Card, Button } from 'react-bootstrap'; // Importamos los componentes de React Bootstrap
+import React, { useContext, useEffect, useState } from "react";
+import { Row, Col, Card, Button } from 'react-bootstrap';
 import "../../styles/event.css";
 import { Context } from "../store/appContext";
 
 export const EventPublicView = () => {
     const { store, actions } = useContext(Context);
+    const [buttonStates, setButtonStates] = useState({});
+    const [buttonColors, setButtonColors] = useState({});
 
     useEffect(() => {
         let token = localStorage.getItem("token");
         actions.getPublicEvents(token);
     }, []);
+
+    const handleRequestButton = async (id) => {
+        await actions.requestJoinEvent(id);
+        setButtonStates({ ...buttonStates, [id]: store.message });
+    }
 
     return (
         <>
@@ -23,7 +30,12 @@ export const EventPublicView = () => {
                                         <Card.Title>{item.name}</Card.Title>
                                     </Col>
                                     <Col>
-                                        <Button variant="primary">Join Us!</Button>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => handleRequestButton(item.id)}
+                                        >
+                                            {buttonStates[item.id] || "Join Us!"}
+                                        </Button>
                                     </Col>
                                 </Row>
                                 <Card.Text>
