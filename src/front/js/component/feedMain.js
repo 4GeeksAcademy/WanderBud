@@ -2,6 +2,8 @@ import React from "react";
 import { Button, Col, Container, Row, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaPlusCircle } from 'react-icons/fa'
+import { EventPublicView} from "./eventPublicView"
+
 
 export const FeedMain = ({ children }) => {
     return (
@@ -26,6 +28,7 @@ export const FeedMain = ({ children }) => {
                         </Nav.Item>
                     </Nav>
                 </Col>
+                    <EventPublicView />
             </Row>
         </Container>
     );

@@ -89,6 +89,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getPublicEvents: async (token) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-all-events", {
+						method: 'GET',
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
