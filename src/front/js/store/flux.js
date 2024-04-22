@@ -255,6 +255,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+
+
+			requestJoinEvent: async (event_id) => {
+				console.log(event_id);
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/join-event/${event_id}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + localStorage.getItem('token')
+						}
+					});
+			
+					if (!response.ok) {
+						throw new Error('Failed to join event');
+					}
+			
+					const data = await response.json();
+					if (response.status === 200) {
+						setStore({ message: "Pending..." });
+						return true;}
+					
+				}	catch (error) {
+					// Manejamos el error y lo mostramos en la consola
+					console.error('Error joining event:', error);
+					throw error; // Lanzamos el error para que el componente que llamó a esta función pueda manejarlo adecuadamente
+				}
+			},
 		}
 	};
 };
