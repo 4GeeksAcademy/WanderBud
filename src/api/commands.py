@@ -1,7 +1,10 @@
-
 import click
-from api.models import db, User
+from api.models import db, User, User_Profile, Event
 from api.models import Event_Type
+from datetime import date, timedelta
+import datetime
+
+
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -30,28 +33,80 @@ def setup_commands(app):
 
         print("All test users created")
 
+
+#This script will add demo data to the database: 
+    
     @app.cli.command("insert-test-data")
     def insert_test_data():
-        print("Inserting test data for event types.")
-        event_types = [
-            {"name": "Cine"},
-            {"name": "Bar"},
-            {"name": "Surf"},
-            {"name": "Concert"},
-            {"name": "Exhibition"},
-            {"name": "Sports"},
-            {"name": "Party"},
-            {"name": "Theater"},
-            {"name": "Conference"},
-            {"name": "Workshop"}
-        ]
-        print("Inserting test data for users")
+        """ Este comando rellenará la base de datos con datos de ejemplo. """
+        db.drop_all()
+        db.create_all()
+        try:
+            users = [
+                User(email="osianjorge@gmail.com",
+                     password="1111",
+                     is_active=True),
+                User(email="wanderbud2024@gmail.com",
+                     password="2222",
+                     is_active=True),
+                User(email="frank@gmail.com",
+                     password="3333",
+                     is_active=True),
+                User(email="bruno@gmail.com",
+                     password="4444",
+                     is_active=True),
+                User(email="lucia@gmail.com",
+                     password="5555",
+                     is_active=True),
+                User(email="lavacapaca@gmail.com",
+                    password="6666",
+                    is_active=True)
+                    # Add more users following the same structure
+                     ]
+            db.session.add_all(users)
+            db.session.commit()
+            
+            user_profiles = [
+                User_Profile(user=users[0], name="Osián", last_name="Chacho", birthdate=date.today() - timedelta(days=365*30), location="Huelva", description="Apasionado de la naturaleza y los deportes al aire libre, siempre buscando nuevas aventuras y emociones. Amante de la fotografía y la música indie, disfruto de cada momento con intensidad y creatividad.", profile_image="user_profile_1.jpg"),
+                User_Profile(user=users[1], name="Wander", last_name="Bud", birthdate=date.today() - timedelta(days=365*30), location="NewYork", description="Explorador incansable con una pasión por descubrir nuevas culturas y sabores. Adicto al café y los libros, me encanta perderme en las páginas de novelas de misterio y viajar a través de las historias.", profile_image="user_profile_2.jpg"),
+                User_Profile(user=users[2], name="Frank", last_name="Pana", birthdate=date.today() - timedelta(days=365*40), location="Madrid", description="Con una mente inquieta y curiosa, siempre buscando desafíos intelectuales y nuevas experiencias. Apasionado de la tecnología y los videojuegos, disfruto de cada día como una oportunidad para aprender algo nuevo.", profile_image="user_profile_3.jpg"),
+                User_Profile(user=users[3], name="Bruno", last_name="Cachai", birthdate=date.today() - timedelta(days=365*40), location="Barcelona", description="Amante de la buena comida y la vida tranquila, disfruto de los placeres simples y las conversaciones profundas. Aficionado al cine clásico y los paseos por la ciudad, encuentro belleza en los detalles cotidianos.", profile_image="user_profile_3.jpg"),
+                User_Profile(user=users[4], name="Lucia", last_name="Illo", birthdate=date.today() - timedelta(days=365*40), location="Cádiz", description="Con una personalidad extrovertida y un sentido del humor contagioso, siempre estoy rodeado de amigos y risas. Apasionado por la música en vivo y los eventos culturales, cada día es una nueva oportunidad para disfrutar de la vida.", profile_image="user_profile_3.jpg"),
+                User_Profile(user=users[5], name="Lavaca", last_name="Paca", birthdate=date.today() - timedelta(days=365*40), location="Teherán", description="Inspirado por la creatividad y la expresión artística, busco constantemente nuevas formas de compartir mi visión del mundo. Aficionado a la pintura y la poesía, encuentro belleza en los pequeños momentos y las grandes ideas.", profile_image="user_profile_3.jpg"),
+      # Add more user profiles following the same structure
+                ]
+            db.session.add_all(user_profiles)
+            db.session.commit()
+            
+            event_types = [
+                Event_Type(name="Cine"),
+                Event_Type(name="Bar"),
+                Event_Type(name="Surf"),
+                Event_Type(name="Concert"),
+                Event_Type(name="Exhibition"),
+                Event_Type(name="Sports"),
+                Event_Type(name="Party"),
+                Event_Type(name="Theater"),
+                Event_Type(name="Conference"),
+                Event_Type(name="Workshop")
+                ]
+          
 
-        for event_type_data in event_types:
-            event_type = Event_Type(**event_type_data)
-            db.session.add(event_type)
+        
+            for event_type in event_types:
+                db.session.add(event_type)
+                db.session.commit()
+
+            events = [
+                Event(owner=users[1], name="Carrera Popular", location="Campo Grande, Valladolid", start_datetime=datetime.datetime(year=2024, month=5, day=12, hour=9), end_datetime=datetime.datetime(year=2024, month=5, day=12, hour=11), status="Planned", description="Carrera de 5km por una causa benéfica", budget_per_person=10.0, event_type=event_types[0]),
+                Event(owner=users[1], name="Visita guiada al Museo del Prado", location="Museo del Prado, Madrid", start_datetime=datetime.datetime(year=2024, month=6, day=10, hour=11), end_datetime=datetime.datetime(year=2024, month=6, day=10, hour=13), status="Planned", description="Visita guiada para conocer los secretos del museo", budget_per_person=20.0, event_type=event_types[1]),
+                Event(owner=users[2], name="Ruta por la Sierra de Gredos", location="Sierra de Gredos, Ávila", start_datetime=datetime.datetime(year=2024, month=7, day=15, hour=8), end_datetime=datetime.datetime(year=2024, month=7, day=17, hour=18), status="Planned", description="Fin de semana de senderismo por la sierra", budget_per_person=50.0, event_type=event_types[2]),
+                ]
+            db.session.add_all(events)
             db.session.commit()
 
-        print("Test data for event types inserted.")
-    
-    
+        
+            print("Demo database successfully created.")
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error while running the script: {e}")
