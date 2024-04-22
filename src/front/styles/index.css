@@ -5,11 +5,17 @@
 
 /* Estilos generales */
 body {
-  background-color: #05445e; /* Navy Blue */
+  background-image: url("https://res.cloudinary.com/dutyp2abm/image/upload/f_auto,q_auto/zyqqmxreweoknajy0txx");
+  background-color: #05445e;
+  background-position: center;
+  background-size: cover;
+  background-repeat: repeat-y;
   color: #f3f6f6; /* Porcelain */
   font-family: "Roboto", sans-serif;
 }
 .feed-container {
+  position: fixed;
+  top: 0;
   background-color: #05445e; /* Porcelain */
   color: #05445e; /* Navy Blue */
   font-family: "Lato", sans-serif;
@@ -23,6 +29,7 @@ body {
 .sidenav-left {
   background-color: #f3f6f6; /* Porcelain */
   color: #05445e; /* Porcelain */
+  left: 0;
   border-right: #05445e0f solid 1px; /* Navy Blue con baja opacidad */
   font-family: "Lato", sans-serif;
   font-weight: 400; /* Peso normal para subtítulos */
@@ -193,8 +200,6 @@ textarea:focus {
 .btn-sidenav:hover,
 .btn-sidenav:active,
 .btn-sidenav:focus,
-.btn-sidenav:visited,
-.btn-sidenav:link,
 .btn-sidenav.active {
   background-color: #f5fffa; /* Light Blue Green */
   color: #05445e; /* Navy Blue */
@@ -222,7 +227,6 @@ textarea:focus {
   text-decoration: none;
   align-items: center;
   width: 100%;
-  box-shadow: 0px 0px 12px 4px #189ab42e;
   font-family: "Lato", sans-serif;
   font-weight: 400; /* Peso normal para subtítulos */
   font-size: 1rem;
@@ -230,13 +234,11 @@ textarea:focus {
 .btn-navtab:hover,
 .btn-navtab:active,
 .btn-navtab:focus,
-.btn-navtab:visited,
-.btn-navtab:link,
 .btn-navtab.active {
-  background-color: #f5fffa; /* Light Blue Green */
-  color: #05445e; /* Navy Blue */
-  border: none;
-  box-shadow: 0px 0px 2px 2px #189ab4;
+  background-color: #f5fffa !important; /* Light Blue Green */
+  color: #05445e !important; /* Navy Blue */
+  border: none !important;
+  box-shadow: 0px 0px 2px 2px #189ab4 !important;
 }
 .btn-logout {
   background-color: #189ab42e; /* Porcelain */
@@ -261,7 +263,7 @@ textarea:focus {
   font-size: 1rem;
 }
 .btn-create {
-  background-color: #ff7f50; /* Coral */
+  background-color: #189ab4; /* Blue Grotto */
   color: #f3f6f6; /* Porcelain */
   border: none;
   width: 100%;
@@ -274,9 +276,86 @@ textarea:focus {
 .btn-create:focus,
 .btn-create:visited,
 .btn-create:link {
-  background-color: #ff6347; /* Tomato */
+  background-color: #107c91;
   color: #f3f6f6; /* Porcelain */
   border: none;
+  box-shadow: 0px 0px 5px 1px #189ab4; /* Blue Grotto con baja opacidad */
+}
+.btn-create:active {
+  background-color: #0e6c7d !important; /* Even Darker Blue Grotto */
+  color: #f3f6f6 !important; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #107c91; /* Darker Blue Grotto con baja opacidad */
+}
+.btn-accept {
+  background-color: #2ecc71;
+  color: #f3f6f6;
+  border: none;
+  box-shadow: 0px 0px 5px 1px #2ecc7178; /* Verde esmeralda con baja opacidad */
+}
+.btn-accept:hover {
+  background-color: #27ae60; /* Verde esmeralda más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(46, 204, 113, 0.5); /* Verde esmeralda con baja opacidad */
+}
+.btn-accept:active {
+  background-color: #229954; /* Verde esmeralda más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(46, 204, 113, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-reject {
+  background-color: #e74c3c; /* Alizarin */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #e74c3c78; /* Alizarin con baja opacidad */
+}
+.btn-reject:hover {
+  background-color: #c0392b; /* Alizarin más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(231, 76, 60, 0.5); /* Alizarin con baja opacidad */
+}
+.btn-reject:active {
+  background-color: #992d22; /* Alizarin más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(231, 76, 60, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-join {
+  background-color: #3498db; /* Belize Hole */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #3498db78; /* Belize Hole con baja opacidad */
+}
+.btn-join:hover {
+  background-color: #2980b9; /* Belize Hole más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(52, 152, 219, 0.5); /* Belize Hole con baja opacidad */
+}
+.btn-join:active {
+  background-color: #1f618d; /* Belize Hole más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(52, 152, 219, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-edit {
+  background-color: #ffd700; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #ffd70078; /* Porcelain con baja opacidad */
+}
+.btn-edit:hover {
+  background-color: #ffcc00; /* Porcelain más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(255, 215, 0, 0.5); /* Porcelain con baja opacidad */
+}
+.btn-edit:active {
+  background-color: #ffbf00; /* Porcelain más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(255, 215, 0, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-post {
+  background-color: #800080; /* Purple */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #80008078; /* Purple con baja opacidad */
+}
+.btn-post:hover {
+  background-color: #6a006a; /* Purple más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(128, 0, 128, 0.5); /* Purple con baja opacidad */
+}
+.btn-post:active {
+  background-color: #4b004b; /* Purple más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(128, 0, 128, 0.5); /* Sombra interna para efecto de hundimiento */
 }
 
 /* Sign Up Image */
@@ -296,18 +375,18 @@ a {
 /* Contenedores y sidebars */
 .container-card {
   background-color: #f3f6f6;
-  border: #189ab4;
+  border: none;
   font-family: "Roboto", sans-serif;
 }
 
 /* Sombra suave para contenedores con fondo Navy Blue */
 .container-shadow {
-  box-shadow: 10px 10px 0px 0 rgba(24, 154, 180, 1); /* Blue Grotto con baja opacidad */
+  box-shadow: 10px 10px 10px 0 #05445e; /* Blue Grotto con baja opacidad */
 }
 
 .home-title {
   text-align: end;
-  color: #d4f1f4;
+  color: #05445e;
   font-size: 5rem;
   font-weight: bold;
   margin: 0;
@@ -318,4 +397,40 @@ a {
   max-height: 300px;
   object-fit: contain;
   aspect-ratio: 1/1;
+}
+.scrollbar {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+  border: none;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  height: 5px;
+  width: 10px;
+  background-color: #f3f6f681; /* Blue Grotto */
+}
+.accordion-button:not(.collapsed) {
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+.accordion-button {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+}
+.accordion-button:hover {
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+.accordion-button:active {
+  background-color: #107c91; /* Darker Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
 }

@@ -68,7 +68,7 @@ const LeftSidebar = ({ changeContent }) => {
     );
 
     return (
-        <Navbar expand="lg" className="flex-column justify-content-between vh-100 sidenav sidenav-left p-0">
+        <Navbar expand="lg" className="flex-column justify-content-between vh-100 p-0">
             <Navbar.Brand href="/" className="w-100 text-center m-0">
                 <h1>WanderBud</h1>
             </Navbar.Brand>

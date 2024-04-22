@@ -48,20 +48,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			validateToken: async () => {
+				const store = getStore();
+				const auth = store.auth;
+				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/signup/profile', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
-				try {
-					const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-						method: 'GET',
-						headers: {
-							"Content-Type": "application/json",
-							'Authorization': 'Bearer ' + accessToken
+				if (!auth && !unloggedPaths.includes(window.location.pathname)) {
+					try {
+						const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
+							method: 'GET',
+							headers: {
+								"Content-Type": "application/json",
+								'Authorization': 'Bearer ' + accessToken
+							}
+						});
+						const data = await response.json();
+						setStore({ auth: response.status === 200 });
+						if (response.status !== 200 && window.location.pathname !== '/login') {
+							window.location.href = '/login';
+							alert('Session expired, please log in again');
 						}
-					});
-					const data = await response.json();
-					setStore({ auth: response.status === 200 });
-				} catch (error) {
-					console.error('Error validating token:', error);
-					throw new Error('Error validating token: ' + error.message);
+
+					} catch (error) {
+						console.error('Error validating token:', error);
+						throw new Error('Error validating token: ' + error.message);
+					}
 				}
 			},
 			resetPassword: async (password, token) => {

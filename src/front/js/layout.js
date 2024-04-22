@@ -13,7 +13,7 @@ import { FeedLayout } from "./pages/FeedLayout";
 import { CreateEvent } from "./component/createEvent";
 import { SignUpProfile } from "./pages/signUp/signUpProfile";
 import { FeedMain } from "./component/feedMain";
-
+import Background from "./component/background";
 
 
 
@@ -31,6 +31,7 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Routes>
+                        <Route element={<Background />} path="/background" />
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup/user" />
                         <Route element={<SignUpProfile />} path="/signup/profile" />
