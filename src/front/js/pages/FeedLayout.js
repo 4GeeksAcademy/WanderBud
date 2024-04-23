@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import LeftSidebar from '../component/leftsidebar';
+import LeftSidenav from '../component/leftSidenav/leftSidenav';
 import { Context } from '../store/appContext';
-import NavbarRight from "../component/NavbarRight";
+import RightSidenav from "../component/rightSidenav/rightSidenav";
 
 export const FeedLayout = ({ children }) => {
     const { store, actions } = useContext(Context);
@@ -16,13 +16,13 @@ export const FeedLayout = ({ children }) => {
         <Container fluid className='feed-container'>
             <Row className="vh-100 scrollbar">
                 <Col md={3} className="p-0 vh-100 sidenav sidenav-left">
-                    <LeftSidebar changeContent={changeContent} />
+                    <LeftSidenav changeContent={changeContent} />
                 </Col>
                 <Col md={5} className="p-0 h-100">
                     {children ? children : null}
                 </Col>
-                <Col md={4} className="p-0 vh-100">
-                    <NavbarRight />
+                <Col md={4} className="p-0 vh-100 sidenav sidenav-right">
+                    <RightSidenav />
                 </Col>
             </Row>
         </Container>

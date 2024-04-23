@@ -267,17 +267,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
 						}
 					});
-			
+
 					if (!response.ok) {
 						throw new Error('Failed to join event');
 					}
-			
+
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: "Pending..." });
-						return true;}
-					
-				}	catch (error) {
+						return true;
+					}
+
+				} catch (error) {
 					// Manejamos el error y lo mostramos en la consola
 					console.error('Error joining event:', error);
 					throw error; // Lanzamos el error para que el componente que llamó a esta función pueda manejarlo adecuadamente

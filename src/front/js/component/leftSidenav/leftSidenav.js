@@ -3,7 +3,7 @@ import { Nav, Navbar, Button } from 'react-bootstrap';
 import { FaHome, FaUser, FaCog } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 
-const LeftSidebar = ({ changeContent }) => {
+const LeftSidenav = ({ changeContent }) => {
     const [path, setPath] = useState(null);
     const [settingsOptions, setSettingsOptions] = useState("w-100 d-flex align-content-end flex-column d-none");
     const [settings, setSettings] = useState("btn setting-container w-75 p-0");
@@ -81,7 +81,7 @@ const LeftSidebar = ({ changeContent }) => {
     );
 };
 
-export default LeftSidebar;
+export default LeftSidenav;
 
 
 
