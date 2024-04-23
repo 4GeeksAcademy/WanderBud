@@ -21,11 +21,11 @@ export const Login = () => {
     e.preventDefault()
     console.log(email, password);
     let logged = await actions.login(email, password)
-    alert("Logged in")
     if (logged) {
       navigate("/feed")
-
+      actions.validateUserProfile()
     }
+    
   }
 
   return (

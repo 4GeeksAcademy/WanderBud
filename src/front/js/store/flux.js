@@ -1,3 +1,5 @@
+import { BsWindowSidebar } from "react-icons/bs";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -50,7 +52,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			validateToken: async () => {
 				const store = getStore();
 				const auth = store.auth;
-				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/signup/profile', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
 				if (!auth && !unloggedPaths.includes(window.location.pathname)) {
 					try {
@@ -66,7 +68,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						if (response.status !== 200 && window.location.pathname !== '/login') {
 							window.location.href = '/login';
 							alert('Session expired, please log in again');
+
 						}
+						else {
+							const actions = getActions()
+							actions.validateUserProfile()
+						}
+						
 
 					} catch (error) {
 						console.error('Error validating token:', error);
@@ -117,6 +125,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			createUserProfile: async (name, lastName, location, birthdate, description, image, accessToken) => {
 				try {
+					console.log(name)
+					console.log(lastName)
+					console.log(location)
+					console.log(birthdate)
+					console.log(description)
+					console.log(image)
+					console.log(accessToken)
+
 					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile", {
 						method: 'POST',
 						headers: {
@@ -124,11 +140,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': 'Bearer ' + accessToken
 						},
 						body: JSON.stringify({
-							name,
+							name: name,
 							last_name: lastName,
-							birthdate,
-							location,
-							description,
+							birthdate: birthdate,
+							location: location,
+							description: description,
 							profile_image: image
 						})
 					});
@@ -284,6 +300,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 					throw error; // Lanzamos el error para que el componente que llamó a esta función pueda manejarlo adecuadamente
 				}
 			},
+
+			validateUserProfile: async () => {
+				let accessToken = localStorage.getItem("token")
+				const unloggedPaths = ['/signup/profile', '/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				if (!unloggedPaths.includes(window.location.pathname)) {
+					try {
+						
+						const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+							method: 'GET',
+							headers: {
+								'Authorization': `Bearer ${accessToken}`
+							}
+						});
+					
+						if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
+							
+							window.location.href = '/signup/profile';
+							alert('You need to create a user profile');
+						}
+						else if (response.status == 200) {
+							return true
+
+						} else {
+							throw new Error('Error getting user profile');
+						}
+					} catch (error) {
+						console.error('Error validating user profile:', error);
+						return false; // Return false if there's an error
+					}
+				}
+			},
+
 		}
 	};
 };

@@ -151,15 +151,18 @@ def get_profile_view():
     user = User.query.filter_by(email=current_user).first()
     query_results = User_Profile.query.filter_by(user_id=user.id)
     results = list(map(lambda item: item.serialize(), query_results))
-
+    print(query_results)
     if user is None:
         return jsonify({"msg": "this user does not exist or is not logged in"}), 404
             
-     
+    if query_results.first() is None: 
+        return jsonify({"msg": "this user does not have a profile yet"}), 404 
     response_body = {
         "msg": "ok",
         "results": results
     }
+    return jsonify(response_body), 200
+
 
 @user_bp.route("/update-profile", methods=["PUT"])
 @jwt_required()
