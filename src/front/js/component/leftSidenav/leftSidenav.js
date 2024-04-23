@@ -11,6 +11,7 @@ const LeftSidenav = ({ changeContent }) => {
     const [settings, setSettings] = useState("btn setting-container w-75 p-0");
     const [settingsBtn, setSettingsBtn] = useState("");
 
+    const navigate = useNavigate();
     const location = useLocation();
     const handleItemClick = (option) => {
         changeContent(option);
@@ -37,6 +38,10 @@ const LeftSidenav = ({ changeContent }) => {
             setSettingsBtn('');
         }
     }
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+    };
 
     return (
         <Navbar expand="lg" className="flex-column justify-content-between vh-100 p-0">
@@ -46,7 +51,7 @@ const LeftSidenav = ({ changeContent }) => {
             <Nav className="p-0 d-flex flex-column w-100 justify-content-start align-items-center h-100">
                 <SidebarButton to='/feed' icon={<FaHome className='me-2' />} text='Feed' w="75" variant={'sidenav'} handlePath={handlePath} />
                 <SidebarButton to='/profile' icon={<FaUser className='me-2' />} text='Profile' w="75" variant={'sidenav'} handlePath={handlePath} />
-                <SettingsButton settings={settings} settingsBtn={settingsBtn} handleSettings={handleSettings} settingsOptions={settingsOptions} handlePath={handlePath} />
+                <SettingsButton settings={settings} settingsBtn={settingsBtn} handleSettings={handleSettings} settingsOptions={settingsOptions} handlePath={handlePath} handleLogout={handleLogout} />
             </Nav>
         </Navbar>
     );
