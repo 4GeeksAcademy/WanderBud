@@ -1,5 +1,7 @@
 import random
 import datetime
+from flask import current_app # type: ignore
+from itsdangerous import URLSafeTimedSerializer as Serializer # type: ignore
 
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 
@@ -7,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy # type: ignore
 db = SQLAlchemy()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True, default=random.randint(100000000, 999999999))
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
@@ -17,6 +19,25 @@ class User(db.Model):
     petition_chat = db.relationship('Petition_Chat', backref='user', lazy=True, primaryjoin='Petition_Chat.user_id==User.id')
     group_chat = db.relationship('Event_Chat', backref='user', lazy=True, primaryjoin='Event_Chat.user_id==User.id')
     
+    def generate_reset_token(self):
+        serializer = Serializer(secret_key=current_app.config['JWT_SECRET_KEY'], salt=current_app.config['SECURITY_PASSWORD_SALT'])
+        return serializer.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(current_app.config['JWT_SECRET_KEY'])
+        try:
+            data = s.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=84600)
+            user_id = data.get('id')
+            if user_id:
+                user = User.query.get(user_id)
+                return user
+        
+        except:
+            pass
+        return None
+    
+        
     def __repr__(self):
         return f'<User ID {self.id} {self.email}>'
 
@@ -39,7 +60,7 @@ class User_Profile(db.Model):
     profile_image = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
-        return f'<User_Profile ID{self.id} {self.name}>'
+        return f'<User_Profile ID{self.user_id} {self.name}>'
 
     def serialize(self):
         return {
@@ -107,7 +128,7 @@ class Event_Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    status = db.Column(db.Enum("Joined","Rejected","Applied","Owner","Abandoned", name="status"), nullable=False)
+    member_status = db.Column(db.Enum("Applied","Owner","Accepted","Rejected", name="member_status"), nullable=False)
 
     def __repr__(self):
         return f'<Event_Member {self.id}>'

@@ -1,15 +1,466 @@
-body{
-    background-color: rgb(26, 31, 37);
-    margin: 0;
-    padding: 0;
+/* Importar las fuentes de Google Fonts */
+@import url("https://fonts.googleapis.com/css?family=Patua+One&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 
+/* Estilos generales */
+body {
+  background-image: url("https://res.cloudinary.com/dutyp2abm/image/upload/f_auto,q_auto/zyqqmxreweoknajy0txx");
+  background-color: #05445e;
+  background-position: center;
+  background-size: cover;
+  background-repeat: repeat-y;
+  color: #f3f6f6; /* Porcelain */
+  font-family: "Roboto", sans-serif;
 }
-.title-feed{
-    font-size: 20px;
-    color: white;
+.feed-container {
+  position: fixed;
+  top: 0;
+  background-color: #05435ec4; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
 }
-.title-container{
-    position: sticky;
-    top: 0px;
-    background-color: rgb(26, 31, 37);
+.sidenav {
+  position: sticky; /* Fixed Sidebar (stay in place on scroll) */
+  top: 0; /* Stay at the top */
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
+.sidenav-left {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Porcelain */
+  left: 0;
+  border-right: #05445e0f solid 1px; /* Navy Blue con baja opacidad */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.card-header {
+  border-bottom: none;
+}
+.request-container {
+  width: 100%;
+  border-top: 1px solid #05445e0f;
+  overflow: hidden;
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+}
+.sidenav-right {
+  /* background-color: #05445e; */
+  position: sticky; /* Fixed Sidebar (stay in place on scroll) */
+  color: #05445e; /* Porcelain */
+  border-left: #f3f6f60e solid 1px; /* Navy Blue con baja opacidad */
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.navtabs {
+  background: #189ab42e;
+  border-radius: 0.5rem;
+  color: #05445e;
+  box-shadow: 0px 0px 12px 4px #189ab42e;
+}
+.sidenav-left h1,
+.sidenav-left h2,
+.sidenav-left h3 {
+  color: #05445e; /* Porcelain */
+}
+.main-feed h1,
+.main-feed h2,
+.main-feed h3 {
+  font-size: 28px;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Encabezados con Patua One */
+h1,
+h2,
+h3 {
+  font-family: "Patua One", cursive;
+  color: #f3f6f6; /* Porcelain */
+}
+
+/* Subtítulos con Lato */
+h4,
+h5,
+.subtitle {
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+}
+
+.subtitle-bold {
+  color: #05445e; /* Navy Blue */
+  font-weight: 700; /* Peso bold para mayor énfasis */
+}
+
+/* Estilos para inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  background-color: #f3f6f6; /* Baby Blue */
+  border-color: #189ab4 solid 1px; /* Blue Grotto */
+  color: #05445e; /* Navy Blue */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  border-color: #3e9ee8; /* Picton Blue */
+}
+
+/* Estilos para botones */
+
+/* Estilos para los botones primarios */
+.button-primary,
+.btn-primary {
+  background-color: #ff7f50; /* Coral */
+  border: none;
+  color: #f3f6f6; /* Porcelain */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-primary:hover,
+.btn-primary:hover {
+  background-color: #ff6347; /* Tomato */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-primary:active,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: #e9967a !important; /* Dark Salmon */
+  outline: #ff6347 !important;
+  border: none !important;
+  transform: scale(0.98); /* Efecto de presión */
+}
+
+/* Estilos para los botones secundarios */
+.button-secondary,
+.btn-secondary {
+  background-color: #4997d0; /* Celestial Blue */
+  border: none;
+  color: #f3f6f6; /* Santas Gray */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-secondary:hover,
+.btn-secondary:hover {
+  background-color: #7bc8f6; /* Sky Blue */
+  color: #f3f6f6; /* Navy Blue */
+  /* Añade las transiciones y transformaciones que prefieras aquí */
+}
+
+.button-secondary:active,
+.btn-secondary:active {
+  background-color: #b0e0e6; /* Powder Blue */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra interna para efecto de hundimiento */
+  color: #f3f6f6; /* Navy Blue */
+}
+.btn-google {
+  background-color: #db4437; /* Google Red */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-google:hover {
+  background-color: #c1351d; /* Google Red Dark */
+}
+.btn-google:active {
+  background-color: #a52714; /* Google Red Darker */
+}
+/* Estilos para el botón Upload */
+.btn-upload {
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+
+.btn-upload:hover {
+  background-color: #107c91; /* Darker Blue Grotto */
+  border: 2px solid #f3f6f6; /* Porcelain */
+}
+
+.btn-upload:active {
+  background-color: #0e6c7d; /* Even Darker Blue Grotto */
+  border: 2px solid #107c91; /* Darker Blue Grotto */
+}
+.btn-sidenav {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+  text-decoration: none;
+  align-items: center;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-sidenav:hover,
+.btn-sidenav:active,
+.btn-sidenav:focus,
+.btn-sidenav.active {
+  background-color: #f5fffa; /* Light Blue Green */
+  color: #05445e; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 2px 2px #189ab4;
+}
+.settingbtn.active {
+  background-color: #189ab4; /* Light Blue Green */
+  color: #f3f6f6; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 0px 1px #189ab4;
+}
+.setting-container.active {
+  background-color: #08546d; /* Light Blue Green */
+  color: #f5fffa; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 2px 5px #08546d;
+}
+.btn-navtab {
+  background-color: #189ab42e; /* Porcelain */
+  color: #f3f6f6; /* Navy Blue */
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  align-items: center;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-navtab:hover,
+.btn-navtab:active,
+.btn-navtab:focus,
+.btn-navtab.active {
+  background-color: #f5fffa !important; /* Light Blue Green */
+  color: #05445e !important; /* Navy Blue */
+  border: none !important;
+  box-shadow: 0px 0px 2px 2px #189ab4 !important;
+}
+.btn-logout {
+  background-color: #189ab42e; /* Porcelain */
+  color: #f3f6f6; /* Navy Blue */
+  box-shadow: 0px 0px 12px 4px #189ab42e;
+  text-align: start;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-logout:hover,
+.btn-logout:active,
+.btn-logout:focus,
+.btn-logout:visited,
+.btn-logout:link {
+  background-color: #dc3545; /* Tomato */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-create {
+  position: sticky;
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  width: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+.btn-create:hover,
+.btn-create:active,
+.btn-create:focus,
+.btn-create:visited,
+.btn-create:link {
+  background-color: #107c91;
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #189ab4; /* Blue Grotto con baja opacidad */
+}
+.btn-create:active {
+  background-color: #0e6c7d !important; /* Even Darker Blue Grotto */
+  color: #f3f6f6 !important; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #107c91; /* Darker Blue Grotto con baja opacidad */
+}
+.btn-accept {
+  padding: 8px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  background-color: #2ecc71;
+  color: #f3f6f6;
+  border: none;
+  box-shadow: 0px 0px 5px 1px #2ecc7178; /* Verde esmeralda con baja opacidad */
+}
+.btn-accept:hover {
+  background-color: #27ae60; /* Verde esmeralda más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(46, 204, 113, 0.5); /* Verde esmeralda con baja opacidad */
+}
+.btn-accept:active {
+  background-color: #229954; /* Verde esmeralda más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(46, 204, 113, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-reject {
+  padding: 8px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  background-color: #e74c3c; /* Alizarin */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #e74c3c78; /* Alizarin con baja opacidad */
+}
+.btn-reject:hover {
+  background-color: #c0392b; /* Alizarin más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(231, 76, 60, 0.5); /* Alizarin con baja opacidad */
+}
+.btn-reject:active {
+  background-color: #992d22; /* Alizarin más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(231, 76, 60, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-join {
+  background-color: #3498db; /* Belize Hole */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #3498db78; /* Belize Hole con baja opacidad */
+}
+.btn-join:hover {
+  background-color: #2980b9; /* Belize Hole más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(52, 152, 219, 0.5); /* Belize Hole con baja opacidad */
+}
+.btn-join:active {
+  background-color: #1f618d; /* Belize Hole más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(52, 152, 219, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-edit {
+  background-color: #ffd700; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #ffd70078; /* Porcelain con baja opacidad */
+}
+.btn-edit:hover {
+  background-color: #ffcc00; /* Porcelain más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(255, 215, 0, 0.5); /* Porcelain con baja opacidad */
+}
+.btn-edit:active {
+  background-color: #ffbf00; /* Porcelain más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(255, 215, 0, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+.btn-post {
+  background-color: #800080; /* Purple */
+  color: #f3f6f6; /* Porcelain */
+  border: none;
+  box-shadow: 0px 0px 5px 1px #80008078; /* Purple con baja opacidad */
+}
+.btn-post:hover {
+  background-color: #6a006a; /* Purple más oscuro al pasar el cursor */
+  box-shadow: 0px 2px 4px rgba(128, 0, 128, 0.5); /* Purple con baja opacidad */
+}
+.btn-post:active {
+  background-color: #4b004b; /* Purple más oscuro al hacer clic */
+  box-shadow: inset 0 5px 10px rgba(128, 0, 128, 0.5); /* Sombra interna para efecto de hundimiento */
+}
+
+/* Sign Up Image */
+.card-img-top {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  padding: 5px;
+  border: #189ab4 solid 2px; /* Blue Grotto */
+}
+
+/* Estilos para links */
+a {
+  color: #75e6da; /* Blue Green */
+  text-decoration: none;
+}
+
+/* Contenedores y sidebars */
+.container-card {
+  background-color: #f3f6f6;
+  border: none;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Sombra suave para contenedores con fondo Navy Blue */
+.container-shadow {
+  box-shadow: 10px 10px 10px 0 #05445e; /* Blue Grotto con baja opacidad */
+}
+
+.home-title {
+  text-align: end;
+  color: #05445e;
+  font-size: 5rem;
+  font-weight: bold;
+  margin: 0;
+}
+.home-logo {
+  width: auto;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  aspect-ratio: 1/1;
+}
+.scrollbar {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+  border: none;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  height: 5px;
+  width: 10px;
+  background-color: #f3f6f681; /* Blue Grotto */
+}
+.accordion-button:not(.collapsed) {
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+.accordion-button {
+  background-color: #f3f6f6; /* Porcelain */
+  color: #05445e; /* Navy Blue */
+}
+.accordion-button:hover {
+  background-color: #189ab4; /* Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+.accordion-button:active {
+  background-color: #107c91; /* Darker Blue Grotto */
+  color: #f3f6f6; /* Porcelain */
+}
+
+.btn-request {
+  background-color: none; /* Blue Grotto */
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  border: none;
+  box-shadow: none; /* Blue Grotto con baja opacidad */
+}
+.message-container {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  height: fit-content;
+  justify-content: center;
+  max-height: 60%;
+  z-index: 1000;
 }

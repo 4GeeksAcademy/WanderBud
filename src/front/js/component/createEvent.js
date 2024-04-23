@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
+import { Form, Button, Row, Col } from "react-bootstrap";
 import MapContainer from "./mapContainer";
+import "../../styles/event.css";
 
 export const CreateEvent = () => {
     const { store, actions } = useContext(Context);
@@ -25,7 +27,6 @@ export const CreateEvent = () => {
             markerPosition: location
         }));
     };
-
 
     const createEventHandler = async () => {
         const { title, budget, startDate, endDate, description, markerPosition, typeEvent, gmt } = eventData;
@@ -82,7 +83,7 @@ export const CreateEvent = () => {
             };
             await actions.createEvent(data);
             alert("Event created successfully!");
-            window.location.href = process.env.FRONT_END_URL + "/feed";
+            window.location.href = "/feed";
         } catch (error) {
             console.error("Error creating event:", error);
             alert("An error occurred while creating the event. Please try again later.");
@@ -107,115 +108,118 @@ export const CreateEvent = () => {
     const { title, budget, startDate, endDate, markerPosition, description, errors } = eventData;
 
     return (
-        <div className="main-feed">
-            <div className="row border-1 border-light border-bottom p-0 py-2 title-container">
-                <div className="col-md-12">
+        <div className="create-event">
+            <Row className="border-1 border-light border-bottom p-0 py-2 title-container">
+                <Col md={12}>
                     <h1 className="text-center title-feed m-0">Create Event</h1>
-                </div>
-                <div className="col-md-8">
-                    <label htmlFor="title">Event Title</label>
-                    <input
-                        type="text"
-                        id="title"
-                        className="input-background"
-                        placeholder="Give a name to your Event"
-                        value={title}
-                        onChange={(e) => {
-                            e.persist();
-                            setEventData(prevState => ({ ...prevState, title: e.target.value }));
-                        }}
-                    />
-                    {errors.title && <div className="text-danger">{errors.title}</div>}
-                </div>
-                <div className="col-md-4">
-                    <label htmlFor="typeEvent">Event Type</label>
-                    <select
-                        className="input-background"
-                        id="typeEvent"
-                        value={eventData.typeEvent}
-                        onChange={(e) => {
-                            e.persist();
-                            setEventData(prevState => ({ ...prevState, typeEvent: e.target.value }));
-                        }}
-                    >
-                        <option value="">Select Event Type</option>
-                        {eventType.map((type, index) => (
-                            <option className="select-text" key={index} value={index}>
-                                {type}
-                            </option>
-                        ))}
-                    </select>
-                    {errors.typeEvent && <div className="text-danger">{errors.typeEvent}</div>}
-                </div>
+                </Col>
+                <Col md={8}>
+                    <Form.Group controlId="title">
+                        <Form.Label>Event Title</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Give a name to your Event"
+                            value={title}
+                            onChange={(e) => {
+                                e.persist();
+                                setEventData(prevState => ({ ...prevState, title: e.target.value }));
+                            }}
+                        />
+                        {errors.title && <Form.Text className="text-danger">{errors.title}</Form.Text>}
+                    </Form.Group>
+                </Col>
+                <Col md={4}>
+                    <Form.Group controlId="typeEvent">
+                        <Form.Label>Event Type</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={eventData.typeEvent}
+                            onChange={(e) => {
+                                e.persist();
+                                setEventData(prevState => ({ ...prevState, typeEvent: e.target.value }));
+                            }}
+                        >
+                            <option value="">Select Event Type</option>
+                            {eventType.map((type, index) => (
+                                <option className="select-text" key={index} value={index}>
+                                    {type}
+                                </option>
+                            ))}
+                        </Form.Control>
+                        {errors.typeEvent && <Form.Text className="text-danger">{errors.typeEvent}</Form.Text>}
+                    </Form.Group>
+                </Col>
 
-                <div className="col-md-12">
-                    <label htmlFor="budget">Budget {budget}$</label>
-                    <input
-                        type="range"
-                        id="budget"
-                        className="input-range"
-                        min="0"
-                        max="100"
-                        step={10}
-                        value={budget}
-                        onChange={(e) => {
-                            e.persist();
-                            setEventData(prevState => ({ ...prevState, budget: e.target.value }));
-                        }}
-                    />
-                </div>
-                <div className="col-md-6">
-                    <label htmlFor="startDate">Start Date</label>
-                    <input
-                        type="datetime-local"
-                        id="startDate"
-                        className="input-background"
-                        defaultValue={new Date().toISOString().slice(0, 16)}
-                        onChange={(e) => {
-                            e.persist();
-                            setEventData(prevState => ({ ...prevState, startDate: e.target.value }))
-                            setEventData(prevState => ({ ...prevState, endDate: e.target.value }))
-                                ;
-                        }}
-                    />
-                    {errors.startDate && <div className="text-danger">{errors.startDate}</div>}
-                </div>
-                <div className="col-md-6">
-                    <label htmlFor="endDate">End Date</label>
-                    <input
-                        type="datetime-local"
-                        id="endDate"
-                        className="input-background"
-                        value={endDate}
-                        onChange={(e) => {
-                            e.persist();
-                            setEventData(prevState => ({ ...prevState, endDate: e.target.value }));
-                        }}
-                    />
-                    {errors.endDate && <div className="text-danger">{errors.endDate}</div>}
-                </div>
-                <div className="col-md-12">
+                <Col md={12}>
+                    <Form.Group controlId="budget">
+                        <Form.Label>Budget {budget}$</Form.Label>
+                        <Form.Control
+                            type="range"
+                            min="0"
+                            max="100"
+                            step={10}
+                            value={budget}
+                            onChange={(e) => {
+                                e.persist();
+                                setEventData(prevState => ({ ...prevState, budget: e.target.value }));
+                            }}
+                        />
+                    </Form.Group>
+                </Col>
+                <Row>
+                    <Col md={6}>
+                        <Form.Group controlId="startDate">
+                            <Form.Label>Start Date</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                defaultValue={new Date().toISOString().slice(0, 16)}
+                                onChange={(e) => {
+                                    e.persist();
+                                    setEventData(prevState => ({ ...prevState, startDate: e.target.value }))
+                                    setEventData(prevState => ({ ...prevState, endDate: e.target.value }));
+                                }}
+                            />
+                            {errors.startDate && <Form.Text className="text-danger">{errors.startDate}</Form.Text>}
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group controlId="endDate">
+                            <Form.Label>End Date</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={endDate}
+                                onChange={(e) => {
+                                    e.persist();
+                                    setEventData(prevState => ({ ...prevState, endDate: e.target.value }));
+                                }}
+                            />
+                            {errors.endDate && <Form.Text className="text-danger">{errors.endDate}</Form.Text>}
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Col md={12}>
                     <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} />
-                    {errors.markerPosition && <div className="text-danger">{errors.markerPosition}</div>}
-                </div>
-                <div className="col-md-12">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                        id="description"
-                        className="input-background w-100"
-                        placeholder="Describe your event"
-                        value={description}
-                        onChange={(e) => {
-                            e.persist();
-                            setEventData(prevState => ({ ...prevState, description: e.target.value }));
-                        }}
-                    />
-                    {errors.description && <div className="text-danger">{errors.description}</div>}
-                </div>
-                <button className="btn btn-primary col-md-11" onClick={createEventHandler}>
+                    {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
+                </Col>
+                <Col md={12}>
+                    <Form.Group controlId="description">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            placeholder="Describe your event"
+                            value={description}
+                            onChange={(e) => {
+                                e.persist();
+                                setEventData(prevState => ({ ...prevState, description: e.target.value }));
+                            }}
+                        />
+                        {errors.description && <Form.Text className="text-danger">{errors.description}</Form.Text>}
+                    </Form.Group>
+                </Col>
+                <Button variant="primary" onClick={createEventHandler}>
                     Create Event
-                </button>
-            </div>
+                </Button>
+            </Row>
         </div>
     );
 };
