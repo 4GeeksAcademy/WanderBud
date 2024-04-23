@@ -141,3 +141,48 @@ def create_user_profile():
         db.session.commit()
         return jsonify({"msg": "user profile successfully created"}), 200
 
+
+
+
+@user_bp.route("/profile-view", methods=["GET"])
+@jwt_required()
+def get_profile_view():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    query_results = User_Profile.query.filter_by(user_id=user.id)
+    results = list(map(lambda item: item.serialize(), query_results))
+
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+            
+     
+    response_body = {
+        "msg": "ok",
+        "results": results
+    }
+
+@user_bp.route("/update-profile", methods=["PUT"])
+@jwt_required()
+def update_user_profile():
+    current_user = get_jwt_identity()
+    data = request.json
+    user = User.query.filter_by(email=current_user).first()
+    user_profile = User_Profile.query.filter_by(user_id=user.id).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+            
+    else: 
+        
+            
+        user_profile.name=data["name"],
+        user_profile.last_name=data["last_name"],
+        user_profile.birthdate=data["birthdate"],
+        user_profile.location=data["location"],
+        user_profile.description=data["description"],
+        user_profile.profile_image=data["profile_image"]
+        
+       
+        db.session.commit()
+        return jsonify({"msg": "user profile successfully updated"}), 200
+
+
