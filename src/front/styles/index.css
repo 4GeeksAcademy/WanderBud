@@ -461,5 +461,6 @@ a {
   display: flex;
   height: fit-content;
   justify-content: center;
+  max-height: 60%;
   z-index: 1000;
 }
