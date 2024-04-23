@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Nav, Navbar, Button } from 'react-bootstrap';
 import { FaHome, FaUser, FaCog } from 'react-icons/fa';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate} from 'react-router-dom';
 
 const LeftSidenav = ({ changeContent }) => {
     const [path, setPath] = useState(null);
@@ -9,6 +9,7 @@ const LeftSidenav = ({ changeContent }) => {
     const [settings, setSettings] = useState("btn setting-container w-75 p-0");
     const [settingsBtn, setSettingsBtn] = useState("");
 
+    const navigate = useNavigate();
     const location = useLocation();
     const handleItemClick = (option) => {
         changeContent(option);
@@ -36,6 +37,11 @@ const LeftSidenav = ({ changeContent }) => {
         }
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/'); 
+    };
+
 
     const SidebarButton = ({ to, icon, text, w, variant }) => (
         <Nav.Item className={`w-${w} mb-2`}>
@@ -60,7 +66,7 @@ const LeftSidenav = ({ changeContent }) => {
                 <SidebarButton to='/settings/notifications' text='Notifications' w="100" variant={'navtab'} />
                 <SidebarButton to='/settings/privacy' text='Privacy' w="100" variant={'navtab'} />
                 <SidebarButton to='/settings/security' text='Security' w="100" variant={'navtab'} />
-                <Button variant="logout" className='w-100'>
+                <Button variant="logout" className='w-100' onClick={handleLogout}>
                     Log out
                 </Button>
             </Nav.Item>
