@@ -188,4 +188,23 @@ def update_user_profile():
         db.session.commit()
         return jsonify({"msg": "user profile successfully updated"}), 200
 
+@user_bp.route("/public-user-profile/<int:user_id>", methods=["GET"])
+@jwt_required()
+def get_public_user_profile(user_id):
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    query_results = User_Profile.query.filter_by(user_id=user_id)
+    results = list(map(lambda item: item.serialize(), query_results))
+    print(results)
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+            
+    if query_results.first() is None: 
+        return jsonify({"msg": "this user does not have a profile yet"}), 404 
+    response_body = {
+        "msg": "ok",
+        "results": results
+    }
+    return jsonify(response_body), 200
+
 
