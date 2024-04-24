@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { FaHome, FaUser } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarButton from './component/SidebarButton';
 import SettingsButton from './component/SettingsButton';
 

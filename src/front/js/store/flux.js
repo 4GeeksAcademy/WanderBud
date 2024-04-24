@@ -5,6 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			users: [],
 			publicEvents: [],
+			userProfile: [],
 			auth: false,
 			message: ""
 		},
@@ -329,6 +330,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.error('Error validating user profile:', error);
 						return false; // Return false if there's an error
 					}
+				}
+			},
+
+			getUserProfile: async (token) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ userProfile: data.results });
+					} else {
+						throw new Error('Error getting public events');
+					}
+				} catch (error) {
+					console.error('Error getting public events:', error);
+					setStore({ message: "Network error, please try again" });
 				}
 			},
 

@@ -157,13 +157,19 @@ def get_all_events():
         """
         events = Event.query.all()
         events_list = []
+        print(events_list)
         for event in events:
             event_timezone = coordinates_to_timezone(event.location)['timezone']
+
+            owner = User_Profile.query.get(event.owner_id)
             
             events_list.append({
                 "id": event.id,
                 "name": event.name,
-                "owner": event.owner_id,
+                "owner": {
+                    "name": owner.name if owner else None,  # Handle potential missing owner
+                    "profile_image": owner.profile_image if owner else None
+                },
                 "location": event.location,
                 "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
