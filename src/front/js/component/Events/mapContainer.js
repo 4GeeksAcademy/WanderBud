@@ -74,30 +74,17 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
     );
 };
 
-const mapStyles = { height: "400px", width: "100%", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" };
+const mapStyles = {
+    height: "400px",
+    width: "100%",
+    borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+};
+
 const mapOptions = {
-    styles: [
-        { elementType: "geometry", stylers: [{ color: "#2C408A" }] },
-        { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
-        { elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
-        { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "road", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
-        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#ffffff" }] },
-        { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
-        { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#ffffff" }] },
-        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
-        { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "water", elementType: "geometry", stylers: [{ color: "#2C408A" }] },
-        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
-        { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#2C408A" }] }
-    ],
     disableDefaultUI: true
 };
+
 const searchStyles = {
     position: "absolute",
     top: "10px",
@@ -109,5 +96,6 @@ const searchStyles = {
     backgroundColor: "#ffffff",
     color: "#000000"
 };
+
 
 export default MapContainer;

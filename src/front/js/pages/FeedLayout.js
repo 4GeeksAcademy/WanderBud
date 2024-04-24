@@ -15,10 +15,10 @@ export const FeedLayout = ({ children }) => {
     return (
         <Container fluid className='feed-container'>
             <Row className="vh-100 scrollbar">
-                <Col md={3} className="p-0 vh-100 sidenav sidenav-left">
+                <Col md={2} className="p-0 vh-100 sidenav sidenav-left">
                     <LeftSidenav changeContent={changeContent} />
                 </Col>
-                <Col md={5} className="p-0 h-100">
+                <Col md={6} className="p-0 h-100">
                     {children ? children : null}
                 </Col>
                 <Col md={4} className="p-0 vh-100 sidenav sidenav-right">

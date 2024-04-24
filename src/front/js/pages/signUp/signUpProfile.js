@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../store/appContext';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
-import ImageUploader from '../../component/imageUploader';
+import ImageUploader from '../../component/signUp/imageUploader';
 import { Link } from 'react-router-dom';
 
 export const SignUpProfile = () => {

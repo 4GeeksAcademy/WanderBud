@@ -18,8 +18,8 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
                 </h2>
                 <div id={title.replace(" ", "")} className={"accordion-collapse collapse " + (collapsed ? "" : "show")} data-bs-parent="#accordionExample">
                     <div className="accordion-body m-0 p-0">
-                        {title !== "Join Requests" ? (
-                            title === "Apply Requests" ?
+                        {title !== "Solicitudes Owner" ? (
+                            title === "Solicitudes Enviadas" ?
                                 <>
                                     <ApplyCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} chatId={1} />
                                     <ApplyCard username={"Osian Lezcano"} eventname={"Alone in my House :("} img={"https://ca.slack-edge.com/T0BFXMWMV-U064ZSVS678-877ce3b7e9a7-512"} chatId={2} />
