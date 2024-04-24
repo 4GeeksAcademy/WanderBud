@@ -1,57 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Context } from '../store/appContext';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
-function UserProfile() {
-  const [userProfile, setUserProfile] = useState(null); // Store user profile data
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
+const Profile = () => {
+    const { store, actions } = useContext(Context);
+    const [loaded, setLoaded] = useState(false);
+    const [profile, setProfile] = useState({});
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        const getUserProfile = async () => {
+            try {
+                await actions.getUserProfile(localStorage.getItem("token"));
+                console.log(store.userProfile[0])
+                setProfile(store.userProfile[0])
+            } catch (error) {
+                console.error('Error al obtener el perfil del usuario:', error);
+            }
+        };
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
+        // Llama a la función para obtener el perfil cuando el componente se monta
+        getUserProfile().then(setLoaded(true));
+    }, []); // Asegúrate de incluir actions y store.token como dependencias del efecto
 
-      try {
-        const token = localStorage.getItem('userToken'); // Replace with your token retrieval logic
+    return (
+      loaded ?
+        <Container className="mt-4">
+            <Row>
+                <Col>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>Perfil de Usuario</Card.Title>
+                            {/* Muestra la información del perfil */}
+                            <p><strong>Nombre:</strong> {profile.name}</p>
+                            <p><strong>Correo Electrónico:</strong> {store.userProfile.email}</p>
+                            {/* Agrega más campos según la estructura de tu perfil de usuario */}
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container> : null
+    );
+};
 
-        const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUserProfile(data.results); // Update state with profile data
-        } else {
-          throw new Error('Error getting public events');
-        }
-      } catch (error) {
-        setErrorMessage(error.message || "Network error, please try again"); // Handle errors
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, []); // Run only once on component mount
-
-  if (isLoading) {
-    return <p>Loading user profile...</p>;
-  }
-
-  if (errorMessage) {
-    return <p className="error-message">{errorMessage}</p>;
-  }
-
-  // Display profile data here
-  return (
-    <div className="user-profile">
-      <h1>{userProfile?.name}</h1> {/* Use optional chaining to handle potential null value */}
-      <p>{userProfile?.email}</p>
-      {/* Display other profile details, using optional chaining */}
-    </div>
-  );
-}
-
-export default UserProfile;
+export default Profile;
