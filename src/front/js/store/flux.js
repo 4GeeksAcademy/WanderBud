@@ -1,5 +1,3 @@
-import { BsWindowSidebar } from "react-icons/bs";
-
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -7,6 +5,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			publicEvents: [],
 			userProfile: [],
 			auth: false,
+			authProfile: false,
+			storeShow: false,
+			alertTitle: "",
+			alertBody: "",
 			message: ""
 		},
 		actions: {
@@ -29,6 +31,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			login: async (email, password) => {
+				const actions = getActions();
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
 						method: 'POST',
@@ -50,37 +53,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+			hideAlert: () => {
+				setStore({ storeShow: false });
+				window.location.href = '/login';
+			},
 			validateToken: async () => {
 				const store = getStore();
+				const actions = getActions()
 				const auth = store.auth;
 				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
-				if (!auth && !unloggedPaths.includes(window.location.pathname)) {
-					try {
-						const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-							method: 'GET',
-							headers: {
-								"Content-Type": "application/json",
-								'Authorization': 'Bearer ' + accessToken
-							}
-						});
-						const data = await response.json();
-						setStore({ auth: response.status === 200 });
-						if (response.status !== 200 && window.location.pathname !== '/login') {
-							window.location.href = '/login';
-							alert('Session expired, please log in again');
-
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/valid-token", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
 						}
-						else {
-							const actions = getActions()
-							actions.validateUserProfile()
+					});
+					if (response.status === 200) {
+						setStore({ auth: true });
+						actions.validateUserProfile();
+						return true;
+					} else {
+						setStore({ auth: false })
+						if (!unloggedPaths.includes(window.location.pathname)) {
+							setStore({ storeShow: true, alertTitle: 'Session Expired', alertBody: 'Your session has expired, please log in again' })
+							throw new Error('Token is not valid');
+						} else {
+							return false;
 						}
-						
-
-					} catch (error) {
-						console.error('Error validating token:', error);
-						throw new Error('Error validating token: ' + error.message);
 					}
+				} catch (error) {
+					console.error('Error validating token:', error);
+
+					return false;
 				}
 			},
 			resetPassword: async (password, token) => {
@@ -152,6 +158,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: data.msg });
+						setStore({ authProfile: true });
 						return true;
 					} else {
 						throw new Error('Error creating user profile');
@@ -173,6 +180,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (resp.ok) {
 						const newUser = await resp.json();
 						setStore({ users: [...getStore().users, newUser] });
+						const actions = getActions();
+						actions.login(userData.email, userData.password);
 						return true;
 					} else {
 						throw new Error('Error creating user');
@@ -303,34 +312,39 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			validateUserProfile: async () => {
-				let accessToken = localStorage.getItem("token")
-				const unloggedPaths = ['/signup/profile', '/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
-				if (!unloggedPaths.includes(window.location.pathname)) {
-					try {
-						
-						const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
-							method: 'GET',
-							headers: {
-								'Authorization': `Bearer ${accessToken}`
-							}
-						});
-					
-						if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
-							
-							window.location.href = '/signup/profile';
-							alert('You need to create a user profile');
-						}
-						else if (response.status == 200) {
-							return true
+				let accessToken = localStorage.getItem("token");
+				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				try {
 
-						} else {
-							throw new Error('Error getting user profile');
+					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
 						}
-					} catch (error) {
-						console.error('Error validating user profile:', error);
-						return false; // Return false if there's an error
+					});
+					alert(response.status)
+					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
+						window.location.href = '/signup/profile';
 					}
+					else if (response.status === 200 && unloggedPaths.includes(window.location.pathname)) {
+						setStore({ authProfile: true });
+						window.location.href = '/feed';
+					} else if (response.status === 200 && !unloggedPaths.includes(window.location.pathname)) {
+						setStore({ authProfile: true });
+					}
+					else if (response.status === 200 && window.location.pathname === '/signup/profile') {
+						setStore({ authProfile: true });
+						window.location.href = '/feed';
+					} else if (response.status !== 200 && window.location.pathname === '/signup/profile') {
+						return false;
+					} else {
+						throw new Error('Error getting user profile');
+					}
+				} catch (error) {
+					console.error('Error validating user profile:', error);
+					return false; // Return false if there's an error
 				}
+
 			},
 
 			getUserProfile: async (token) => {

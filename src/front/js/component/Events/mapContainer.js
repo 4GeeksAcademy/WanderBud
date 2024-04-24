@@ -41,6 +41,8 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
             if (!place.geometry) {
                 setError('Lugar no encontrado.');
                 return;
+            } else {
+                setError(null);
             }
             const location = {
                 lat: place.geometry.location.lat(),
@@ -75,7 +77,7 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
 };
 
 const mapStyles = {
-    height: "400px",
+    height: "200px",
     width: "100%",
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"

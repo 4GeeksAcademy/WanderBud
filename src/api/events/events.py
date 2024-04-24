@@ -6,13 +6,15 @@ from datetime import datetime
 from flask_cors import CORS # type: ignore
 from . import event_bp
 import pytz # type: ignore
-from api.utils_map import get_address_in_radius, coordinates_to_timezone, get_currency_symbol
+from api.utils_map import get_address_in_radius, addres_to_timezone, get_currency_symbol
+import time
 
 CORS(event_bp)
 
 def get_datetime_with_timezone(date_str, time_str, location):
-    timezone_str = coordinates_to_timezone(location)
+    timezone_str = addres_to_timezone(location)
     datetime_str = f"{date_str} {time_str}"
+    print(datetime_str)
     datetime_without_tz = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
     timezone = pytz.timezone(timezone_str['timezone'])
     datetime_with_tz = datetime_without_tz.astimezone(timezone)
@@ -129,6 +131,9 @@ def get_event_types():
 @event_bp.route("/get-all-events", methods=["GET"])
 @jwt_required()
 def get_all_events():
+    start_time = time.time()  # Registro del tiempo de inicio
+    
+    
     try:
         """
         Retrieve all events.
@@ -157,12 +162,8 @@ def get_all_events():
         """
         events = Event.query.all()
         events_list = []
-        print(events_list)
         for event in events:
-            event_timezone = coordinates_to_timezone(event.location)['timezone']
-
             owner = User_Profile.query.get(event.owner_id)
-            
             events_list.append({
                 "id": event.id,
                 "name": event.name,
@@ -175,18 +176,22 @@ def get_all_events():
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
                 "end_date": event.end_datetime.strftime("%Y-%m-%d"),
                 "end_time": event.end_datetime.strftime("%H:%M:%S"),
-                "timezone": event_timezone,
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
                 "budget_per_person": str(event.budget_per_person) +" "+ str(get_currency_symbol(event.location))
             })
-            
+        
+        # Cálculo del tiempo de ejecución
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print("Tiempo de ejecución:", execution_time, "segundos")
+        
         return jsonify(events_list), 200
     except Exception as e:
         return jsonify({"msg": "error retrieving events",
                         "error": str(e)}), 500
-
+        
 @event_bp.route("/get-event/<int:event_id>", methods=["GET"])
 @jwt_required()
 def get_event(event_id):
@@ -212,7 +217,6 @@ def get_event(event_id):
                 "end_datetime": "2023-01-01 01:00:00",
                 "status": "Planned",
                 "description": "A description of my event",
-                "timezone": "America/New_York",
                 "event_type_id": 1,
                 "budget_per_person": 100
             }
@@ -222,7 +226,6 @@ def get_event(event_id):
         if event is None:
             return jsonify({"msg": "event not found"}), 404
         
-        event_timezone = coordinates_to_timezone(event.location)['timezone']
         
         event_details = {
             "id": event.id,
@@ -232,7 +235,6 @@ def get_event(event_id):
             "start_time": event.start_datetime.strftime("%H:%M:%S"),
             "end_date": event.end_datetime.strftime("%Y-%m-%d"),
             "end_time": event.end_datetime.strftime("%H:%M:%S"),
-            "timezone": event_timezone,
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
@@ -278,7 +280,6 @@ def get_my_events():
         events = Event.query.filter_by(owner_id=user.id).all()
         events_list = []
         for event in events:
-            event_timezone = coordinates_to_timezone(event.location)['timezone']
             
             events_list.append({
                 "id": event.id,
@@ -289,7 +290,6 @@ def get_my_events():
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
                 "end_date": event.end_datetime.strftime("%Y-%m-%d"),
                 "end_time": event.end_datetime.strftime("%H:%M:%S"),
-                "timezone": event_timezone,
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
@@ -344,7 +344,6 @@ def get_event_by_radius():
         events_list_address = get_address_in_radius(user_location, radius, events_address)
         events_list = []
         for event in events:
-            event_timezone = coordinates_to_timezone(event.location)['timezone']
             
             events_list.append({
                 "id": event.id,
@@ -355,7 +354,6 @@ def get_event_by_radius():
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
                 "end_date": event.end_datetime.strftime("%Y-%m-%d"),
                 "end_time": event.end_datetime.strftime("%H:%M:%S"),
-                "timezone": event_timezone,
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,

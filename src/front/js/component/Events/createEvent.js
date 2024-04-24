@@ -3,6 +3,7 @@ import { Context } from "../../store/appContext";
 import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
 import MapContainer from "./mapContainer";
 import "../../../styles/event.css";
+import { EventPublicView } from "../mainFeed/component/eventPublicView";
 
 export const CreateEvent = () => {
     const { store, actions } = useContext(Context);
@@ -200,10 +201,6 @@ export const CreateEvent = () => {
                             </Col>
                         </Row>
                         <Col md={12} className="mb-2">
-                            <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} />
-                            {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
-                        </Col>
-                        <Col md={12} className="mb-2">
                             <Form.Group controlId="description">
                                 <Form.Label>Description</Form.Label>
                                 <Form.Control
@@ -217,6 +214,10 @@ export const CreateEvent = () => {
                                 />
                                 {errors.description && <Form.Text className="text-danger">{errors.description}</Form.Text>}
                             </Form.Group>
+                        </Col>
+                        <Col md={12} className="mb-2">
+                            <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} />
+                            {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
                         <Button variant="primary" onClick={createEventHandler}>
                             Create Event

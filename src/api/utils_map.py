@@ -1,25 +1,17 @@
-# Description: This file contains the utility functions for the Google Maps API. It uses the googlemaps library to interact with the Google Maps API. The geocode_result function takes an address as input and returns the geocode result for that address. The geocode result contains information such as the latitude and longitude of the address. The Google Maps API key is loaded from the environment variable GOOGLE_MAPS_API_KEY using the dotenv library.
-#
-import googlemaps
 import requests
-from datetime import datetime
-from dotenv import load_dotenv
-import os
-import random
 import math
-# Load environment variables from .env file
-load_dotenv()
+import pytz
+import pycountry
+from timezonefinder import TimezoneFinder
+from geopy.geocoders import Nominatim
+import time
+from geopy.geocoders import Nominatim
 
-# Get the Google Maps API key from the environment variable
-google_maps_api_key = os.getenv("GOOGLE_API")
-
-gmaps = googlemaps.Client(key=google_maps_api_key)
-
-def addres_to_coordinates(address):
+def address_to_coordinates(address):
     """
     Get the coordinates (latitude and longitude) of a given address.
 
-    This function uses the Google Maps API to geocode the given address and
+    This function uses the Nominatim API to geocode the given address and
     return the coordinates (latitude and longitude) of the address.
 
     Args:
@@ -28,55 +20,11 @@ def addres_to_coordinates(address):
     Returns:
         dict: A dictionary containing the latitude and longitude of the address.
     """
-    geocode_result = gmaps.geocode(address)
-    if geocode_result:
-        location = geocode_result[0]["geometry"]["location"]
-        return location
-    else:
-        return None
-    
-def coordinates_to_timezone(coordinates):
-    timezone = gmaps.timezone(addres_to_coordinates(coordinates))
-    timezone = {
-        "timezone": timezone["timeZoneId"],
-        "timezone_name": timezone["timeZoneName"],
-        "offset": timezone["rawOffset"] / 3600
-    }
-    offset_hours = int(timezone["offset"])
-    offset_minutes = int((timezone["offset"] - offset_hours) * 60)
-    offset = f"GMT {offset_hours:02d}:{offset_minutes:02d}"
-    timezone["offset"] = f"GMT {offset_hours:02d}:{offset_minutes:02d}"
-    return timezone
-    
-
-def random_coordinates(coordinates, radius):
-    """
-    Generate random coordinates within a given radius of a given point.
-
-    This function generates random coordinates within a given radius of a given
-    point. The function takes the coordinates of the point and the radius as
-    input and returns the random coordinates.
-
-    Args:
-        coordinates (dict): A dictionary containing the latitude and longitude of the point.
-        radius (float): The radius within which to generate random coordinates in kilometers.
-
-    Returns:
-        dict: A dictionary containing the latitude and longitude of the random coordinates.
-    """
-    lat = coordinates["lat"]
-    lon = coordinates["lng"]
-    r = radius / 111.32
-    u = random.random()
-    v = random.random()
-    w = r * math.sqrt(u)
-    t = 2 * math.pi * v
-    x = w * math.cos(t)
-    y = w * math.sin(t)
-    x = x / math.cos(lat)
-    new_lat = x + lat
-    new_lon = y + lon
-    return {"lat": new_lat, "lng": new_lon}
+    geolocator = Nominatim(user_agent="wanderbud")
+    location = geolocator.geocode(address)
+    if location:
+        return {"lat": location.latitude, "lng": location.longitude}
+    return None
 
 def calculate_distance(coords1, coords2):
     """
@@ -98,86 +46,68 @@ def calculate_distance(coords1, coords2):
     lat2 = math.radians(coords2["lat"])
     lon2 = math.radians(coords2["lng"])
     distance_latitude = lat2 - lat1
-    distamce_longitude = lon2 - lon1
-    a = math.sin(distance_latitude / 2) * math.sin(distance_latitude / 2) + math.cos(lat1) * math.cos(lat2) * math.sin(distamce_longitude / 2) * math.sin(distamce_longitude / 2)
+    distance_longitude = lon2 - lon1
+    a = math.sin(distance_latitude / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(distance_longitude / 2) ** 2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    distance = 6378 * c
+    distance = 6371 * c  # Earth's radius in kilometers
     return distance
 
-def get_address_in_radius(ubication, radius_in_km, list_of_ubications):
-    list_of_coordinates = {}
-    for address in list_of_ubications:
-        list_of_coordinates[address] = addres_to_coordinates(address)
-    
-    coordinates_in_radius = []
-    ubication_in_radius = []
-    counter = 0
-    for address, coords in list_of_coordinates.items():
-        distance = calculate_distance(addres_to_coordinates(ubication), coords)
-        if distance <= radius_in_km:
-            coordinates_in_radius.append(address)
-            ubication_in_radius.append(list_of_ubications[counter])
-        counter += 1        
-    
-        
-    
-    return ubication_in_radius
+def get_address_in_radius(location, radius_in_km, list_of_locations):
+    location_coords = address_to_coordinates(location)
+    locations_in_radius = []
+    for loc in list_of_locations:
+        loc_coords = address_to_coordinates(loc)
+        if loc_coords is not None:
+            distance = calculate_distance(location_coords, loc_coords)
+            if distance <= radius_in_km:
+                locations_in_radius.append(loc)
+    return locations_in_radius
 
+
+def addres_to_timezone(addres):
+    """
+    Get the timezone of a given set of coordinates.
+
+    This function uses the TimezoneFinder library to get the timezone of a given set
+    of coordinates. The function takes the coordinates as input and returns
+    the timezone of the coordinates.
+
+    Args:
+        coords (dict): A dictionary containing the latitude and longitude of the coordinates.
+
+    Returns:
+        str: The timezone of the coordinates.
+    """
+    start_time = time.time()
+    tf = TimezoneFinder()
+    coords = address_to_coordinates(addres)
+    timezone = tf.timezone_at(lng=coords["lng"], lat=coords["lat"])
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print("Tiempo de ejecución:", execution_time, "segundos")
+    return timezone
+
+def get_currency_symbol(address):
+    geolocator = Nominatim(user_agent="my_geocoder")
     
-def get_currency_symbol(location):
-    currency_symbols = {
-        'United States': '$',
-        'United Kingdom': '£',
-        'Germany': '€',
-        'France': '€',
-        'Italy': '€',
-        'Spain': '€',
-        'Canada': '$',
-        'Australia': '$',
-        'Japan': '¥',
-        'China': '¥',
-        'India': '₹',
-        'Brazil': 'R$',
-        'Mexico': '$',
-        'South Africa': 'R',
-        'Argentina': '$',
-        'Bangladesh': '৳',
-        'Belgium': '€',
-        'Chile': '$',
-        'Colombia': '$',
-        'Egypt': '£',
-        'Greece': '€',
-        'Indonesia': 'Rp',
-        'Ireland': '€',
-        'Netherlands': '€',
-        'New Zealand': '$',
-        'Nigeria': '₦',
-        'Pakistan': '₨',
-        'Philippines': '₱',
-        'Portugal': '€',
-        'Saudi Arabia': '﷼',
-        'Singapore': '$',
-        'South Korea': '₩',
-        'Sweden': 'kr',
-        'Switzerland': 'CHF',
-        'Thailand': '฿',
-        'Turkey': '₺',
-        'United Arab Emirates': 'د.إ',
-        'Vietnam': '₫',
-    }
+    try:
+        # Obtener la ubicación a partir de la dirección
+        location = geolocator.geocode(address)
+        
+        if location:
+            # Obtener el código ISO del país
+            country_code = location.raw['address']['country_code'].upper()
+            
+            # Obtener información de la moneda a partir del código ISO del país
+            country = pycountry.countries.get(alpha_2=country_code)
+            
+            if country:
+                currency_code = country.alpha_3
+                currency = pycountry.currencies.get(numeric=currency_code)
+                
+                if currency:
+                    return currency.symbol
+    except Exception as e:
+        print("Error:", e)
     
-    location = addres_to_coordinates(location)
-    location = gmaps.reverse_geocode((location["lat"], location["lng"]))
-    country = None
-    for result in location:
-        for component in result["address_components"]:
-            if "country" in component["types"]:
-                country = component["long_name"]
-                break
-        if country:
-            break
-    print(country)
-    
-    currency_symbol = currency_symbols.get(country)
-    
-    return currency_symbol
+    return None

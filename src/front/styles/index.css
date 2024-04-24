@@ -64,7 +64,11 @@ body {
 }
 .sidenav-left h1,
 .sidenav-left h2,
-.sidenav-left h3 {
+.sidenav-left h3,
+.modal-content h1,
+.modal-content h2,
+.modal-content h3
+{
   color: #05445e; /* Porcelain */
 }
 .main-feed h1,
@@ -399,14 +403,16 @@ a {
 }
 
 /* Contenedores y sidebars */
-.container-card {
+.container-card,
+.modal-content{
   background-color: #f3f6f6;
   border: none;
   font-family: "Roboto", sans-serif;
 }
 
 /* Sombra suave para contenedores con fondo Navy Blue */
-.container-shadow {
+.container-shadow,
+.modal-content {
   box-shadow: 10px 10px 10px 0 #05445e; /* Blue Grotto con baja opacidad */
 }
 
@@ -477,4 +483,19 @@ a {
   justify-content: center;
   max-height: 60%;
   z-index: 1000;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10; /* Asegúrate de que la imagen esté sobre el spinner */
+}
+.modal-content {
+  color: #05445e !important ; /* Navy Blue */
 }
