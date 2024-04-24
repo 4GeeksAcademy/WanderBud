@@ -17,10 +17,8 @@ const Profile = () => {
                 console.error('Error al obtener el perfil del usuario:', error);
             }
         };
-
-        // Llama a la función para obtener el perfil cuando el componente se monta
         getUserProfile().then(setLoaded(true));
-    }, []); // Asegúrate de incluir actions y store.token como dependencias del efecto
+    }, []);
 
     return (
       loaded ?
@@ -31,8 +29,8 @@ const Profile = () => {
                         <Card.Body>
                             <Card.Title>Perfil de Usuario</Card.Title>
                             {/* Muestra la información del perfil */}
-                            <p><strong>Nombre:</strong> {profile.name}</p>
-                            <p><strong>Correo Electrónico:</strong> {store.userProfile.email}</p>
+                            <p><strong>Name:</strong> {profile.name}</p>
+                            <p><strong>Last Name:</strong> {profile.last_name}</p>
                             {/* Agrega más campos según la estructura de tu perfil de usuario */}
                         </Card.Body>
                     </Card>
