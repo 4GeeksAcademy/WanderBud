@@ -6,7 +6,7 @@ import { Context } from "../store/appContext";
 export const EventPublicView = () => {
     const { store, actions } = useContext(Context);
     const [buttonStates, setButtonStates] = useState({});
-    const [buttonColors, setButtonColors] = useState({});
+    console.log(store.publicEvents)
 
     useEffect(() => {
         let token = localStorage.getItem("token");
@@ -27,7 +27,7 @@ export const EventPublicView = () => {
                             <Card.Body>
                                 <Row className="justify-content-between">
                                     <Col>
-                                        <Card.Title>{item.name}</Card.Title>
+                                        <Card.Title>{item.owner.name}</Card.Title>
                                     </Col>
                                     <Col>
                                         <Button
