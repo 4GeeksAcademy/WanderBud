@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Nav, Tab } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaPlusCircle } from 'react-icons/fa'
-import { EventPublicView } from "./eventPublicView";
+import { EventPublicView } from "./component/eventPublicView";
 
 
 

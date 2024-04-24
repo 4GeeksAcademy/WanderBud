@@ -25,12 +25,12 @@ const RightSidenav = () => {
           <CreateEventButton handleClick={handleClick} />
           <SideAccordion
             extraClass="overflow-hidden"
-            title="Join Requests"
+            title="Solicitudes Owner"
             collapsed={false}
           />
           <SideAccordion
             extraClass="overflow-hidden"
-            title="Apply Requests"
+            title="Solicitudes Enviadas"
             collapsed={false}
           />
         </Col>

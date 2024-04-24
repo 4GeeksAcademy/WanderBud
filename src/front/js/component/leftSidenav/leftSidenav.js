@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Nav, Navbar, Button } from 'react-bootstrap';
-import { FaHome, FaUser, FaCog } from 'react-icons/fa';
-import { Link, useLocation, useNavigate} from 'react-router-dom';
+import { Nav, Navbar } from 'react-bootstrap';
+import { FaHome, FaUser } from 'react-icons/fa';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SidebarButton from './component/SidebarButton';
+import SettingsButton from './component/SettingsButton';
 
 const LeftSidenav = ({ changeContent }) => {
     const [path, setPath] = useState(null);
@@ -36,58 +38,23 @@ const LeftSidenav = ({ changeContent }) => {
             setSettingsBtn('');
         }
     }
-
     const handleLogout = () => {
         localStorage.removeItem('token');
-        navigate('/'); 
+        navigate('/');
     };
-
-
-    const SidebarButton = ({ to, icon, text, w, variant }) => (
-        <Nav.Item className={`w-${w} mb-2`}>
-            <Link to={to}>
-                <Button variant={variant} className={handlePath(to) + " justify-content-start"}>
-                    {icon}
-                    {text}
-                </Button>
-            </Link>
-        </Nav.Item>
-    );
-
-    const SettingsButton = () => (
-        <Nav.Item className={settings}>
-            <Link to='#'>
-                <Button variant="sidenav" className={settingsBtn} onClick={handleSettings}>
-                    <FaCog className="me-2" /> Settings
-                </Button>
-            </Link>
-            <Nav.Item className={settingsOptions + " setting-option"}>
-                <SidebarButton to='/settings/account' text='Account' w="100" variant={'navtab'} />
-                <SidebarButton to='/settings/notifications' text='Notifications' w="100" variant={'navtab'} />
-                <SidebarButton to='/settings/privacy' text='Privacy' w="100" variant={'navtab'} />
-                <SidebarButton to='/settings/security' text='Security' w="100" variant={'navtab'} />
-                <Button variant="logout" className='w-100' onClick={handleLogout}>
-                    Log out
-                </Button>
-            </Nav.Item>
-        </Nav.Item>
-    );
 
     return (
         <Navbar expand="lg" className="flex-column justify-content-between vh-100 p-0">
             <Navbar.Brand href="/" className="w-100 text-center m-0">
-                <h1>WanderBud</h1>
+                <h1>W</h1>
             </Navbar.Brand>
             <Nav className="p-0 d-flex flex-column w-100 justify-content-start align-items-center h-100">
-                <SidebarButton to='/feed' icon={<FaHome className='me-2' />} text='Feed' w="75" variant={'sidenav'} />
-                <SidebarButton to='/profile' icon={<FaUser className='me-2' />} text='Profile' w="75" variant={'sidenav'} />
-                <SettingsButton />
+                <SidebarButton to='/feed' icon={<FaHome className='me-2' />} text='Feed' w="75" variant={'sidenav'} handlePath={handlePath} />
+                <SidebarButton to='/profile' icon={<FaUser className='me-2' />} text='Profile' w="75" variant={'sidenav'} handlePath={handlePath} />
+                <SettingsButton settings={settings} settingsBtn={settingsBtn} handleSettings={handleSettings} settingsOptions={settingsOptions} handlePath={handlePath} handleLogout={handleLogout} />
             </Nav>
         </Navbar>
     );
 };
 
 export default LeftSidenav;
-
-
-
