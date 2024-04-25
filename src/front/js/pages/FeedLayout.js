@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import LeftSidenav from '../component/leftSidenav/leftSidenav';
-import { Context } from '../store/appContext';
 import RightSidenav from "../component/rightSidenav/rightSidenav";
-import img from "../../img/WanderBud.png";
-import { Background } from './backgroundLoading';
+import { Context } from '../store/appContext';
 
 export const FeedLayout = ({ children, to }) => {
     const { store, actions } = useContext(Context);

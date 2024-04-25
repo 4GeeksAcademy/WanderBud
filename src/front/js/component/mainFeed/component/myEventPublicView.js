@@ -4,14 +4,16 @@ import "../../../../styles/event.css";
 import { Context } from "../../../store/appContext";
 import { Link } from "react-router-dom";
 
-export const EventPublicView = () => {
+export const MyEventPublicView = () => {
     const { store, actions } = useContext(Context);
     const [buttonStates, setButtonStates] = useState({});
-    
+    console.log(store.myPublicEvents)
+    console.log(store.joinedPublicEvents)
 
     useEffect(() => {
         let token = localStorage.getItem("token");
-        actions.getPublicEvents(token);
+        actions.getMyPublicEvents(token);
+        actions.getJoinedPublicEvents(token);
     }, []);
 
   
@@ -19,7 +21,7 @@ export const EventPublicView = () => {
     return (
         <>
             <Row className="flex-column">
-                {store.publicEvents.reverse().map((item, index) => (
+                {store.myPublicEvents.reverse().map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
                         <Link to={`/event-view/${item.id}/${item.owner.user_id}`}>
                             <Card className="h-100">
