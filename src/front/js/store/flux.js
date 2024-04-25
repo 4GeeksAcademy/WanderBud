@@ -7,7 +7,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			publicEvents: [],
 			userProfile: [],
 			auth: false,
-			message: ""
+			message: "",
+			isAuthenticated: false,
+      		userData: {},
+      		accessToken: null,
 		},
 		actions: {
 			onCreateEvent: () => {
@@ -50,6 +53,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+
+			loginWithGoogle: async (accessToken) => {
+				try {
+				  const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ accessToken })
+				  });
+			  
+				  if (!response.ok) {
+					// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
+					const errorData = await response.json();
+					throw new Error(`Error en la validación del token: ${errorData.message}`);
+				  }
+			  
+				  const userData = await response.json();
+			  
+				  // Almacenar datos del usuario y el token en el store
+				  setStore({
+					isAuthenticated: true,
+					userData: userData,
+					accessToken: accessToken
+				  });
+			  
+				}catch (error) {
+				  
+				}
+			  },
+			  
+
 			validateToken: async () => {
 				const store = getStore();
 				const auth = store.auth;
