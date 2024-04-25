@@ -3,6 +3,7 @@ import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import LeftSidenav from '../component/leftSidenav/leftSidenav';
 import RightSidenav from "../component/rightSidenav/rightSidenav";
 import { Context } from '../store/appContext';
+import { Background } from './backgroundLoading';
 
 export const FeedLayout = ({ children, to }) => {
     const { store, actions } = useContext(Context);
@@ -28,8 +29,8 @@ export const FeedLayout = ({ children, to }) => {
                     </Col>
                 </Row>
             </Container>
-            :
-            <Background to={to} />
+             :
+             <Background to={to} />
 
     );
 };
