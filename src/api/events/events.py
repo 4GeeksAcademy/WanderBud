@@ -168,7 +168,7 @@ def get_all_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
-                "budget_per_person": str(event.budget_per_person) +" "+ str(get_currency_symbol(event.location))
+                "budget_per_person": str(event.budget_per_person)
             })
         
         # Cálculo del tiempo de ejecución
@@ -227,7 +227,7 @@ def get_event(event_id):
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
-            "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+            "budget_per_person": str(event.budget_per_person)
         }
         
         return jsonify(event_details), 200
@@ -282,7 +282,7 @@ def get_my_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
-                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+                "budget_per_person": str(event.budget_per_person)
             })
             
             if events_list == []:
@@ -312,7 +312,8 @@ def get_event_by_radius():
                     "id": 1,
                     "name": "My Event",
                     "location": "New York",
-                    "datetime": "2022-12-31 23:59:59",
+                    "start_datetime": "2022-12-31 23:59:59",
+                    "end_datetime": "2023-01-01 01:00:00",
                     "status": "planned",
                     "description": "A description of my event",
                     "event_type_id": 1,
@@ -333,24 +334,25 @@ def get_event_by_radius():
         events_list_address = get_address_in_radius(user_location, radius, events_address)
         events_list = []
         for event in events:
-            
-            events_list.append({
-                "id": event.id,
-                "name": event.name,
-                "owner": event.owner_id,
-                "location": event.location,
-                "start_date": event.start_datetime.strftime("%Y-%m-%d"),
-                "start_time": event.start_datetime.strftime("%H:%M:%S"),
-                "end_date": event.end_datetime.strftime("%Y-%m-%d"),
-                "end_time": event.end_datetime.strftime("%H:%M:%S"),
-                "status": event.status,
-                "description": event.description,
-                "event_type_id": event.event_type_id,
-                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
-            })
+            if event.location in events_list_address:
+                print(event.location)
+                event_details = {
+                    "id": event.id,
+                    "name": event.name,
+                    "location": event.location,
+                    "start_date": event.start_datetime.strftime("%Y-%m-%d"),
+                    "start_time": event.start_datetime.strftime("%H:%M:%S"),
+                    "end_date": event.end_datetime.strftime("%Y-%m-%d"),
+                    "end_time": event.end_datetime.strftime("%H:%M:%S"),
+                    "status": event.status,
+                    "description": event.description,
+                    "event_type_id": event.event_type_id,
+                    "budget_per_person": str(event.budget_per_person)
+                }
+                events_list.append(event_details)
+                
             if events_list == []:
-                return jsonify({"msg": "No events found in the radius of "+radius+" Km"}), 404
-            
+                return jsonify({"msg": "No events found in the given radius"}), 404    
         return jsonify(events_list), 200
     except Exception as e:
         return jsonify({"msg": "error retrieving events",
@@ -375,10 +377,8 @@ def update_event(event_id):
             {
                 "name": "My Updated Event",
                 "location": "New York",
-                "start_date": "2022-12-31",
-                "start_time": "23:59:59",
-                "end_date": "2023-01-01",
-                "end_time": "01:00:00",
+                "start_datetime": "2022-12-31T23:59:59Z ",
+                "end_datetime": "2023-01-01T01:00:00Z",
                 "description": "An updated description of my event",
                 "event_type_id": 1,
                 "budget_per_person": 100
@@ -396,8 +396,8 @@ def update_event(event_id):
         
         event.name = request.json.get("name", event.name)
         event.location = request.json.get("location", event.location)
-        event.start_datetime = get_datetime_with_timezone(request.json.get("start_date", event.start_datetime.strftime("%Y-%m-%d")), request.json.get("start_time", event.start_datetime.strftime("%H:%M:%S")), event.location)
-        event.end_datetime = get_datetime_with_timezone(request.json.get("end_date", event.end_datetime.strftime("%Y-%m-%d")), request.json.get("end_time", event.end_datetime.strftime("%H:%M:%S")), event.location)
+        event.start_datetime = request.json.get("start_datetime", event.start_datetime.strftime("%Y-%m-%d %H:%M:%S"))
+        event.end_datetime = request.json.get("end_datetime", event.end_datetime.strftime("%Y-%m-%d %H:%M:%S"))
         event.description = request.json.get("description", event.description)
         event.event_type_id = request.json.get("event_type_id", event.event_type_id)
         event.budget_per_person = request.json.get("budget_per_person", event.budget_per_person)
