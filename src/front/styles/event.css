@@ -12,5 +12,34 @@
    
 }
 
+#event-cardUserName{
+    padding-top: 55px;
+    padding-left: 70px;
+    color: white; 
+    
+}
 
+#event-userRow{
+    background-color: #05445e;
+    width: 573px; 
+    border-radius: 20px;
+    margin-bottom: 20px;
+    
+}
 
+#event-userButton{
+    padding-left: 180px; 
+    margin-top: 40px; 
+}
+
+#event-private{
+    background-color: #189ab4;
+    width: 1000px;
+    height: 550px;
+    margin: auto; 
+}
+
+#event-private h1{
+    color: white; 
+    
+}

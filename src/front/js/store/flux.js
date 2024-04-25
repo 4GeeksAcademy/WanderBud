@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			users: [],
 			publicEvents: [],
 			publicEventData: {},
+			userProfileData: {},
 			userProfile: [],
 			favorites: [],
 			auth: false,
@@ -367,6 +368,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.ok) {
 						const data = await response.json();
 						setStore({ publicEventData: data });
+					} else {
+						throw new Error('Error getting public events');
+					}
+				} catch (error) {
+					console.error('Error getting public events:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+
+			getPublicUserProfile: async (id) => {
+				let accessToken = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/public-user-profile/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ userProfileData: data });
 					} else {
 						throw new Error('Error getting public events');
 					}

@@ -14,22 +14,19 @@ export const EventPublicView = () => {
         actions.getPublicEvents(token);
     }, []);
 
-    // const handleRequestButton = async (id) => {
-    //     await actions.requestJoinEvent(id);
-    //     setButtonStates({ ...buttonStates, [id]: store.message });
-    // }
+  
 
     return (
         <>
             <Row className="flex-column">
-                {store.publicEvents.map((item, index) => (
+                {store.publicEvents.reverse().map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
                         <Link to={`/event-view/${item.id}`}>
                             <Card className="h-100">
                                 <Card.Body>
                                     <Row className="justify-content-between">
                                         <Col xs={9}>
-                                            <Card.Title><h4>{item.name}</h4></Card.Title>
+                                            <Card.Title className="p-3"><h4>{item.name}</h4></Card.Title>
                                         </Col>
                                         <Col xs={3}>
                                             <Button
@@ -39,28 +36,23 @@ export const EventPublicView = () => {
                                                     // Lógica para agregar a favoritos
                                                     // actions.addFavouriteEvent(item.id);
                                                 }}
-
-
                                             >
                                                 {"Add to favorites"}
                                             </Button>
                                         </Col>
-                                        <Row className="mt-4 d-flex justify-content-between">
+                                        <Row id="event-userRow" className="mt-2 ms-1">
                                             <Col xs={2}>
-                                                <Card.Title><img className="rounded-circle" src={item.owner.profile_image} style={{ width: "80px", height: "80px", objectFit: "cover" }} /></Card.Title>
+                                                <Card.Title className="p-3"><img className="rounded-circle" src={item.owner.profile_image} style={{ width: "100px", height: "100px", objectFit: "cover" }} /></Card.Title>
                                             </Col>
-                                            <Col xs={3} className="p-4">
+                                            <Col xs={4} id="event-cardUserName">
                                                 <Card.Title >{item.owner.name}</Card.Title>
                                             </Col>
-                                            <Col xs={6} className="p-4">
+                                            <Col xs={4} id="event-userButton">
                                                 <Button
-
-                                                    xs={3}
-                                                    variant="primary"
+                                                    variant="secondary"
                                                 // onClick={() => actions.addFavouriteEvent(item.id)}
-
                                                 >
-                                                    {"Visit Profile today"}
+                                                    {"Visit Profile"}
                                                 </Button>
                                             </Col>
                                         </Row>
