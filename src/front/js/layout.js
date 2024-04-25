@@ -34,7 +34,7 @@ const Layout = () => {
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
                         <Route element={<FeedLayout children={<FeedMain />} />} path="/feed" />
                         <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
-                        <Route element={<EventPrivateView />} path="/event-view/:id" />
+                        <Route element={<EventPrivateView />} path="/event-view/:event_id/:owner_id" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

@@ -195,6 +195,7 @@ def get_public_user_profile(user_id):
     user = User.query.filter_by(email=current_user).first()
     query_results = User_Profile.query.filter_by(user_id=user_id)
     results = list(map(lambda item: item.serialize(), query_results))
+    print(query_results)
     print(results)
     if user is None:
         return jsonify({"msg": "this user does not exist or is not logged in"}), 404

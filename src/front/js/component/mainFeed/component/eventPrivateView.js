@@ -9,14 +9,16 @@ import LeftSidenav from "../../leftSidenav/leftSidenav";
 export const EventPrivateView = () => {
 
   const { store, actions } = useContext(Context)
-  const { id } = useParams();
+  const { event_id, owner_id } = useParams();
 
   useEffect(() => {
-    actions.getOneEvent(id)
-    // actions.getPublicUserProfile(user_id)
+    actions.getOneEvent(event_id)
+    actions.getPublicUserProfile(owner_id)
   }, [])
 
   console.log(store.publicEventData)
+  console.log(store.userProfileData)
+
   const eventData = store.publicEventData
   const ownerData = store.userProfileData
 
@@ -30,6 +32,22 @@ export const EventPrivateView = () => {
           <Col md={8} className="p-5">
             <h1>{eventData.name}</h1>
             <Row>
+              <Col md={6}>
+                <img src={ownerData.profile_image} style={{ width: "150px", height: "150px", objectFit: "cover" }} />
+              </Col>
+              <Col md={6}>
+                <h1>{ownerData.name}</h1>
+              </Col>
+            </Row>
+            <Row>
+              <Card.Text>
+                <label>Event Location:</label>
+                <p>{eventData.location}</p>
+                <label>Event Schedule:</label>
+                <p>{eventData.start_date}, {eventData.start_time}-{eventData.end_time}</p>
+                <label>Event description:</label>
+                <p>{eventData.description}</p>
+              </Card.Text>
               {/* <Row id="event-userRow" className="mt-2 ms-1">
                 <Col xs={2}>
                   <Card.Title className="p-3"><img className="rounded-circle" src={d.profile_image} style={{ width: "100px", height: "100px", objectFit: "cover" }} /></Card.Title>
@@ -48,7 +66,7 @@ export const EventPrivateView = () => {
               </Row> */}
             </Row>
           </Col>
-          <Col md={4}>
+          <Col md={4} className="p-5 border-start">
             <h1>Mensajes</h1>
           </Col>
         </Row>
