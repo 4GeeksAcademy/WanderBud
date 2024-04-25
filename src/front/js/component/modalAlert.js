@@ -24,7 +24,7 @@ export const ModalAlert = () => {
             </Modal.Header>
             <Modal.Body>{alertBody}</Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="google" onClick={handleClose}>
                     Close
                 </Button>
             </Modal.Footer>

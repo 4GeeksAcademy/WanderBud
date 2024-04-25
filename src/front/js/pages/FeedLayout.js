@@ -25,7 +25,7 @@ export const FeedLayout = ({ children, to }) => {
                     <Col md={6} className="p-0 h-100">
                         {children ? children : null}
                     </Col>
-                    <Col md={4} className="p-0 vh-100 sidenav sidenav-right">
+                    <Col md={4} className="p-0 vh-100 sidenav sidenav-right scrollbar">
                         <RightSidenav />
                     </Col>
                 </Row>

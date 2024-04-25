@@ -11,15 +11,6 @@ import time
 
 CORS(event_bp)
 
-def get_datetime_with_timezone(date_str, time_str, location):
-    timezone_str = addres_to_timezone(location)
-    datetime_str = f"{date_str} {time_str}"
-    print(datetime_str)
-    datetime_without_tz = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
-    timezone = pytz.timezone(timezone_str['timezone'])
-    datetime_with_tz = datetime_without_tz.astimezone(timezone)
-    
-    return datetime_with_tz
 def actualize_event_status():
     events = Event.query.all()
     for event in events:
@@ -50,10 +41,8 @@ def create_event():
             {
                 "name": "My Event",
                 "location": "New York",
-                "start_date": "2022-12-31",
-                "start_time": "23:59:59",
-                "end_date": "2023-01-01",
-                "end_time": "01:00:00",
+                "start_datetime": "2022-12-31T23:59:59Z",
+                "end_datetime": "2023-01-01T01:00:00Z",
                 "description": "A description of my event",
                 "event_type_id": 1,
                 "budget_per_person": 100
@@ -69,8 +58,8 @@ def create_event():
         name = request.json.get("name", None)
         owner_id = querty_results.id
         location = request.json.get("location", None)
-        start_datetime = get_datetime_with_timezone(request.json.get("start_date", None),request.json.get("start_time", None),location)
-        end_datetime = get_datetime_with_timezone(request.json.get("end_date", None), request.json.get("end_time", None),location)
+        start_datetime = request.json.get("start_datetime", None)
+        end_datetime = request.json.get("end_datetime", None)
         description = request.json.get("description", None)
         event_type_id = request.json.get("event_type_id", None)
         budget_per_person = request.json.get("budget_per_person", None)

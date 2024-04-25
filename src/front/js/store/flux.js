@@ -1,3 +1,5 @@
+import { redirect } from "react-router-dom";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -9,6 +11,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			storeShow: false,
 			alertTitle: "",
 			alertBody: "",
+			redirect: "",
 			message: ""
 		},
 		actions: {
@@ -55,7 +58,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			hideAlert: () => {
 				setStore({ storeShow: false });
-				window.location.href = '/login';
+				const store = getStore();
+				store.redirect && window.location.replace(store.redirect);
 			},
 			validateToken: async () => {
 				const store = getStore();
@@ -77,7 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					} else {
 						setStore({ auth: false })
 						if (!unloggedPaths.includes(window.location.pathname)) {
-							setStore({ storeShow: true, alertTitle: 'Session Expired', alertBody: 'Your session has expired, please log in again' })
+							setStore({ storeShow: true, alertTitle: 'Session Expired', alertBody: 'Your session has expired, please log in again', redirect: '/login' })
 							throw new Error('Token is not valid');
 						} else {
 							return false;
@@ -228,13 +232,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			coordinatesToAddress: async (coordinates) => {
 				try {
-					const resp = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + coordinates.lat + ',' + coordinates.lng + '&key=' + process.env.GOOGLE_API);
+					const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinates["lat"]}&lon=${coordinates["lng"]}&zoom=18&addressdetails=1`;
+					const resp = await fetch(url);
 					if (resp.ok) {
 						const data = await resp.json();
-						if (data.status === 'OK') {
-							return data.results[0].formatted_address;
-						} else {
+						if (data.error) {
 							throw new Error('Error converting coordinates to address');
+						} else {
+							return data.display_name;
 						}
 					} else {
 						throw new Error('Error converting coordinates to address');
@@ -245,23 +250,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			createEvent: async (eventData) => {
+				console.log(eventData);
 				const actions = getActions();
 				const startDate = eventData.startDate.split('T')[0];
 				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
 				const endDate = eventData.endDate.split('T')[0];
 				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
-				const location = await actions.coordinatesToAddress(eventData.location);
+				const location = await actions.coordinatesToAddress(eventData.markerPosition);
 				const eventDataForBackend = {
-					name: eventData.name,
-					location,
-					start_date: startDate,
-					start_time: startTime,
-					end_date: endDate,
-					end_time: endTime,
+					name: eventData.title,
+					location: location,
+					start_datetime: startDate + ' ' + startTime,
+					end_datetime: endDate + ' ' + endTime,
 					description: eventData.description,
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
 				};
+				console.log(eventDataForBackend);
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/create-event', {
 						method: 'POST',
@@ -271,9 +276,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(eventDataForBackend)
 					});
-					if (resp.ok) {
+
+					if (resp.status === 200) {
+						const data = await resp.json();
+						setStore({ message: data.msg });
+						window.location.href = '/feed';
 						return true;
 					} else {
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error creating event', redirect: '/create-event' });
 						throw new Error('Error creating event');
 					}
 				} catch (error) {
@@ -322,9 +332,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					alert(response.status)
 					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
-						window.location.href = '/signup/profile';
+						setStore({ authProfile: false });
+						setStore({ storeShow: true, alertTitle: 'Register not completed', alertBody: 'Please complete your profile', redirect: '/signup/profile' });
 					}
 					else if (response.status === 200 && unloggedPaths.includes(window.location.pathname)) {
 						setStore({ authProfile: true });
