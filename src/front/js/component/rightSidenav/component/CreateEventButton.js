@@ -5,7 +5,7 @@ import { FaPlusCircle } from 'react-icons/fa';
 export const CreateEventButton = ({ handleClick }) => (
     <Button
         variant="create"
-        className="d-flex align-items-center justify-content-between w-100 rounded-pill m-0 mt-4"
+        className="d-flex align-items-center justify-content-between w-100 rounded-pill m-0 mt-4 position-sticky top-0"
         onClick={handleClick}
     >
         Create New Event

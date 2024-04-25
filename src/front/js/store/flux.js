@@ -1,4 +1,4 @@
-import { BsWindowSidebar } from "react-icons/bs";
+import { redirect } from "react-router-dom";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -7,7 +7,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			publicEvents: [],
 			userProfile: [],
 			auth: false,
-			message: ""
+			authProfile: false,
+			storeShow: false,
+			alertTitle: "",
+			alertBody: "",
+			redirect: "",
+			message: "",
+			isAuthenticated: false,
+      		userData: {},
+      		accessToken: null,
 		},
 		actions: {
 			onCreateEvent: () => {
@@ -29,6 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			login: async (email, password) => {
+				const actions = getActions();
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
 						method: 'POST',
@@ -50,37 +59,70 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+			hideAlert: () => {
+				setStore({ storeShow: false });
+				const store = getStore();
+				store.redirect && window.location.replace(store.redirect);
+			},
+			loginWithGoogle: async (accessToken) => {
+				try {
+				  const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ accessToken })
+				  });
+			  
+				  if (!response.ok) {
+					// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
+					const errorData = await response.json();
+					throw new Error(`Error en la validación del token: ${errorData.message}`);
+				  }
+			  
+				  const userData = await response.json();
+			  
+				  // Almacenar datos del usuario y el token en el store
+				  setStore({
+					isAuthenticated: true,
+					userData: userData,
+					accessToken: accessToken
+				  });
+			  
+				}catch (error) {
+				  
+				}
+			  },
 			validateToken: async () => {
 				const store = getStore();
+				const actions = getActions()
 				const auth = store.auth;
 				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
-				if (!auth && !unloggedPaths.includes(window.location.pathname)) {
-					try {
-						const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-							method: 'GET',
-							headers: {
-								"Content-Type": "application/json",
-								'Authorization': 'Bearer ' + accessToken
-							}
-						});
-						const data = await response.json();
-						setStore({ auth: response.status === 200 });
-						if (response.status !== 200 && window.location.pathname !== '/login') {
-							window.location.href = '/login';
-							alert('Session expired, please log in again');
-
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/valid-token", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
 						}
-						else {
-							const actions = getActions()
-							actions.validateUserProfile()
+					});
+					if (response.status === 200) {
+						setStore({ auth: true });
+						actions.validateUserProfile();
+						return true;
+					} else {
+						setStore({ auth: false })
+						if (!unloggedPaths.includes(window.location.pathname)) {
+							setStore({ storeShow: true, alertTitle: 'Session Expired', alertBody: 'Your session has expired, please log in again', redirect: '/login' })
+							throw new Error('Token is not valid');
+						} else {
+							return false;
 						}
-						
-
-					} catch (error) {
-						console.error('Error validating token:', error);
-						throw new Error('Error validating token: ' + error.message);
 					}
+				} catch (error) {
+					console.error('Error validating token:', error);
+
+					return false;
 				}
 			},
 			resetPassword: async (password, token) => {
@@ -152,6 +194,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: data.msg });
+						setStore({ authProfile: true });
 						return true;
 					} else {
 						throw new Error('Error creating user profile');
@@ -173,6 +216,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (resp.ok) {
 						const newUser = await resp.json();
 						setStore({ users: [...getStore().users, newUser] });
+						const actions = getActions();
+						actions.login(userData.email, userData.password);
 						return true;
 					} else {
 						throw new Error('Error creating user');
@@ -219,13 +264,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			coordinatesToAddress: async (coordinates) => {
 				try {
-					const resp = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + coordinates.lat + ',' + coordinates.lng + '&key=' + process.env.GOOGLE_API);
+					const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinates["lat"]}&lon=${coordinates["lng"]}&zoom=18&addressdetails=1`;
+					const resp = await fetch(url);
 					if (resp.ok) {
 						const data = await resp.json();
-						if (data.status === 'OK') {
-							return data.results[0].formatted_address;
-						} else {
+						if (data.error) {
 							throw new Error('Error converting coordinates to address');
+						} else {
+							return data.display_name;
 						}
 					} else {
 						throw new Error('Error converting coordinates to address');
@@ -236,23 +282,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			createEvent: async (eventData) => {
+				console.log(eventData);
 				const actions = getActions();
 				const startDate = eventData.startDate.split('T')[0];
 				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
 				const endDate = eventData.endDate.split('T')[0];
 				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
-				const location = await actions.coordinatesToAddress(eventData.location);
+				const location = await actions.coordinatesToAddress(eventData.markerPosition);
 				const eventDataForBackend = {
-					name: eventData.name,
-					location,
-					start_date: startDate,
-					start_time: startTime,
-					end_date: endDate,
-					end_time: endTime,
+					name: eventData.title,
+					location: location,
+					start_datetime: startDate + ' ' + startTime,
+					end_datetime: endDate + ' ' + endTime,
 					description: eventData.description,
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
 				};
+				console.log(eventDataForBackend);
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/create-event', {
 						method: 'POST',
@@ -262,9 +308,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(eventDataForBackend)
 					});
-					if (resp.ok) {
+
+					if (resp.status === 200) {
+						const data = await resp.json();
+						setStore({ message: data.msg });
+						window.location.href = '/feed';
 						return true;
 					} else {
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error creating event', redirect: '/create-event' });
 						throw new Error('Error creating event');
 					}
 				} catch (error) {
@@ -303,34 +354,39 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			validateUserProfile: async () => {
-				let accessToken = localStorage.getItem("token")
-				const unloggedPaths = ['/signup/profile', '/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
-				if (!unloggedPaths.includes(window.location.pathname)) {
-					try {
-						
-						const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
-							method: 'GET',
-							headers: {
-								'Authorization': `Bearer ${accessToken}`
-							}
-						});
-					
-						if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
-							
-							window.location.href = '/signup/profile';
-							alert('You need to create a user profile');
-						}
-						else if (response.status == 200) {
-							return true
+				let accessToken = localStorage.getItem("token");
+				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				try {
 
-						} else {
-							throw new Error('Error getting user profile');
+					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
 						}
-					} catch (error) {
-						console.error('Error validating user profile:', error);
-						return false; // Return false if there's an error
+					});
+					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
+						setStore({ authProfile: false });
+						setStore({ storeShow: true, alertTitle: 'Register not completed', alertBody: 'Please complete your profile', redirect: '/signup/profile' });
 					}
+					else if (response.status === 200 && unloggedPaths.includes(window.location.pathname)) {
+						setStore({ authProfile: true });
+						window.location.href = '/feed';
+					} else if (response.status === 200 && !unloggedPaths.includes(window.location.pathname)) {
+						setStore({ authProfile: true });
+					}
+					else if (response.status === 200 && window.location.pathname === '/signup/profile') {
+						setStore({ authProfile: true });
+						window.location.href = '/feed';
+					} else if (response.status !== 200 && window.location.pathname === '/signup/profile') {
+						return false;
+					} else {
+						throw new Error('Error getting user profile');
+					}
+				} catch (error) {
+					console.error('Error validating user profile:', error);
+					return false; // Return false if there's an error
 				}
+
 			},
 
 			getUserProfile: async (token) => {

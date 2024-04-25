@@ -24,6 +24,9 @@ flask-mail = "*"
 googlemaps = "*"
 requests = "*"
 itsdangerous = "*"
+geopy = "*"
+timezonefinder = "*"
+pycountry = "*"
 
 [requires]
 python_version = "3.10"
