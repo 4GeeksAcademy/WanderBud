@@ -12,6 +12,8 @@ import { FeedLayout } from "./pages/FeedLayout";
 import { CreateEvent } from "./component/Events/createEvent";
 import { SignUpProfile } from "./pages/signUp/signUpProfile";
 import { FeedMain } from "./component/mainFeed/feedMain";
+import { Background } from "./pages/backgroundLoading";
+import { ModalAlert } from "./component/modalAlert";
 
 
 
@@ -24,6 +26,7 @@ const Layout = () => {
     return (
         <div>
             <BrowserRouter basename={basename}>
+                <ModalAlert />
                 <ScrollToTop>
                     <Routes>
                         <Route element={<Home />} path="/" />
@@ -31,10 +34,10 @@ const Layout = () => {
                         <Route element={<SignUpProfile />} path="/signup/profile" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
-                        <Route element={<FeedLayout children={<FeedMain />} />} path="/feed" />
-                        <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
+                        <Route element={<FeedLayout children={<FeedMain />} to={"/feed"} />} path="/feed" />
+                        <Route element={<FeedLayout children={<CreateEvent />} to={"/create-event"} />} path="/create-event" />
                         <Route element={<Login />} path="/login" />
-                        <Route element={<h1>Not found!</h1>} />
+                        <Route element={<Background />} path="/*" />
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>

@@ -26,11 +26,14 @@ export const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     console.log(email, password);
-    let logged = await actions.login(email, password);
-    if (logged) {
-      navigate("/feed");
-      actions.validateUserProfile();
+    await actions.login(email, password).then((response) => {
+      if (response) {
+        actions.validateToken()
+      } else {
+        alert("Invalid credentials")
+      }
     }
+    )
   }
 
   return (
