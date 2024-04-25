@@ -516,3 +516,9 @@ a {
 .select-placeholder {
   color: #7D7F82;
 }
+.profile-img{
+  position: absolute;
+  top: 42%;
+  left: 19%;
+  width: 15%;
+}
