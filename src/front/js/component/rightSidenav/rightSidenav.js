@@ -21,7 +21,7 @@ const RightSidenav = () => {
   return (
     <Container>
       <Row>
-        <Col md={12}>
+        <Col md={12} className="mb-5 pb-4">
           <CreateEventButton handleClick={handleClick} />
           <SideAccordion
             extraClass="overflow-hidden"

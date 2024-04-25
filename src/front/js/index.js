@@ -1,16 +1,19 @@
-//import react into the bundle
-import React from "react";
-import ReactDOM from "react-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importado una sola vez
+import "../styles/index.css"; // Tus estilos personalizados
 
-//include your index.scss file into the bundle
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import Layout from './layout'; // Tu componente principal que posiblemente incluye la lógica de inicio de sesión
 
-import "../styles/index.css";
+// La ID del cliente de Google OAuth
+const googleClientId = "467490747977-ibcvrqifhfoj80vm3j3publt6egneu0s.apps.googleusercontent.com";
 
-
-//import your own components
-import Layout from "./layout";
-
-//render your react application
-ReactDOM.render(<Layout />, document.querySelector("#app"));
+// Renderizar tu aplicación React
+ReactDOM.render(
+  <GoogleOAuthProvider clientId={googleClientId}>
+    <Layout />
+  </GoogleOAuthProvider>,
+  document.querySelector("#app")
+);

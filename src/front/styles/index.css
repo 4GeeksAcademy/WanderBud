@@ -64,7 +64,11 @@ body {
 }
 .sidenav-left h1,
 .sidenav-left h2,
-.sidenav-left h3 {
+.sidenav-left h3,
+.modal-content h1,
+.modal-content h2,
+.modal-content h3
+{
   color: #05445e; /* Porcelain */
 }
 .main-feed h1,
@@ -280,6 +284,7 @@ textarea:focus {
   font-size: 1rem;
 }
 .btn-create {
+  z-index: 1000;
   position: sticky;
   background-color: #189ab4; /* Blue Grotto */
   color: #f3f6f6; /* Porcelain */
@@ -288,6 +293,7 @@ textarea:focus {
   font-family: "Lato", sans-serif;
   font-weight: 400; /* Peso normal para subtítulos */
   font-size: 1rem;
+  box-shadow: 0px 0px 5px 2px #052a32a8;; /* Blue Grotto con baja opacidad */
 }
 .btn-create:hover,
 .btn-create:active,
@@ -297,7 +303,7 @@ textarea:focus {
   background-color: #107c91;
   color: #f3f6f6; /* Porcelain */
   border: none;
-  box-shadow: 0px 0px 5px 1px #189ab4; /* Blue Grotto con baja opacidad */
+  box-shadow: 0px 0px 5px 2px #189ab4; /* Blue Grotto con baja opacidad */
 }
 .btn-create:active {
   background-color: #0e6c7d !important; /* Even Darker Blue Grotto */
@@ -401,14 +407,16 @@ a {
 }
 
 /* Contenedores y sidebars */
-.container-card {
+.container-card,
+.modal-content{
   background-color: #f3f6f6;
   border: none;
   font-family: "Roboto", sans-serif;
 }
 
 /* Sombra suave para contenedores con fondo Navy Blue */
-.container-shadow {
+.container-shadow,
+.modal-content {
   box-shadow: 10px 10px 10px 0 #05445e; /* Blue Grotto con baja opacidad */
 }
 
@@ -479,4 +487,34 @@ a {
   justify-content: center;
   max-height: 60%;
   z-index: 1000;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10; /* Asegúrate de que la imagen esté sobre el spinner */
+}
+.modal-content {
+  color: #05445e !important ; /* Navy Blue */
+}
+.create-event input , .create-event textarea , .create-event select, .create-event option {
+  background-color: white;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400; /* Peso normal para subtítulos */
+  font-size: 1rem;
+}
+
+.create-event input:focus, .create-event textarea:focus, .create-event select:focus, .create-event option:focus {
+  border: none;
+  background-color: white;
+  box-shadow: 0px 0px 4px 3px #189ab4; /* Blue Grotto con baja opacidad */
+}
+.select-placeholder {
+  color: #7D7F82;
 }
