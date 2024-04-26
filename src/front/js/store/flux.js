@@ -5,7 +5,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			users: [],
 			publicEvents: [],
+			myPublicEvents: [],
+			joinedPublicEvents: [],
+			publicEventData: {},
+			userProfileData: {},
 			userProfile: [],
+			favorites: [],
 			auth: false,
 			authProfile: false,
 			storeShow: false,
@@ -400,6 +405,88 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.ok) {
 						const data = await response.json();
 						setStore({ userProfile: data.results });
+					} else {
+						throw new Error('Error getting public events');
+					}
+				} catch (error) {
+					console.error('Error getting public events:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+
+			getOneEvent: async (id) => {
+				let accessToken = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-event/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ publicEventData: data });
+					} else {
+						throw new Error('Error getting public events');
+					}
+				} catch (error) {
+					console.error('Error getting public events:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+
+			getPublicUserProfile: async (id) => {
+				let accessToken = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/public-user-profile/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ userProfileData: data.results[0] });
+					} else {
+						throw new Error('Error getting public events');
+					}
+				} catch (error) {
+					console.error('Error getting public events:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+
+			getMyPublicEvents: async (token) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/get-my-events", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ myPublicEvents: data });
+					} else {
+						throw new Error('Error getting public events');
+					}
+				} catch (error) {
+					console.error('Error getting public events:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+			
+			getJoinedPublicEvents: async (token) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/get-joined-events", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ joinedPublicEvents: data });
 					} else {
 						throw new Error('Error getting public events');
 					}

@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import LeftSidenav from '../component/leftSidenav/leftSidenav';
-import { Context } from '../store/appContext';
 import RightSidenav from "../component/rightSidenav/rightSidenav";
-import img from "../../img/WanderBud.png";
+import { Context } from '../store/appContext';
 import { Background } from './backgroundLoading';
 
 export const FeedLayout = ({ children, to }) => {
@@ -30,8 +29,8 @@ export const FeedLayout = ({ children, to }) => {
                     </Col>
                 </Row>
             </Container>
-            :
-            <Background to={to} />
+             :
+             <Background to={to} />
 
     );
 };

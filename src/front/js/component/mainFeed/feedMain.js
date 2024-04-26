@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Nav, Tab } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaPlusCircle } from 'react-icons/fa'
+import { MyEventPublicView } from "./component/myEventPublicView";
 import { EventPublicView } from "./component/eventPublicView";
 
 
@@ -44,7 +45,7 @@ export const FeedMain = ({ children }) => {
                             <p>Content for Tab 2</p>
                         </Tab.Pane>
                         <Tab.Pane eventKey="my-events">
-                            <p>Content for Tab 3</p>
+                            <MyEventPublicView />
                         </Tab.Pane>
                     </Tab.Content>
                 </Row>
