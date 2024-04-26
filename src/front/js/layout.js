@@ -14,7 +14,7 @@ import { SignUpProfile } from "./pages/signUp/signUpProfile";
 import { FeedMain } from "./component/mainFeed/feedMain";
 import { Background } from "./pages/backgroundLoading";
 import { ModalAlert } from "./component/modalAlert";
-import { ProfileContainer } from "./component/profile/profile";
+import { AccountContainer } from "./component/Settings/account";
 
 
 
@@ -36,7 +36,7 @@ const Layout = () => {
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
                         <Route element={<FeedLayout children={<FeedMain />} to={"/feed"} />} path="/feed" />
-                        <Route element={<FeedLayout children={<ProfileContainer />} to={"/profile"} />} path="/profile" />
+                        <Route element={<FeedLayout children={<AccountContainer />} to={"/settings/account"} />} path="/settings/account" />
                         <Route element={<FeedLayout children={<CreateEvent />} to={"/create-event"} />} path="/create-event" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Background />} path="/*" />
