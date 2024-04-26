@@ -6,7 +6,7 @@ from datetime import datetime
 from flask_cors import CORS # type: ignore
 from . import event_bp
 import pytz # type: ignore
-from api.utils_map import get_address_in_radius, addres_to_timezone, get_currency_symbol
+from api.utils_map import get_address_in_radius, get_currency_symbol
 import time
 
 CORS(event_bp)
@@ -216,7 +216,7 @@ def get_event(event_id):
         if event is None:
             return jsonify({"msg": "event not found"}), 404
         
-        event_timezone = coordinates_to_timezone(event.location)['timezone']
+       
 
         owner = User_Profile.query.get(event.owner_id)
         
@@ -277,7 +277,7 @@ def get_my_events():
         events = Event.query.filter_by(owner_id=user.id).all()
         events_list = []
         for event in events:
-            event_timezone = coordinates_to_timezone(event.location)['timezone']
+            
             
             owner = User_Profile.query.get(event.owner_id)
             
@@ -399,14 +399,15 @@ def update_event(event_id):
                 "budget_per_person": 100
             }
         """
+        current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
-        
+        user = User.query.filter_by(email=current_user).first()
         if event is None:
             return jsonify({"msg": "event not found"}), 404
         
         # Check if the current user is the owner of the event
-        current_user = get_jwt_identity()
-        if event.owner_id != current_user:
+       
+        if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
         event.name = request.json.get("name", event.name)
@@ -439,14 +440,16 @@ def delete_event(event_id):
         Returns:
             A JSON response indicating the success or failure of the event deletion.
         """
+        current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
+        user = User.query.filter_by(email=current_user).first()
+
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         
         
         # Check if the current user is the owner of the event
-        current_user = get_jwt_identity()
-        if event.owner_id != current_user:
+        if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
         db.session.delete(event)
