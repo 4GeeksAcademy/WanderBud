@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 
 export const UpdateEvent = () => {
     const { store, actions } = useContext(Context);
-    const { event_id, owner_id} = useParams()
+    const { event_id} = useParams()
     const [eventData, setEventData] = useState({
         title: "",
         budget: 0,
@@ -60,7 +60,7 @@ export const UpdateEvent = () => {
             await actions.updateEvent({
                 ...eventData,
                 event_type_id: eventTypeId[eventData.typeEvent]
-            }, event_id, owner_id);
+            }, event_id);
         } catch (error) {
             console.error("Error creating event:", error);
         }
@@ -72,7 +72,7 @@ export const UpdateEvent = () => {
         <Container fluid className="vh-100 d-flex align-items-start justify-content-center create-event">
             <Row className="w-100">
                 <Col md={12} className="mt-3">
-                    <h2 className="text-center">Create Event</h2>
+                    <h2 className="text-center">Update Event</h2>
                 </Col>
                 <Col md={12} className="mt-5">
                     <Card className="p-4 row flex-row h-100 container-card container-shadow">
@@ -172,7 +172,7 @@ export const UpdateEvent = () => {
                             {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
                         <Button variant="primary" onClick={createEventHandler}>
-                            Create Event
+                            Update Event
                         </Button>
                     </Card>
                 </Col>

@@ -34,9 +34,7 @@
 
 #event-private{
     background-color: #189ab4;
-    width: 1000px;
-    height: 550px;
-    margin: auto; 
+    height: 120vh;
 }
 
 #event-private h1{

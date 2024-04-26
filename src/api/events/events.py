@@ -342,14 +342,20 @@ def get_event_by_radius():
                     
             }
         """
-        user_location = request.json.get("location", None)
-        radius = request.json.get("radius", None)
+        user_location = request.args.get("location")
+        radius = float(request.args.get("radius"))
+        print(user_location)
+        print(radius)
+
         events = Event.query.all()
+        
         events_address = [event.location for event in events]
         events_list_address = get_address_in_radius(user_location, radius, events_address)
+
         events_list = []
         for event in events:
             if event.location in events_list_address:
+                owner = User_Profile.query.get(event.owner_id)
                 print(event.location)
                 event_details = {
                     "id": event.id,
@@ -544,14 +550,19 @@ def get_joined_events():
         """
         current_user = get_jwt_identity()
         user = User.query.filter_by(email=current_user).first()
-        joined_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id, Event_Member.member_status == "Joined").all()
+        joined_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id, Event_Member.member_status == "Accepted").all()
         joined_events_list = []
         for event in joined_events:
+            owner = User_Profile.query.get(event.owner_id)
             event_timezone = event.start_datetime.strftime("%Z")
             event_details = {
                 "id": event.id,
                 "name": event.name,
-                "owner": event.owner_id,
+                "owner": {
+                    "name": owner.name if owner else None,  # Handle potential missing owner
+                    "profile_image": owner.profile_image if owner else None,
+                    "user_id":owner.user_id if owner else None
+                },
                 "location": event.location,
                 "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
@@ -561,7 +572,7 @@ def get_joined_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
-                "budget_per_person": str(event.budget_per_person) + get_currency_symbol(event.location)
+                "budget_per_person": str(event.budget_per_person)
             }
             joined_events_list.append(event_details)
             

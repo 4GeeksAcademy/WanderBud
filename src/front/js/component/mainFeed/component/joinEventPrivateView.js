@@ -4,21 +4,31 @@ import { useParams } from "react-router-dom";
 import { Context } from "../../../store/appContext";
 import LeftSidenav from "../../leftSidenav/leftSidenav";
 import RightSidenav from "../../rightSidenav/rightSidenav";
-import { useNavigate } from "react-router-dom";
 
 
-export const MyEventPrivateView = () => {
+export const JoinEventPrivateView = () => {
 
   const { store, actions } = useContext(Context)
   const { event_id, owner_id } = useParams();
-  const navigate = useNavigate()
 
   useEffect(() => {
     actions.getOneEvent(event_id)
     actions.getPublicUserProfile(owner_id)
+
+    // actions.getJoinedPublicEvents();
+    // actions.getMyPublicEvents();
+    // actions.getPublicEvents();
   }, [])
 
+  const sendRequest = (event_id) => {
+    actions.requestJoinEvent(event_id);
+    alert("quiero tener amigos!!!")
+  }
 
+  
+  // const forYouData = store.publicEvents
+  // const myEventsData = store.myPublicEvents
+  // const joinedData = store.joinedPublicEvents
   const eventData = store.publicEventData
   const ownerData = store.userProfileData
 
@@ -29,11 +39,11 @@ export const MyEventPrivateView = () => {
           <LeftSidenav />
         </Col>
         <Col md={6} className="p-0 h-100">
-          <Row id="event-private">
-            {/* {forYouData.id == eventData.id && <h1>For you</h1>}
+          <Row id="event-private">          
+              {/* {forYouData.id == eventData.id && <h1>For you</h1>}
               {myEventsData.id == eventData.id && <h1>My Events</h1>}
               {joinedData.id == eventData.id && <h1>Joined</h1>} */}
-
+            
             <Col md={12} className="p-5 ">
               <h1 className="text-center">{eventData.name}</h1>
               <Row id="event-userRow" className="mt-4 ms-1">
@@ -64,12 +74,18 @@ export const MyEventPrivateView = () => {
                   </Card.Text>
                 </Col>
                 <Col md={6} className="d-flex justify-content-center">
-                  <Button
-                    variant="primary"
-                    onClick={() => navigate(`/update-event/${event_id}`)}
-                  >
-                    {"Edit Event"}
-                  </Button>
+                  <div className="dropdown">
+                    <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                      Event Request
+                    </button>
+                    <form className="dropdown-menu p-4">
+                      <div className="mb-3">
+                        <label for="exampleDropdownFormEmail2" className="form-label">Contact the event creator</label>
+                        <input type="text" className="form-control" id="exampleDropdownFormEmail2" placeholder="I am interested in joining the event..." />
+                      </div>
+                      <button type="submit" className="btn btn-primary" onClick={sendRequest}>Send</button>
+                    </form>
+                  </div>
                 </Col>
               </Row>
             </Col>

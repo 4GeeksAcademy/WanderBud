@@ -154,16 +154,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getPublicEvents: async () => {
 				const accessToken = localStorage.getItem("token")
+				const radius = 10000;
+				const location = encodeURIComponent("Carrer de Simancas 50, Hospitalet de Llobregat, Spain");
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/get-event-by-radius", {
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&location=${location}`, {
 						method: 'GET',
 						headers: {
 							'Authorization': `Bearer ${accessToken}`
 						},
-						body: JSON.stringify({
-							"radius": 10000,
-               			    "location": "Carrer de Simancas 50, Hospitalet de Llobregat, Spain"
-						})
 					});
 					if (response.ok) {
 						const data = await response.json();
@@ -461,12 +459,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			getMyPublicEvents: async (token) => {
+			getMyPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-my-events", {
 						method: 'GET',
 						headers: {
-							'Authorization': `Bearer ${token}`
+							'Authorization': `Bearer ${accessToken}`
 						}
 					});
 					if (response.ok) {
@@ -481,16 +480,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			
-			getJoinedPublicEvents: async (token) => {
+			getJoinedPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-joined-events", {
 						method: 'GET',
 						headers: {
-							'Authorization': `Bearer ${token}`
+							'Authorization': `Bearer ${accessToken}`
 						}
 					});
 					if (response.ok) {
 						const data = await response.json();
+						console.log(data)
 						setStore({ joinedPublicEvents: data });
 					} else {
 						throw new Error('Error getting public events');
@@ -501,7 +502,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			updateEvent: async (eventData, event_id, user_id) => {
+			updateEvent: async (eventData, event_id) => {
 				console.log(eventData);
 				const actions = getActions();
 				const startDate = eventData.startDate.split('T')[0];
@@ -520,7 +521,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 				console.log(eventDataForBackend);
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}/${user_id}`, {
+					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import { Context } from "../../../store/appContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-export const MyEventPublicView = () => {
+export const JoinEventPublicView = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate()
     const [buttonStates, setButtonStates] = useState({});
@@ -13,7 +13,7 @@ export const MyEventPublicView = () => {
     console.log(store.joinedPublicEvents)
 
     useEffect(() => {
-        actions.getMyPublicEvents();
+        actions.getJoinedPublicEvents();
     }, []);
 
   
@@ -21,14 +21,13 @@ export const MyEventPublicView = () => {
     return (
         <>
             <Row className="flex-column">
-                {store.myPublicEvents.reverse().map((item, index) => (
+                {store.joinedPublicEvents.reverse().map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
-                        
                             <Card className="h-100">
                                 <Card.Body>
                                     <Row className="justify-content-between">
                                         <Col xs={9}>
-                                        <Link to={`/myevent-view/${item.id}/${item.owner.user_id}`}>
+                                        <Link to={`/joinevent-view/${item.id}/${item.owner.user_id}`}>
                                             <Card.Title className="p-3"><h4>{item.name}</h4></Card.Title>
                                             </Link>
                                         </Col>
@@ -52,12 +51,12 @@ export const MyEventPublicView = () => {
                                                 <Card.Title >{item.owner.name}</Card.Title>
                                             </Col>
                                             <Col xs={4} id="event-userButton">
-                                                {/* <Button
+                                                <Button
                                                     variant="secondary"
                                                 // onClick={() => navigate(`/myevent-view/${item.id}/${item.owner.user_id}`)}
                                                 >
                                                     {"Visit Profile"}
-                                                </Button> */}
+                                                </Button>
                                             </Col>
                                         </Row>
                                     </Row>
