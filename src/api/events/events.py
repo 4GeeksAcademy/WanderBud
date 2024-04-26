@@ -373,9 +373,9 @@ def get_event_by_radius():
         return jsonify({"msg": "error retrieving events",
                         "error": str(e)}), 500
         
-@event_bp.route("/update-event/<int:event_id>", methods=["PUT"])
+@event_bp.route("/update-event/<int:event_id>/<int:user_id>", methods=["PUT"])
 @jwt_required()
-def update_event(event_id):
+def update_event(event_id, user_id):
     try:
         """
         Update a specific event.
@@ -400,13 +400,14 @@ def update_event(event_id):
             }
         """
         event = Event.query.filter_by(id=event_id).first()
-        
+        user = User.query.filter_by(id=user_id).first()
         if event is None:
             return jsonify({"msg": "event not found"}), 404
         
         # Check if the current user is the owner of the event
         current_user = get_jwt_identity()
-        if event.owner_id != current_user:
+        print(current_user)
+        if user.email != current_user:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
         event.name = request.json.get("name", event.name)
@@ -424,9 +425,9 @@ def update_event(event_id):
         return jsonify({"msg": "error updating event",
                         "error": str(e)}), 500
         
-@event_bp.route("/delete-event/<int:event_id>", methods=["DELETE"])
+@event_bp.route("/delete-event/<int:event_id>/<int:user_id>", methods=["DELETE"])
 @jwt_required()
-def delete_event(event_id):
+def delete_event(event_id, user_id):
     try:
         """
         Delete a specific event.
@@ -440,13 +441,14 @@ def delete_event(event_id):
             A JSON response indicating the success or failure of the event deletion.
         """
         event = Event.query.filter_by(id=event_id).first()
+        user = User.query.filter_by(id=user_id).first()
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         
         
         # Check if the current user is the owner of the event
         current_user = get_jwt_identity()
-        if event.owner_id != current_user:
+        if user.email != current_user:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
         db.session.delete(event)
