@@ -28,8 +28,14 @@ const injectContext = PassedComponent => {
 			 * you should do your ajax requests or fetch api requests here. Do not use setState() to save data in the
 			 * store, instead use actions, like this:
 			 **/
-			state.actions.validateToken();
-			
+			state.actions.validateToken().then((resp) => {
+				if (resp) {
+					state.actions.getUserProfile();
+					state.actions.getUserAccount();
+					state.actions.getEventTypes();
+				}
+			});
+
 		}, []);
 
 		// The initial value for the context is not null anymore, but the current state of this component,

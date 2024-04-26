@@ -58,6 +58,7 @@ class User_Profile(db.Model):
     location = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(500), nullable=False)
     profile_image = db.Column(db.String(250), nullable=False)
+    cover_image = db.Column(db.String(250), nullable=True)
 
     def __repr__(self):
         return f'<User_Profile ID{self.user_id} {self.name}>'
@@ -69,7 +70,8 @@ class User_Profile(db.Model):
             "birthdate": self.birthdate,
             "location": self.location,
             "description": self.description,
-            "profile_image": self.profile_image
+            "profile_image": self.profile_image,
+            "cover_image": self.cover_image
         }
 
 
