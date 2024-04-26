@@ -23,15 +23,17 @@ export const MyEventPublicView = () => {
             <Row className="flex-column">
                 {store.myPublicEvents.reverse().map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
-                        <Link to={`/event-view/${item.id}/${item.owner.user_id}`}>
+                        
                             <Card className="h-100">
                                 <Card.Body>
                                     <Row className="justify-content-between">
                                         <Col xs={9}>
+                                        <Link to={`/event-view/${item.id}/${item.owner.user_id}`}>
                                             <Card.Title className="p-3"><h4>{item.name}</h4></Card.Title>
+                                            </Link>
                                         </Col>
                                         <Col xs={3}>
-                                            <Button
+                                            {/* <Button
                                                 variant="primary"
                                                 onClick={(e) => {
                                                     e.stopPropagation(); // Evita que el clic se propague al Link
@@ -40,7 +42,7 @@ export const MyEventPublicView = () => {
                                                 }}
                                             >
                                                 {"Add to favorites"}
-                                            </Button>
+                                            </Button> */}
                                         </Col>
                                         <Row id="event-userRow" className="mt-2 ms-1">
                                             <Col xs={2}>
@@ -70,7 +72,7 @@ export const MyEventPublicView = () => {
                                 </Card.Body>
                                 <Card.Footer className="border"></Card.Footer>
                             </Card>
-                        </Link>
+                       
                     </Col>
                 ))}
             </Row>

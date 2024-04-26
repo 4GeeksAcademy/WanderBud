@@ -10,11 +10,10 @@ export const EventPublicView = () => {
     
 
     useEffect(() => {
-        let token = localStorage.getItem("token");
-        actions.getPublicEvents(token);
+        actions.getPublicEvents();
     }, []);
 
-  
+  console.log(store.publicEvents);
 
     return (
         <>

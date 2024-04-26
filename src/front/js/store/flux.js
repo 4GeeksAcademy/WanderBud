@@ -152,13 +152,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			getPublicEvents: async (token) => {
+			getPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/get-all-events", {
+					const response = await fetch(process.env.BACKEND_URL + "/api/get-event-by-radius", {
 						method: 'GET',
 						headers: {
-							'Authorization': `Bearer ${token}`
-						}
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify({
+							"radius": 10000,
+               			    "location": "Carrer de Simancas 50, Hospitalet de Llobregat, Spain"
+						})
 					});
 					if (response.ok) {
 						const data = await response.json();
@@ -495,6 +500,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
+
+			updateEvent: async (eventData, event_id, user_id) => {
+				console.log(eventData);
+				const actions = getActions();
+				const startDate = eventData.startDate.split('T')[0];
+				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
+				const endDate = eventData.endDate.split('T')[0];
+				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
+				const location = await actions.coordinatesToAddress(eventData.markerPosition);
+				const eventDataForBackend = {
+					name: eventData.title,
+					location: location,
+					start_datetime: startDate + ' ' + startTime,
+					end_datetime: endDate + ' ' + endTime,
+					description: eventData.description,
+					event_type_id: parseInt(eventData.event_type_id) + 1,
+					budget_per_person: parseInt(eventData.budget),
+				};
+				console.log(eventDataForBackend);
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}/${user_id}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + localStorage.getItem('token')
+						},
+						body: JSON.stringify(eventDataForBackend)
+					});
+
+					if (resp.status === 200) {
+						const data = await resp.json();
+						setStore({ message: data.msg });
+						window.location.href = '/feed';
+						return true;
+					} else {
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error creating event', redirect: '/create-event' });
+						throw new Error('Error creating event');
+					}
+				} catch (error) {
+					console.error('Error creating event:', error);
+					return false;
+				}
+			},
+
 
 		}
 	};

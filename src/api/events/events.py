@@ -354,6 +354,11 @@ def get_event_by_radius():
                 event_details = {
                     "id": event.id,
                     "name": event.name,
+                    "owner": {
+                    "name": owner.name if owner else None,  # Handle potential missing owner
+                    "profile_image": owner.profile_image if owner else None,
+                    "user_id":owner.user_id if owner else None
+                },
                     "location": event.location,
                     "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                     "start_time": event.start_datetime.strftime("%H:%M:%S"),
