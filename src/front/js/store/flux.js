@@ -154,9 +154,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getPublicEvents: async () => {
 				const accessToken = localStorage.getItem("token")
-				const radius = 10000;
-				const location = encodeURIComponent("Carrer de Simancas 50, Hospitalet de Llobregat, Spain");
+				const radius = 1000;
 				try {
+					const locationResponse = await fetch('https://freeipapi.com/api/json');
+					const locationData = await locationResponse.json();
+					const location = encodeURIComponent(`${locationData.cityName}, ${locationData.countryName}`)
+					console.log(location)
 					const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&location=${location}`, {
 						method: 'GET',
 						headers: {

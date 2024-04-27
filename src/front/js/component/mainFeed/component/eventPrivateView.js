@@ -29,8 +29,10 @@ export const EventPrivateView = () => {
 
   const eventData = store.publicEventData
   const ownerData = store.userProfileData
-  const requestMessage = store.message
+  const requestMessage = store.joinedPublicEvents
   console.log(requestMessage)
+  console.log(ownerData)
+  console.log(eventData)
 
   return (
     <Container fluid className='feed-container'>
