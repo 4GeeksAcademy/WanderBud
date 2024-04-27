@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { FaHome, FaUser } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarButton from './component/SidebarButton';
 import SettingsButton from './component/SettingsButton';
+import { Context } from '../../store/appContext';
 
 const LeftSidenav = ({ changeContent }) => {
+    const { store, actions } = useContext(Context);
     const [path, setPath] = useState(null);
     const [settingsOptions, setSettingsOptions] = useState("w-100 d-flex align-content-end flex-column d-none");
     const [settings, setSettings] = useState("btn setting-container w-75 p-0");
     const [settingsBtn, setSettingsBtn] = useState("");
+    const userID = store.userAccount.id;
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -50,7 +53,7 @@ const LeftSidenav = ({ changeContent }) => {
             </Navbar.Brand>
             <Nav className="p-0 d-flex flex-column w-100 justify-content-start align-items-center h-100">
                 <SidebarButton to='/feed' icon={<FaHome className='me-2' />} text='Feed' w="75" variant={'sidenav'} handlePath={handlePath} />
-                <SidebarButton to='/profile' icon={<FaUser className='me-2' />} text='Profile' w="75" variant={'sidenav'} handlePath={handlePath} />
+                <SidebarButton to={'/profile/' + userID} icon={<FaUser className='me-2' />} text='Profile' w="75" variant={'sidenav'} handlePath={handlePath} />
                 <SettingsButton settings={settings} settingsBtn={settingsBtn} handleSettings={handleSettings} settingsOptions={settingsOptions} handlePath={handlePath} handleLogout={handleLogout} />
             </Nav>
         </Navbar>

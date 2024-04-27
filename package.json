@@ -85,6 +85,7 @@
 		"core-js": "^3.37.0",
 		"date-fns": "^3.6.0",
 		"gapi-script": "^1.2.0",
+		"pexels": "^1.4.0",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-axios": "^2.0.6",

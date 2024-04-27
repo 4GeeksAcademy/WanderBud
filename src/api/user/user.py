@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, url_for
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.models import db, User, User_Profile
+from api.models import db, User, User_Profile, Event, Event_Member
 from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
@@ -141,29 +141,6 @@ def create_user_profile():
         db.session.commit()
         return jsonify({"msg": "user profile successfully created"}), 200
 
-
-
-
-@user_bp.route("/profile-view", methods=["GET"])
-@jwt_required()
-def get_profile_view():
-    current_user = get_jwt_identity()
-    user = User.query.filter_by(email=current_user).first()
-    query_results = User_Profile.query.filter_by(user_id=user.id)
-    results = list(map(lambda item: item.serialize(), query_results))
-    print(results)
-    if user is None:
-        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
-            
-    if query_results.first() is None: 
-        return jsonify({"msg": "this user does not have a profile yet"}), 404 
-    response_body = {
-        "msg": "ok",
-        "results": results
-    }
-    return jsonify(response_body), 200
-
-
 @user_bp.route("/update-profile", methods=["PUT"])
 @jwt_required()
 def update_user_profile():
@@ -177,35 +154,76 @@ def update_user_profile():
     else: 
         
             
-        user_profile.name=data["name"],
-        user_profile.last_name=data["last_name"],
-        user_profile.birthdate=data["birthdate"],
-        user_profile.location=data["location"],
-        user_profile.description=data["description"],
-        user_profile.profile_image=data["profile_image"]
+        user_profile.name = data.get("name")
+        user_profile.last_name = data.get("last_name")
+        user_profile.birthdate = data.get("birthdate")
+        user_profile.location = data.get("location")
+        user_profile.description = data.get("description")
+        user_profile.profile_image = data.get("profile_image")
+        user_profile.cover_image = data.get("cover_image")
         
        
         db.session.commit()
         return jsonify({"msg": "user profile successfully updated"}), 200
 
-@user_bp.route("/public-user-profile/<int:user_id>", methods=["GET"])
+@user_bp.route("/user-profile/<int:user_id>", methods=["GET"])
 @jwt_required()
 def get_public_user_profile(user_id):
     current_user = get_jwt_identity()
     user = User.query.filter_by(email=current_user).first()
-    query_results = User_Profile.query.filter_by(user_id=user_id)
-    results = list(map(lambda item: item.serialize(), query_results))
-    print(query_results)
-    print(results)
+    user_profile = User_Profile.query.filter_by(user_id=user_id).first()
     if user is None:
         return jsonify({"msg": "this user does not exist or is not logged in"}), 404
             
-    if query_results.first() is None: 
+    if user_profile is None: 
         return jsonify({"msg": "this user does not have a profile yet"}), 404 
     response_body = {
         "msg": "ok",
-        "results": results
+        "results": user_profile.serialize()
     }
     return jsonify(response_body), 200
+@user_bp.route("/user-account", methods=["GET"])
+@jwt_required()
+def get_user_account():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    response_body = user.serialize()
+    return jsonify(response_body), 200
+@user_bp.route("/update-user", methods=["PUT"])
+@jwt_required()
+def update_user():
+    current_user = get_jwt_identity()
+    data = request.json
+    user = User.query.filter_by(email=current_user).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    user.email = data["email"]
+    user.password = data["password"]
+    db.session.commit()
+    return jsonify({"msg": "user successfully updated"}), 200
+
+@user_bp.route("/delete-user", methods=["DELETE"])
+@jwt_required()
+def delete_user():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    user_membership = Event_Member.query.filter_by(user_id=user.id).all()
+    for membership in user_membership:
+        db.session.delete(membership)
+    user_events = Event.query.filter_by(owner_id=user.id).all()
+    for event in user_events:
+        members = Event_Member.query.filter_by(event_id=event.id).all()
+        for member in members:
+            db.session.delete(member)
+        db.session.delete(event)
+    user_profile = User_Profile.query.filter_by(user_id=user.id).first()
+    db.session.delete(user_profile)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"msg": "user successfully deleted"}), 200
 
 

@@ -62,6 +62,9 @@ body {
   color: #05445e;
   box-shadow: 0px 0px 12px 4px #189ab42e;
 }
+.container-card h1,
+.container-card h2,
+.container-card h3,
 .sidenav-left h1,
 .sidenav-left h2,
 .sidenav-left h3,
@@ -517,4 +520,33 @@ a {
 }
 .select-placeholder {
   color: #7D7F82;
+}
+#profile-img{
+  background-color: transparent;
+  position: relative;
+  width: 30%;
+  margin-left: 1%;
+  z-index: 100;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  padding: 2px;
+  border: #189ab4 solid 5px; /* Blue Grotto */
+}
+.profile-banner{
+  aspect-ratio: 600/200;
+  width: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+.profile-container{
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+}
+.span-container{
+  font-size: 0.8rem;
+  color: #7D7F82;
+}
+.hidden{
+  visibility: hidden;
 }
