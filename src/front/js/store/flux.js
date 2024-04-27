@@ -440,7 +440,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						setStore({ publicEventData: data });
+						return data;
 					} else {
 						throw new Error('Error getting public events');
 					}
@@ -469,7 +469,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			
+
 			getJoinedPublicEvents: async () => {
 				const accessToken = localStorage.getItem("token")
 				try {
@@ -640,7 +640,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error('Error updating user profile:', error);
 					return false;
 				}
-			}
+			},
+			getOwnerRequest: async () => {
+				const accessToken = localStorage.getItem('token')
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/get-owner-request', {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ ownerRequest: data });
+					} else {
+						throw new Error('Error getting owner request');
+					}
+				} catch (error) {
+					console.error('Error getting owner request:', error);
+					return [];
+				}
+
+			},
+			getUserRequest: async () => {
+				const accessToken = localStorage.getItem('token')
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/get-user-request', {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ userRequest: data });
+					} else {
+						throw new Error('Error getting user request');
+					}
+				} catch (error) {
+					console.error('Error getting user request:', error);
+					return [];
+				}
+
+			},
 
 
 		}
