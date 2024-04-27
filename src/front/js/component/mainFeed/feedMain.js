@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaPlusCircle } from 'react-icons/fa'
 import { MyEventPublicView } from "./component/myEventPublicView";
 import { EventPublicView } from "./component/eventPublicView";
+import { JoinEventPublicView } from "./component/joinEventPublicView";
 
 
 
@@ -42,7 +43,7 @@ export const FeedMain = ({ children }) => {
                             <EventPublicView />
                         </Tab.Pane>
                         <Tab.Pane eventKey="Joined">
-                            <p>Content for Tab 2</p>
+                            <JoinEventPublicView />
                         </Tab.Pane>
                         <Tab.Pane eventKey="my-events">
                             <MyEventPublicView />

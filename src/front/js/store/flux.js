@@ -159,13 +159,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			getPublicEvents: async (token) => {
+			getPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
+				const radius = 1000;
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/get-all-events", {
+					const locationResponse = await fetch('https://freeipapi.com/api/json');
+					const locationData = await locationResponse.json();
+					const location = encodeURIComponent(`${locationData.cityName}, ${locationData.countryName}`)
+					console.log(location)
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&location=${location}`, {
 						method: 'GET',
 						headers: {
-							'Authorization': `Bearer ${token}`
-						}
+							'Authorization': `Bearer ${accessToken}`
+						},
 					});
 					if (response.ok) {
 						const data = await response.json();
@@ -443,12 +449,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			getMyPublicEvents: async (token) => {
+			getMyPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-my-events", {
 						method: 'GET',
 						headers: {
-							'Authorization': `Bearer ${token}`
+							'Authorization': `Bearer ${accessToken}`
 						}
 					});
 					if (response.ok) {
@@ -462,17 +469,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-
-			getJoinedPublicEvents: async (token) => {
+			
+			getJoinedPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-joined-events", {
 						method: 'GET',
 						headers: {
-							'Authorization': `Bearer ${token}`
+							'Authorization': `Bearer ${accessToken}`
 						}
 					});
 					if (response.ok) {
 						const data = await response.json();
+						console.log(data)
 						setStore({ joinedPublicEvents: data });
 					} else {
 						throw new Error('Error getting public events');
@@ -482,6 +491,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
+
+			updateEvent: async (eventData, event_id) => {
+				console.log(eventData);
+				const actions = getActions();
+				const startDate = eventData.startDate.split('T')[0];
+				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
+				const endDate = eventData.endDate.split('T')[0];
+				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
+				const location = await actions.coordinatesToAddress(eventData.markerPosition);
+				const eventDataForBackend = {
+					name: eventData.title,
+					location: location,
+					start_datetime: startDate + ' ' + startTime,
+					end_datetime: endDate + ' ' + endTime,
+					description: eventData.description,
+					event_type_id: parseInt(eventData.event_type_id) + 1,
+					budget_per_person: parseInt(eventData.budget),
+				};
+				console.log(eventDataForBackend);
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + localStorage.getItem('token')
+						},
+						body: JSON.stringify(eventDataForBackend)
+					});
+
+					if (resp.status === 200) {
+						const data = await resp.json();
+						setStore({ message: data.msg });
+						window.location.href = '/feed';
+						return true;
+					} else {
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error creating event', redirect: '/create-event' });
+						throw new Error('Error creating event');
+					}
+				} catch (error) {
+					console.error('Error creating event:', error);
+					return false;
+				}
+			},
+
 			getUserAccount: async () => {
 				const accesToken = localStorage.getItem("token");
 				try {

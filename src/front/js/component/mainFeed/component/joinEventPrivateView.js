@@ -6,33 +6,31 @@ import LeftSidenav from "../../leftSidenav/leftSidenav";
 import RightSidenav from "../../rightSidenav/rightSidenav";
 
 
-export const EventPrivateView = () => {
+export const JoinEventPrivateView = () => {
 
   const { store, actions } = useContext(Context)
   const { event_id, owner_id } = useParams();
-  const [text, setText] = useState("")
-  console.log(event_id);
-  console.log(text);
 
-  
   useEffect(() => {
     actions.getOneEvent(event_id)
     actions.getPublicUserProfile(owner_id)
+
+    // actions.getJoinedPublicEvents();
+    // actions.getMyPublicEvents();
+    // actions.getPublicEvents();
   }, [])
 
+  const sendRequest = (event_id) => {
+    actions.requestJoinEvent(event_id);
+    alert("quiero tener amigos!!!")
+  }
 
-  // const sendRequest = (event_id) => {
-  //   ;
-  //   alert("quiero tener amigos!!!")
-  // }
-
-
+  
+  // const forYouData = store.publicEvents
+  // const myEventsData = store.myPublicEvents
+  // const joinedData = store.joinedPublicEvents
   const eventData = store.publicEventData
   const ownerData = store.userProfileData
-  const requestMessage = store.joinedPublicEvents
-  console.log(requestMessage)
-  console.log(ownerData)
-  console.log(eventData)
 
   return (
     <Container fluid className='feed-container'>
@@ -42,6 +40,10 @@ export const EventPrivateView = () => {
         </Col>
         <Col md={6} className="p-0 h-100">
           <Row id="event-private">          
+              {/* {forYouData.id == eventData.id && <h1>For you</h1>}
+              {myEventsData.id == eventData.id && <h1>My Events</h1>}
+              {joinedData.id == eventData.id && <h1>Joined</h1>} */}
+            
             <Col md={12} className="p-5 ">
               <h1 className="text-center">{eventData.name}</h1>
               <Row id="event-userRow" className="mt-4 ms-1">
@@ -73,15 +75,15 @@ export const EventPrivateView = () => {
                 </Col>
                 <Col md={6} className="d-flex justify-content-center">
                   <div className="dropdown">
-                    <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style={{width: "320px"}}>
-                      {requestMessage ? "Pending" : "Event Request"}
+                    <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                      Event Request
                     </button>
-                    <form className="dropdown-menu p-2" style={{width: "312px", height:"300px"}}>
+                    <form className="dropdown-menu p-4">
                       <div className="mb-3">
                         <label for="exampleDropdownFormEmail2" className="form-label">Contact the event creator</label>
-                        <textarea type="text" className="form-control" id="exampleDropdownFormEmail2" style={{height:"200px"}} onChange={(e) => setText(e.target.value)} value={text} />
+                        <input type="text" className="form-control" id="exampleDropdownFormEmail2" placeholder="I am interested in joining the event..." />
                       </div>
-                      <button type="submit" className="btn btn-primary" onClick={() =>actions.requestJoinEvent(event_id)}>Send</button>
+                      <button type="submit" className="btn btn-primary" onClick={sendRequest}>Send</button>
                     </form>
                   </div>
                 </Col>
