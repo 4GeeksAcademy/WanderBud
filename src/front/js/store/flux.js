@@ -13,6 +13,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				password: "",
 				id: ""
 			},
+			ownerRequest: [],
+			userRequest: [],
+			groupChat: [],
 			favorites: [],
 			auth: false,
 			authProfile: false,
@@ -652,6 +655,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
+						console.log(data);
 						setStore({ ownerRequest: data });
 					} else {
 						throw new Error('Error getting owner request');
@@ -673,6 +677,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
+						console.log(data);
 						setStore({ userRequest: data });
 					} else {
 						throw new Error('Error getting user request');
@@ -683,6 +688,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 
 			},
+			getGroupChat: async () => {
+				const accessToken = localStorage.getItem('token')
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/get-group-chat', {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ groupChat: data });
+					} else {
+						throw new Error('Error getting group chat');
+					}
+				} catch (error) {
+					console.error('Error getting group chat:', error);
+					return [];
+				}
+
+			}
 
 
 		}

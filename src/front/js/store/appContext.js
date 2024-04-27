@@ -33,6 +33,9 @@ const injectContext = PassedComponent => {
 					state.actions.getUserProfile();
 					state.actions.getUserAccount();
 					state.actions.getEventTypes();
+					state.actions.getOwnerRequest();
+					state.actions.getUserRequest();
+					state.actions.getGroupChat();
 				}
 			});
 

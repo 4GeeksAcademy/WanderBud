@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ApplyCard } from "../cards/ApplyCard";
 import { RequestsCard } from "../cards/RequestCard";
 import { GroupCard } from "../cards/GroupsCard";
+import Spinner from "react-bootstrap/Spinner";
+import { Context } from "../../../../store/appContext";
 
 export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scrollbar }) => {
+    const { store, actions } = useContext(Context);
     const startDate = new Date().toLocaleDateString();
     const endDate = new Date().toLocaleDateString();
     const eventdate = `${startDate}${startDate === endDate ? "" : ` ${endDate}`}`;
@@ -20,13 +23,15 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
                     <div className="accordion-body m-0 p-0">
                         {title !== "Solicitudes Owner" ? (
                             title === "Solicitudes Enviadas" ?
-                                <>
-                                    <ApplyCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} chatId={1} />
-                                    <ApplyCard username={"Osian Lezcano"} eventname={"Alone in my House :("} img={"https://ca.slack-edge.com/T0BFXMWMV-U064ZSVS678-877ce3b7e9a7-512"} chatId={2} />
-                                    <ApplyCard username={"Osian Lezcano"} eventname={"Alone in my House :("} img={"https://ca.slack-edge.com/T0BFXMWMV-U064ZSVS678-877ce3b7e9a7-512"} chatId={2} />
-                                    <ApplyCard username={"Osian Lezcano"} eventname={"Alone in my House :("} img={"https://ca.slack-edge.com/T0BFXMWMV-U064ZSVS678-877ce3b7e9a7-512"} chatId={2} />
-                                    <ApplyCard username={"Osian Lezcano"} eventname={"Alone in my House :("} img={"https://ca.slack-edge.com/T0BFXMWMV-U064ZSVS678-877ce3b7e9a7-512"} chatId={2} />
-                                </>
+                                (store.userRequest.length !== 0 ?
+                                    <>(Array.isArray(store.userRequest)  ?
+                                        ({store.userRequest.map((item, index) => (
+                                            <ApplyCard username={item.member_name + " " + item.member_last_name} eventname={item.name} img={item.member_img} member_id={item.member_id} chatId={item.private_chat_id} />
+                                        ))}): <p>No hay Solicitudes</p>
+                                        )
+                                    </>
+                                    : <Spinner animation="border" variant="light" />
+                                )
                                 :
                                 <>
                                     <GroupCard eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} eventdate={eventdate} />
@@ -38,12 +43,15 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
                                 </>
                         ) :
                             <>
-                                <RequestsCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} />
-                                <RequestsCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} />
-                                <RequestsCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} />
-                                <RequestsCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} />
-                                <RequestsCard username={"Bruno Murua"} eventname={"Dune 2 at the Cinema"} img={"https://media.licdn.com/dms/image/D4D03AQHepyIMxVGZ6A/profile-displayphoto-shrink_800_800/0/1703165598705?e=1719446400&v=beta&t=G3Qe-5D8glPTTi5Ovn20LKlI4no3y6qNuPucDm6ZaNU"} />
-                                <RequestsCard username={"Osian Lezcano"} eventname={"Alone in my House :("} img={"https://ca.slack-edge.com/T0BFXMWMV-U064ZSVS678-877ce3b7e9a7-512"} />
+                                (store.ownerRequest.length !== 0 ?
+                                <>
+                                    {store.ownerRequest.map((item, index) => (
+                                        <ApplyCard username={item.member_name + " " + item.member_last_name} eventname={item.name} img={item.member_img} member_id={item.member_id} chatId={item.private_chat_id} />
+                                    ))}
+
+                                </>
+                                : <Spinner animation="border" variant="light" />
+                                )
                             </>}
                     </div>
                 </div>

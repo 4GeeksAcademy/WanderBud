@@ -232,7 +232,7 @@ def get_event(event_id):
         
         event_details = {
             "id": event.id,
-                "name": event.name,
+            "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
                     "profile_image": owner.profile_image if owner else None
@@ -648,7 +648,7 @@ def get_applied_events():
             applied_events_list.append(event_details)
         
         if applied_events_list == []:
-            return jsonify({"msg": "No applied events found"}), 404
+            return jsonify({"msg": "No applied events found"}), 200
         
                 
         return jsonify(applied_events_list)
@@ -719,7 +719,7 @@ def get_owner_requests():
             }
             join_requests.append(event_details)
         if join_requests == []:
-            return jsonify({"msg": "No join requests found"}), 404
+            return jsonify({"msg": "No join requests found"}), 200
         return jsonify(join_requests)
     except Exception as e:
         return jsonify({"error": str(e)})
