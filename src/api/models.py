@@ -7,7 +7,7 @@ from itsdangerous import URLSafeTimedSerializer as Serializer
 db = SQLAlchemy()
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     is_active = db.Column(db.Boolean(), nullable=False)
@@ -19,6 +19,16 @@ class User(db.Model):
     group_chats = db.relationship('UsersGroupChat', backref='user', lazy=True)
     sender = db.relationship('Message', foreign_keys='Message.sender_id' ,backref='sender', lazy=True)
     receiver = db.relationship('Message', foreign_keys='Message.receiver_id',backref='receiver', lazy=True)
+
+    def generate_unique_id(self):
+        while True:
+            new_id = random.randint(10**9, 10**10 - 1)  # Genera un número aleatorio de 10 dígitos
+            if not User.query.filter_by(id=new_id).first():
+                return new_id
+
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        self.id = self.generate_unique_id()
 
     def generate_reset_token(self):
         serializer = Serializer(secret_key=current_app.config['JWT_SECRET_KEY'], salt=current_app.config['SECURITY_PASSWORD_SALT'])
@@ -46,9 +56,10 @@ class User(db.Model):
             "email": self.email,
             # do not serialize the password, it's a security breach
         }
-
+        
+        
 class User_Profile(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     last_name = db.Column(db.String(120), nullable=False)
     birthdate = db.Column(db.Date, nullable=False)
@@ -90,8 +101,8 @@ class Event_Type(db.Model):
 class Event(db.Model):
     __tablename__ = 'event'
      
-    id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    owner_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
     start_datetime = db.Column(db.DateTime, nullable=False)
@@ -104,6 +115,16 @@ class Event(db.Model):
     private_chats = db.relationship('PrivateChat', backref='event', lazy=True)
     group_chats = db.relationship('GroupChat', backref='event', lazy=True)
 
+    def generate_unique_id(self):
+        while True:
+            new_id = random.randint(10**9, 10**10 - 1)  # Genera un número aleatorio de 10 dígitos
+            if not Event.query.filter_by(id=new_id).first():
+                return new_id
+
+    def __init__(self, *args, **kwargs):
+        super(Event, self).__init__(*args, **kwargs)
+        self.id = self.generate_unique_id()
+        
     def __repr__(self):
         return f'<Event Id {self.id} {self.name}>'
 
@@ -122,8 +143,8 @@ class Event(db.Model):
 
 class Event_Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     member_status = db.Column(db.Enum("Applied","Owner","Accepted","Rejected", name="member_status"), nullable=False)
 
     def __repr__(self):
@@ -140,8 +161,8 @@ class Event_Member(db.Model):
 class UsersPrivateChat(db.Model):
     '''This table is used to store the users that are part of a private chat'''
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    chat_id = db.Column(db.Integer, db.ForeignKey('private_chat.id'), nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    chat_id = db.Column(db.BigInteger, db.ForeignKey('private_chat.id'), nullable=False)
     
     def __repr__(self):
         return f'<UsersChat {self.id}>'
@@ -155,12 +176,22 @@ class UsersPrivateChat(db.Model):
         
 class PrivateChat(db.Model):
     '''This table is used to store the private chats between users'''
-    id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     users_chat = db.relationship('UsersPrivateChat', backref='private_chat', lazy=True)
     messages = db.relationship('Message', backref='private_chat', lazy=True)
+    
+    def generate_unique_id(self):
+        while True:
+            new_id = random.randint(10**9, 10**10 - 1)  # Genera un número aleatorio de 10 dígitos
+            if not PrivateChat.query.filter_by(id=new_id).first():
+                return new_id
+
+    def __init__(self, *args, **kwargs):
+        super(PrivateChat, self).__init__(*args, **kwargs)
+        self.id = self.generate_unique_id()
     
     def __repr__(self):
         return f'<PrivateChat {self.id}>'
@@ -170,14 +201,14 @@ class PrivateChat(db.Model):
             "id": self.id,
             "event_id": self.event_id,
             "user_id": self.user_id,
-            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M') # "2021-06-01 12:00:00
+            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M:%S') # "2021-06-01 12:00:00
         }
 
 class UsersGroupChat(db.Model):
     '''This table is used to store the users that are part of a group chat'''
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    chat_id = db.Column(db.Integer, db.ForeignKey('group_chat.id'), nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    chat_id = db.Column(db.BigInteger, db.ForeignKey('group_chat.id'), nullable=False)
     
     def __repr__(self):
         return f'<UsersGroupChat {self.id}>'
@@ -191,11 +222,21 @@ class UsersGroupChat(db.Model):
 
 class GroupChat(db.Model):
     '''This table is used to store the group chats between users'''
-    id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     users_chat = db.relationship('UsersGroupChat', backref='group_chat', lazy=True)
     messages = db.relationship('Message', backref='group_chat', lazy=True)
+    
+    def generate_unique_id(self):
+        while True:
+            new_id = random.randint(10**9, 10**10 - 1)  # Genera un número aleatorio de 10 dígitos
+            if not GroupChat.query.filter_by(id=new_id).first():
+                return new_id
+
+    def __init__(self, *args, **kwargs):
+        super(GroupChat, self).__init__(*args, **kwargs)
+        self.id = self.generate_unique_id()
     
     def __repr__(self):
         return f'<GroupChat {self.id}>'
@@ -203,17 +244,17 @@ class GroupChat(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M'), # "2021-06-01 12:00:00
+            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M:%S'), # "2021-06-01 12:00:00
             "event_id": self.event_id
         }
 
 class Message(db.Model):
     '''This table is used to store the messages between users'''
     id = db.Column(db.Integer, primary_key=True)
-    private_chat_id = db.Column(db.Integer, db.ForeignKey('private_chat.id'), nullable=True)
-    group_chat_id = db.Column(db.Integer, db.ForeignKey('group_chat.id'), nullable=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    private_chat_id = db.Column(db.BigInteger, db.ForeignKey('private_chat.id'), nullable=True)
+    group_chat_id = db.Column(db.BigInteger, db.ForeignKey('group_chat.id'), nullable=True)
+    sender_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=True)
     message = db.Column(db.String(250), nullable=False)
     group_type = db.Column(db.Enum("Private","Group", name="group_type"), nullable=False)
     sentAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)

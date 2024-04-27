@@ -205,6 +205,8 @@ def setup_commands(app):
                 Message(sender=users[3], group_chat=group_chat[0], message="¡Hasta mañana!" , group_type="Group"),
                 Message(sender=users[5], group_chat=group_chat[0], message="¡Nos vemos!" , group_type="Group"),
                 ]
+            db.session.add_all(group_messages)
+            db.session.commit()
 
         
             print("Demo database successfully created.")
