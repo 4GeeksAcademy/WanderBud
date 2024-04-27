@@ -449,7 +449,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			getMyPublicEvents: async (token) => {
+			getMyPublicEvents: async () => {
+				const accessToken = localStorage.getItem("token")
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-my-events", {
 						method: 'GET',
