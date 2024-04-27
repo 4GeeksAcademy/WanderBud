@@ -21,6 +21,7 @@ import Profile from "./pages/profile";
 
 import { Background } from "./pages/backgroundLoading";
 import { ModalAlert } from "./component/modalAlert";
+import PublicProfile from "./pages/PublicProfile";
 
 
 
@@ -42,6 +43,7 @@ const Layout = () => {
                         <Route element={<SignUp />} path="/signup/user" />
                         <Route element={<SignUpProfile />} path="/signup/profile" />
                         <Route element={<Profile />} path="/profile" />
+                        <Route element={<PublicProfile />} path="/public-profile" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
                         <Route element={<FeedLayout children={<FeedMain />} />} path="/feed" />

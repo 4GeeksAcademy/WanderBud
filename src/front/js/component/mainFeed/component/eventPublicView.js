@@ -48,12 +48,11 @@ export const EventPublicView = () => {
                                                 <Card.Title >{item.owner.name}</Card.Title>
                                             </Col>
                                             <Col xs={4} id="event-userButton">
-                                                <Button
-                                                    variant="secondary"
-                                                // onClick={() => actions.addFavouriteEvent(item.id)}
-                                                >
-                                                    {"Visit Profile"}
-                                                </Button>
+                                            <Link to={"/public-profile"}>
+                                            <Button variant="secondary">
+                                            {"Visit Profile"}
+                                            </Button>
+                                            </Link>
                                             </Col>
                                         </Row>
                                     </Row>
