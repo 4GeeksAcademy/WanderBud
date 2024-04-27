@@ -11,13 +11,16 @@ export const EventPrivateView = () => {
   const { store, actions } = useContext(Context)
   const { event_id, owner_id } = useParams();
   const [text, setText] = useState("")
-  console.log(event_id);
-  console.log(text);
+  const [eventData, setEventData] = useState({})
+  const [ownerData, setOwnerData] = useState({})
+  const [requestMessage, setRequestMessage] = useState("")
 
-  
+
   useEffect(() => {
-    actions.getOneEvent(event_id)
-    actions.getPublicUserProfile(owner_id)
+    actions.getOneEvent(event_id).then((data) => {
+      setEventData(data)
+      setOwnerData(data.owner)
+    })
   }, [])
 
 
@@ -26,14 +29,6 @@ export const EventPrivateView = () => {
   //   alert("quiero tener amigos!!!")
   // }
 
-
-  const eventData = store.publicEventData
-  const ownerData = store.userProfileData
-  const requestMessage = store.joinedPublicEvents
-  console.log(requestMessage)
-  console.log(ownerData)
-  console.log(eventData)
-
   return (
     <Container fluid className='feed-container'>
       <Row className="vh-100 scrollbar">
@@ -41,7 +36,7 @@ export const EventPrivateView = () => {
           <LeftSidenav />
         </Col>
         <Col md={6} className="p-0 h-100">
-          <Row id="event-private">          
+          <Row id="event-private">
             <Col md={12} className="p-5 ">
               <h1 className="text-center">{eventData.name}</h1>
               <Row id="event-userRow" className="mt-4 ms-1">
@@ -73,15 +68,15 @@ export const EventPrivateView = () => {
                 </Col>
                 <Col md={6} className="d-flex justify-content-center">
                   <div className="dropdown">
-                    <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style={{width: "320px"}}>
+                    <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style={{ width: "320px" }}>
                       {requestMessage ? "Pending" : "Event Request"}
                     </button>
-                    <form className="dropdown-menu p-2" style={{width: "312px", height:"300px"}}>
+                    <form className="dropdown-menu p-2" style={{ width: "312px", height: "300px" }}>
                       <div className="mb-3">
                         <label for="exampleDropdownFormEmail2" className="form-label">Contact the event creator</label>
-                        <textarea type="text" className="form-control" id="exampleDropdownFormEmail2" style={{height:"200px"}} onChange={(e) => setText(e.target.value)} value={text} />
+                        <textarea type="text" className="form-control" id="exampleDropdownFormEmail2" style={{ height: "200px" }} onChange={(e) => setText(e.target.value)} value={text} />
                       </div>
-                      <button type="submit" className="btn btn-primary" onClick={() =>actions.requestJoinEvent(event_id)}>Send</button>
+                      <button type="submit" className="btn btn-primary" onClick={() => { actions.requestJoinEvent(event_id) }}>Send</button>
                     </form>
                   </div>
                 </Col>

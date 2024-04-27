@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import "../../../../styles/event.css";
 import { Context } from "../../../store/appContext";
+import { Link } from "react-router-dom";
 
 export const EventPublicView = () => {
     const { store, actions } = useContext(Context);

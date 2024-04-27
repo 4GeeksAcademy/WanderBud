@@ -632,9 +632,12 @@ def get_applied_events():
         applied_events_list = []
         for event in applied_events:
             owner_profile = User_Profile.query.filter_by(user_id=event.owner.id).first()
+            private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+            private_chat_id = private_chat.id if private_chat else None
             event_details = {
                 "id": event.id,
                 "name": event.name,
+                "private_chat_id": private_chat_id,
                 "owner": event.owner_id,
                 "owner_name": owner_profile.name,
                 "owner_last_name": owner_profile.last_name,
@@ -700,10 +703,12 @@ def get_owner_requests():
         for event_member in my_events_members:
             event = Event.query.filter_by(id=event_member["event_id"]).first()
             member = User.query.filter_by(id=event_member["member_id"]).first()
-            print(member)
             member_profile = User_Profile.query.filter_by(user_id=member.id).first()
+            private_chat = PrivateChat.query.filter_by(user_id=member.id, event_id=event.id).first()
+            private_chat_id = private_chat.id if private_chat else None
             event_details = {
                 "id": event.id,
+                "private_chat_id": private_chat_id,
                 "name": event.name,
                 "member_id": member.id,
                 "member_name": member_profile.name,
