@@ -346,7 +346,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 
-			requestJoinEvent: async (event_id) => {
+			requestJoinEvent: async (event_id, message) => {
 				console.log(event_id);
 				try {
 					const response = await fetch(process.env.BACKEND_URL + `/api/join-event/${event_id}`, {
@@ -354,7 +354,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						headers: {
 							'Content-Type': 'application/json',
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
-						}
+						},
+						body:JSON.stringify({
+							"msg": message
+						})
 					});
 
 					if (!response.ok) {

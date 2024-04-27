@@ -235,7 +235,8 @@ def get_event(event_id):
             "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
-                    "profile_image": owner.profile_image if owner else None
+                    "profile_image": owner.profile_image if owner else None,
+                    "user_id": owner.user_id if owner else None
                 },
             "location": event.location,
             "start_date": event.start_datetime.strftime("%Y-%m-%d"),

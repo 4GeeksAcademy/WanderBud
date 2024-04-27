@@ -52,12 +52,12 @@ export const MyEventPublicView = () => {
                                                 <Card.Title >{item.owner.name}</Card.Title>
                                             </Col>
                                             <Col xs={4} id="event-userButton">
-                                                {/* <Button
-                                                    variant="secondary"
-                                                // onClick={() => navigate(`/myevent-view/${item.id}/${item.owner.user_id}`)}
-                                                >
-                                                    {"Visit Profile"}
-                                                </Button> */}
+                                            <Button
+                                                variant="secondary"
+                                            onClick={() => navigate(`/profile/${item.owner.user_id}`)}
+                                            >
+                                                {"Visit Profile"}
+                                            </Button>
                                             </Col>
                                         </Row>
                                     </Row>
