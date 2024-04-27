@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			users: [],
+			userRequest: [],
 			publicEvents: [],
 			myPublicEvents: [],
 			joinedPublicEvents: [],

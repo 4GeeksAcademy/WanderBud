@@ -19,14 +19,34 @@ export const EventPrivateView = () => {
   console.log(event_id)
   console.log(eventData)
   console.log(ownerData)
+  console.log(store.userRequest)
+  console.log(requestMessage)
+
 
   useEffect(() => {
+    actions.getUserRequest();
     actions.getOneEvent(event_id).then((data) => {
       setEventData(data)
       setOwnerData(data.owner)
     })
   }, [])
 
+  const handleRequestMessage = () => {
+    if (store.userRequest.length > 0) { 
+      for (const event of store.userRequest) {
+        if (event_id == event.id) {
+          setRequestMessage("Applied");
+          break; 
+        }
+      }
+    } else {
+      setRequestMessage(""); 
+    }
+  };
+
+  useEffect(() => {
+    handleRequestMessage();
+  }, [store.userRequest]) // This effect runs whenever store.userRequest changes
 
 
   return (
