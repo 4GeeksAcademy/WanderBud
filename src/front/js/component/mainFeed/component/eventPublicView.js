@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import "../../../../styles/event.css";
 import { Context } from "../../../store/appContext";
-import { Link } from "react-router-dom";
 
 export const EventPublicView = () => {
     const { store, actions } = useContext(Context);
@@ -18,7 +17,7 @@ export const EventPublicView = () => {
     return (
         <>
             <Row className="flex-column">
-                {store.publicEvents.reverse().map((item, index) => (
+                {store.publicEvents.map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
 
                         <Card className="h-100">

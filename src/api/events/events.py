@@ -1,6 +1,6 @@
 from enum import Enum
 from flask import request, jsonify, Blueprint # type: ignore
-from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Event_Chat
+from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Message , GroupChat, UsersGroupChat, PrivateChat, UsersPrivateChat
 from flask_jwt_extended import jwt_required, get_jwt_identity # type: ignore # type: ignore
 from datetime import datetime
 from flask_cors import CORS # type: ignore
@@ -63,8 +63,7 @@ def create_event():
         description = request.json.get("description", None)
         event_type_id = request.json.get("event_type_id", None)
         budget_per_person = request.json.get("budget_per_person", None)
-        print(name, owner_id, location, start_datetime, end_datetime, description, event_type_id, budget_per_person)
-        
+        '''Check if the event type exists'''
         new_event = Event(
             name=name,
             owner_id=owner_id,
@@ -75,10 +74,21 @@ def create_event():
             event_type_id=event_type_id,
             budget_per_person=budget_per_person
         )
-        print(new_event)
 
         db.session.add(new_event)
         db.session.commit()
+        
+        '''Add the owner to the event members'''
+        event = Event.query.filter_by(name=name, owner_id=owner_id, location=location, start_datetime=start_datetime, end_datetime=end_datetime, description=description, event_type_id=event_type_id, budget_per_person=budget_per_person).first()
+        db.session.add(Event_Member(user_id=owner_id, event_id=event.id, member_status="Owner"))
+        '''Add the group chat to the event'''
+        db.session.add(GroupChat(event_id=event.id))
+        db.session.commit()
+        group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        '''Add the owner to the group chat'''
+        db.session.add(UsersGroupChat(user_id=owner_id, chat_id=group_chat.id))
+        db.session.commit()
+        
 
         return jsonify({"msg": "event created"}), 200
     except Exception as e:
@@ -721,6 +731,11 @@ def join_event(event_id):
 
         Args:
             event_id (int): The ID of the event to join.
+            
+        Request JSON:
+            {
+                "message": "A message to the event owner"
+            }
 
         Returns:
             A JSON response indicating the success or failure of joining the event.
@@ -729,12 +744,26 @@ def join_event(event_id):
         user = User.query.filter_by(email=current_user).first()
         event = Event.query.filter_by(id=event_id).first()
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
+        join_message = request.json.get("message", None)
         
         if event_member is not None:
             return jsonify({"msg": "You have already joined this event"}), 403
         
         event_member = Event_Member(user_id=user.id, event_id=event.id, member_status="Applied")
+        '''Add the user to the event members'''
         db.session.add(event_member)
+        '''Add the private chat between the user and the owner of the event'''
+        db.session.add(PrivateChat(user_id=user.id, event_id=event.id))
+        db.session.commit()
+        
+        private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        '''Add the user to the private chat'''
+        db.session.add(UsersPrivateChat(user_id=user.id, chat_id=private_chat.id))
+        '''Add the owner to the private chat'''
+        db.session.add(UsersPrivateChat(user_id=event.owner_id, chat_id=private_chat.id))
+        '''Add the join message to the private chat between the user and the owner of the event'''
+        db.session.add(Message(private_chat_id=private_chat.id, sender_id=user.id, receiver_id=event.owner_id ,message=join_message, group_type="Private"))
+        
         db.session.commit()
         
         return jsonify({"msg": "joined event"}), 200
@@ -763,10 +792,16 @@ def leave_event(event_id):
         event = Event.query.filter_by(id=event_id).first()
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
+        '''Do it if u want to delete your chats'''
+        # user_private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        # user_group_chat = GroupChat.query.filter_by(user_id=user.id, event_id=event.id).first()
         if event_member is None:
             return jsonify({"msg": "You are not a member of this event"}), 403
         
         db.session.delete(event_member)
+        '''Do it if u want to delete your chats'''
+        # db.session.delete(user_private_chat)
+        # db.session.delete(user_group_chat)
         db.session.commit()
         
         return jsonify({"msg": "left event"}), 200
@@ -829,6 +864,11 @@ def accept_member(event_id):
 
         Args:
             event_id (int): The ID of the event to accept the member to.
+            
+        Request JSON:
+            {
+                "member_id": 1
+            }
 
         Returns:
             A JSON response indicating the success or failure of accepting the member.
@@ -851,8 +891,21 @@ def accept_member(event_id):
         elif event_member is None:
             return jsonify({"msg": "This user has not applied to join the event"}), 403
         
-        
         db.session.commit()
+        
+        group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        if group_chat is None:
+            return jsonify({"msg": "group chat does not exist"}), 404
+        '''Add the user to the group chat'''
+        db.session.add(UsersGroupChat(user_id=member_id, chat_id=group_chat.id))
+        '''Get the user's name and last name to add it to the join message'''
+        user_profile = User_Profile.query.filter_by(user_id=member_id).first()
+        username = user_profile.name + " " + user_profile.last_name
+        '''Add the join message to the group chat'''
+        db.session.add(Message(group_chat_id=group_chat.id, sender_id=1,message=username+' has been accepted', group_type="Group"))
+        '''Sender ID 1 is the system'''
+        db.session.commit()
+        
         
         return jsonify({"msg": "member accepted"}), 200
     except Exception as e:

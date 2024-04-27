@@ -1,4 +1,4 @@
-import { redirect } from "react-router-dom";
+import { id } from "date-fns/locale";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -8,8 +8,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			myPublicEvents: [],
 			joinedPublicEvents: [],
 			publicEventData: {},
-			userProfileData: {},
-			userProfile: [],
+			userAccount: {
+				email: "",
+				password: "",
+				id: ""
+			},
 			favorites: [],
 			auth: false,
 			authProfile: false,
@@ -19,8 +22,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			redirect: "",
 			message: "",
 			isAuthenticated: false,
-      		userData: {},
-      		accessToken: null,
+			updateUser: false,
+			userData: {},
+			accessToken: null,
 		},
 		actions: {
 			onCreateEvent: () => {
@@ -71,33 +75,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			loginWithGoogle: async (accessToken) => {
 				try {
-				  const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-					method: 'POST',
-					headers: {
-					  'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ accessToken })
-				  });
-			  
-				  if (!response.ok) {
-					// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
-					const errorData = await response.json();
-					throw new Error(`Error en la validación del token: ${errorData.message}`);
-				  }
-			  
-				  const userData = await response.json();
-			  
-				  // Almacenar datos del usuario y el token en el store
-				  setStore({
-					isAuthenticated: true,
-					userData: userData,
-					accessToken: accessToken
-				  });
-			  
-				}catch (error) {
-				  
+					const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ accessToken })
+					});
+
+					if (!response.ok) {
+						// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
+						const errorData = await response.json();
+						throw new Error(`Error en la validación del token: ${errorData.message}`);
+					}
+
+					const userData = await response.json();
+
+					// Almacenar datos del usuario y el token en el store
+					setStore({
+						isAuthenticated: true,
+						userData: userData,
+						accessToken: accessToken
+					});
+
+				} catch (error) {
+
 				}
-			  },
+			},
 			validateToken: async () => {
 				const store = getStore();
 				const actions = getActions()
@@ -129,6 +133,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					return false;
 				}
+			},
+			noMoreCoverImages: async (id) => {
+				setStore({ storeShow: true, alertTitle: 'No more images', alertBody: 'No more images to show', redirect: "" });
 			},
 			resetPassword: async (password, token) => {
 				try {
@@ -400,9 +407,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			},
 
-			getUserProfile: async (token) => {
+			getUserProfile: async (id) => {
+				let token = localStorage.getItem("token");
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile/" + id, {
 						method: 'GET',
 						headers: {
 							'Authorization': `Bearer ${token}`
@@ -410,7 +418,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						setStore({ userProfile: data.results });
+						console.log(data);
+						return data.results;
 					} else {
 						throw new Error('Error getting public events');
 					}
@@ -440,30 +449,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-
-			getPublicUserProfile: async (id) => {
-				let accessToken = localStorage.getItem("token")
-				try {
-					const response = await fetch(process.env.BACKEND_URL + `/api/public-user-profile/${id}`, {
-						method: 'GET',
-						headers: {
-							'Authorization': `Bearer ${accessToken}`
-						}
-					});
-					if (response.ok) {
-						const data = await response.json();
-						setStore({ userProfileData: data.results[0] });
-					} else {
-						throw new Error('Error getting public events');
-					}
-				} catch (error) {
-					console.error('Error getting public events:', error);
-					setStore({ message: "Network error, please try again" });
-				}
-			},
-
-			getMyPublicEvents: async () => {
-				const accessToken = localStorage.getItem("token")
+			getMyPublicEvents: async (token) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/get-my-events", {
 						method: 'GET',
@@ -547,6 +533,113 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+
+			getUserAccount: async () => {
+				const accesToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/user-account", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accesToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({
+							userAccount: {
+								email: data.email,
+								id: data.id
+							}
+						})
+						return data
+							;
+					} else {
+						throw new Error('Error getting user account');
+					}
+				} catch (error) {
+					console.error('Error getting user account:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+			updateUserAccount: async (userData) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/update-user", {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify(userData)
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						setStore({
+							userAccount: {
+								email: userData.email
+							}
+						});
+						setStore({ storeShow: true, alertTitle: 'Success', alertBody: 'User updated successfully', redirect: '/feed' });
+						return true;
+					} else {
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error updating user', redirect: '/settings/account' });
+						throw new Error('Error updating user');
+					}
+				} catch (error) {
+					console.error('Error updating user:', error);
+					return false;
+				}
+			},
+			deleteUserAccount: async () => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/delete-user", {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						setStore({ auth: false, authProfile: false })
+						localStorage.removeItem("token");
+						window.location.href = '/';
+						return true;
+					} else {
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error deleting user', redirect: '/settings/account' });
+						throw new Error('Error deleting user');
+					}
+				} catch (error) {
+					console.error('Error deleting user:', error);
+					return false;
+				}
+			},
+			updateUserProfile: async (userData) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/update-profile", {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify(userData)
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Error updating user profile');
+					}
+				} catch (error) {
+					console.error('Error updating user profile:', error);
+					return false;
+				}
+			}
 
 
 		}

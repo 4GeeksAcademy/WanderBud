@@ -17,11 +17,12 @@ import { MyEventPrivateView } from "./component/mainFeed/component/myEventPrivat
 import { EventPrivateView } from "./component/mainFeed/component/eventPrivateView";
 import { JoinEventPrivateView } from "./component/mainFeed/component/joinEventPrivateView";
 
-import UserProfile from "./pages/profile";
-import Profile from "./pages/profile";
+import UserProfile from "./component/profile/profile";
+import Profile from "./component/profile/profile";
 
 import { Background } from "./pages/backgroundLoading";
 import { ModalAlert } from "./component/modalAlert";
+import { AccountContainer } from "./component/Settings/account";
 
 
 
@@ -42,10 +43,11 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup/user" />
                         <Route element={<SignUpProfile />} path="/signup/profile" />
-                        <Route element={<Profile />} path="/profile" />
+                        <Route element={<FeedLayout children={<Profile />} />} path="/profile/:user_id" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
                         <Route element={<FeedLayout children={<FeedMain />} />} path="/feed" />
+                        <Route element={<FeedLayout children={<AccountContainer />} to={"/settings/account"} />} path="/settings/account" />
                         <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
                         <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />
                         <Route element={<EventPrivateView />} path="/event-view/:event_id/:owner_id" />

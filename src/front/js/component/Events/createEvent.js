@@ -20,6 +20,7 @@ export const CreateEvent = () => {
     const [eventType, setEventType] = useState([]);
     const [eventTypeId, setEventTypeId] = useState([]);
 
+
     useEffect(() => {
         actions.getEventTypes().then(types => {
             if (types) {
