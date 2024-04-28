@@ -24,14 +24,16 @@ export const UpdateEvent = () => {
     useEffect(() => {
         actions.getOneEvent(event_id).then((data) => {
             console.log(data)
+            const formattedStartDate = new Date(data.start_date).toISOString().slice(0, 16);
+            const formattedEndDate = new Date(data.end_date).toISOString().slice(0, 16);
           setEventData({
             ...eventData,
             title: data.name,
             budget: data.budget_per_person,
-            startDate: data.start_date,
-            endDate: data.end_date,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
             description: data.description,
-            markerPosition: data.location || "", 
+            markerPosition: data.location, 
             typeEvent: data.event_type_id,
             errors: data.errors || ""
           });

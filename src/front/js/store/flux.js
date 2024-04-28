@@ -622,7 +622,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			updateUserProfile: async (userData) => {
+			updateUserProfile: async (
+				name,
+				lastName,
+				location,
+				birthdate,
+				description,
+				image,
+			  ) => {
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/update-profile", {
@@ -631,7 +638,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Content-Type': 'application/json',
 							'Authorization': `Bearer ${accessToken}`
 						},
-						body: JSON.stringify(userData)
+						body: JSON.stringify({
+							"name": name, 
+							"last_name": lastName,
+							"location": location,
+							"birthdate": birthdate,
+							"description": description,
+							"profile_image": image
+						})
 					});
 					if (response.status === 200) {
 						const data = await response.json();

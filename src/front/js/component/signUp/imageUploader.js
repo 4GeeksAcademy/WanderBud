@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { Card, Button } from 'react-bootstrap';
 
-function ImageUploader({ onImageUpload }) {
-    const [urlImage, setUrlImage] = useState("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+function ImageUploader({ onImageUpload, initialImageUrl }) {
+    const [urlImage, setUrlImage] = useState(initialImageUrl || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+
+    useEffect(() => {
+        if (initialImageUrl) {
+            setUrlImage(initialImageUrl);
+        }
+    }, [initialImageUrl]);
+
 
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
