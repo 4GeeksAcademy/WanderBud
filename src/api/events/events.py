@@ -450,6 +450,7 @@ def update_event(event_id):
 @event_bp.route("/delete-event/<int:event_id>", methods=["DELETE"])
 @jwt_required()
 def delete_event(event_id):
+    print(event_id)
     try:
         """
         Delete a specific event.
@@ -465,7 +466,7 @@ def delete_event(event_id):
         current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
         user = User.query.filter_by(email=current_user).first()
-
+        print(event)
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         

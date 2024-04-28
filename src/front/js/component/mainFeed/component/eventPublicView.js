@@ -6,9 +6,14 @@ import { Link, useNavigate } from "react-router-dom";
 
 export const EventPublicView = () => {
     const { store, actions } = useContext(Context);
-    const [buttonStates, setButtonStates] = useState({});
+    const [currentUserID, setCurrentUSerID] = useState({});
     const navigate=useNavigate()
 
+    useEffect(() => {
+        actions.getUserAccount().then((data) => {
+            setCurrentUSerID(data.id)
+        })
+      }, [])
 
     useEffect(() => {
         actions.getPublicEvents();
@@ -16,10 +21,12 @@ export const EventPublicView = () => {
 
     console.log(store.publicEvents);
 
+    const filteredEvents = store.publicEvents.filter(item => item.owner.user_id !== currentUserID);
+
     return (
         <>
             <Row className="flex-column">
-                {store.publicEvents.map((item, index) => (
+                {filteredEvents.map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
 
                         <Card className="h-100">

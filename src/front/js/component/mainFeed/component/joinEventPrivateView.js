@@ -14,17 +14,41 @@ export const JoinEventPrivateView = () => {
   const [text, setText] = useState("")
   const [eventData, setEventData] = useState({})
   const [ownerData, setOwnerData] = useState({})
-  const [abandonMessage, setAbandonMessage] = useState("")
+  const [eventStatus, setEventStatus] = useState("")
   console.log(event_id)
   console.log(eventData)
   console.log(ownerData)
+  console.log(store.joinedPublicEvents)
 
   useEffect(() => {
+    actions.getJoinedPublicEvents();
     actions.getOneEvent(event_id).then((data) => {
       setEventData(data)
       setOwnerData(data.owner)
     })
   }, [])
+
+  const handleRequestMessage = () => {
+    if (store.joinedPublicEvents.length > 0) { 
+      for (const event of store.joinedPublicEvents) {
+        if (event_id == event.id) {
+          setEventStatus("I joined this event");
+          break; 
+        }
+      }
+    } else {
+      setEventStatus(""); 
+    }
+  };
+
+  useEffect(() => {
+    handleRequestMessage();
+  }, [store.joinedPublicEvents]) // This effect runs whenever store.joinedPublicEvents changes
+
+  const handleLeaveEvent = () => {
+    actions.leaveEvent(event_id);
+    navigate("/feed")
+  }
 
   return (
     <Container fluid className='feed-container'>
@@ -67,14 +91,14 @@ export const JoinEventPrivateView = () => {
                   <Col md={6} className="d-flex justify-content-center">
                     <div className="dropdown">
                       <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style={{ width: "320px" }}>
-                        {abandonMessage ? "Sent" : "Abandon Message"}
+                        {eventStatus ? "Leave the event" : "You left this event"}
                       </button>
                       <form className="dropdown-menu p-2" style={{ width: "312px", height: "300px" }}>
                         <div className="mb-3">
                           <label for="exampleDropdownFormEmail2" className="form-label">Contact the event creator</label>
                           <textarea type="text" className="form-control" id="exampleDropdownFormEmail2" style={{ height: "200px" }} onChange={(e) => setText(e.target.value)} value={text} />
                         </div>
-                        <button type="submit" className="btn btn-primary" onClick={() => { actions.requestAbandonEvent(event_id, text) }}>Send</button>
+                        <button type="submit" className="btn btn-primary" onClick={() => { handleLeaveEvent() }}>Send</button>
                       </form>
                     </div>
                   </Col>

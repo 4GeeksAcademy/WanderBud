@@ -4,7 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			users: [],
-			userRequest: [],
+			appliedPublicEvents: [],
 			publicEvents: [],
 			myPublicEvents: [],
 			joinedPublicEvents: [],
@@ -428,7 +428,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error('Error getting public events');
 					}
 				} catch (error) {
-					console.error('Error getting public events:', error);
+					console.error('Error getting user profile:', error);
 					setStore({ message: "Network error, please try again" });
 				}
 			},
@@ -516,7 +516,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log(eventDataForBackend);
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}`, {
-						method: 'POST',
+						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -666,7 +666,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 
 			},
-			getUserRequest: async () => {
+
+			getAppliedEvents: async () => {
 				const accessToken = localStorage.getItem('token')
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/get-user-request', {
@@ -677,7 +678,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						setStore({ userRequest: data });
+						setStore({ appliedPublicEvents: data });
 					} else {
 						throw new Error('Error getting user request');
 					}
@@ -688,6 +689,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			},
 
+			leaveEvent: async (event_id) => {
+				let accessToken = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/leave-event/${event_id}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						return data;
+					} else {
+						throw new Error('Error leaving the event');
+					}
+				} catch (error) {
+					console.error('Error leaving the event:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+
+			deleteEvent: async (event_id) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/delete-event/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Error deleting event');
+					}
+				} catch (error) {
+					console.error('Error deleting event:', error);
+					return false;
+				}
+			},
 
 		}
 	};

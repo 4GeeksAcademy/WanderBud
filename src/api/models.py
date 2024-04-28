@@ -4,6 +4,7 @@ from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
+
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -111,9 +112,9 @@ class Event(db.Model):
     description = db.Column(db.String(250), nullable=True)
     budget_per_person = db.Column(db.Float, nullable=True)
     event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.id'), nullable=False)
-    members = db.relationship('Event_Member', backref='event', lazy=True)
-    private_chats = db.relationship('PrivateChat', backref='event', lazy=True)
-    group_chats = db.relationship('GroupChat', backref='event', lazy=True)
+    members = db.relationship('Event_Member', backref='event', lazy=True, cascade="all, delete")
+    private_chats = db.relationship('PrivateChat', backref='event', lazy=True, cascade="all, delete")
+    group_chats = db.relationship('GroupChat', backref='event', lazy=True, cascade="all, delete")
 
     def generate_unique_id(self):
         while True:
@@ -143,7 +144,7 @@ class Event(db.Model):
 
 class Event_Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     member_status = db.Column(db.Enum("Applied","Owner","Accepted","Rejected", name="member_status"), nullable=False)
 
@@ -177,7 +178,7 @@ class UsersPrivateChat(db.Model):
 class PrivateChat(db.Model):
     '''This table is used to store the private chats between users'''
     id = db.Column(db.BigInteger, primary_key=True)
-    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     users_chat = db.relationship('UsersPrivateChat', backref='private_chat', lazy=True)
@@ -223,7 +224,7 @@ class UsersGroupChat(db.Model):
 class GroupChat(db.Model):
     '''This table is used to store the group chats between users'''
     id = db.Column(db.BigInteger, primary_key=True)
-    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id', ondelete='CASCADE'), nullable=False)
     createdAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     users_chat = db.relationship('UsersGroupChat', backref='group_chat', lazy=True)
     messages = db.relationship('Message', backref='group_chat', lazy=True)

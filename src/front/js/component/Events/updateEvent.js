@@ -8,7 +8,8 @@ import { useParams } from "react-router-dom";
 
 export const UpdateEvent = () => {
     const { store, actions } = useContext(Context);
-    const { event_id} = useParams()
+    const { event_id } = useParams()
+    console.log(event_id)
     const [eventData, setEventData] = useState({
         title: "",
         budget: 0,
@@ -19,6 +20,27 @@ export const UpdateEvent = () => {
         typeEvent: "",
         errors: {}
     });
+   
+    useEffect(() => {
+        actions.getOneEvent(event_id).then((data) => {
+            console.log(data)
+          setEventData({
+            ...eventData,
+            title: data.name,
+            budget: data.budget_per_person,
+            startDate: data.start_date,
+            endDate: data.end_date,
+            description: data.description,
+            markerPosition: data.location || "", 
+            typeEvent: data.event_type_id,
+            errors: data.errors || ""
+          });
+        });
+      }, []);
+   
+
+
+
     const [eventType, setEventType] = useState([]);
     const [eventTypeId, setEventTypeId] = useState([]);
 
