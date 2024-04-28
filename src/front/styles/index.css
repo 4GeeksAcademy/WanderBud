@@ -550,3 +550,15 @@ a {
 .hidden{
   visibility: hidden;
 }
+.accordion-collapse {
+    pointer-events: none;
+}
+.accordion-collapse.show {
+  pointer-events: auto;
+}
+.accordion-collapse button {
+    pointer-events: none;
+}
+.accordion-collapse.show button {
+  pointer-events: auto;
+}

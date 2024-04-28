@@ -355,8 +355,6 @@ def get_event_by_radius():
         """
         user_location = request.args.get("location")
         radius = float(request.args.get("radius"))
-        print(user_location)
-        print(radius)
 
         events = Event.query.all()
         
@@ -367,7 +365,6 @@ def get_event_by_radius():
         for event in events:
             if event.location in events_list_address:
                 owner = User_Profile.query.get(event.owner_id)
-                print(event.location)
                 event_details = {
                     "id": event.id,
                     "name": event.name,
@@ -632,14 +629,14 @@ def get_applied_events():
         applied_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id, Event_Member.member_status == "Applied").all()
         applied_events_list = []
         for event in applied_events:
-            owner_profile = User_Profile.query.filter_by(user_id=event.owner.id).first()
+            owner_profile = User_Profile.query.filter_by(user_id=event.owner_id).first()
             private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
             private_chat_id = private_chat.id if private_chat else None
             event_details = {
                 "id": event.id,
                 "name": event.name,
                 "private_chat_id": private_chat_id,
-                "owner": event.owner_id,
+                "owner_id": event.owner_id,
                 "owner_name": owner_profile.name,
                 "owner_last_name": owner_profile.last_name,
                 "owner_img": owner_profile.profile_image,
@@ -649,10 +646,10 @@ def get_applied_events():
             applied_events_list.append(event_details)
         
         if applied_events_list == []:
-            return jsonify({"msg": "No applied events found"}), 200
+            return jsonify([]), 202
         
                 
-        return jsonify(applied_events_list)
+        return jsonify(applied_events_list), 200
     except Exception as e:
         return jsonify({"error": str(e)})
     
@@ -720,8 +717,8 @@ def get_owner_requests():
             }
             join_requests.append(event_details)
         if join_requests == []:
-            return jsonify({"msg": "No join requests found"}), 200
-        return jsonify(join_requests)
+            return jsonify([]), 202
+        return jsonify(join_requests),200
     except Exception as e:
         return jsonify({"error": str(e)})
 
@@ -916,4 +913,62 @@ def accept_member(event_id):
         return jsonify({"msg": "member accepted"}), 200
     except Exception as e:
         return jsonify({"msg": "error accepting member",
+                        "error": str(e)}), 500
+
+@event_bp.route("/get-my-groups-chat", methods=["GET"])
+@jwt_required()
+def get_my_groups_chat():
+    try:
+        """
+        Retrieve the group chats that the current user is a part of.
+
+        This function retrieves the group chats that the current user is a part of from the
+        database and returns them as a list of JSON objects.
+
+        Returns:
+            A JSON response containing a list of the group chats that the current user is a part of.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "event_id": 1,
+                    "event_name": "My Event",
+                    "event_owner": "John Doe",
+                    "event_owner_img": "image.jpg"
+                }
+            ]
+        """
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(email=current_user).first()
+        group_chats = GroupChat.query.join(UsersGroupChat, GroupChat.id == UsersGroupChat.chat_id).filter(UsersGroupChat.user_id == user.id).all()
+        group_chats_list = []
+        print(group_chats)
+        for group_chat in group_chats:
+            event = Event.query.filter_by(id=group_chat.event_id).first()
+            owner_profile = User_Profile.query.filter_by(user_id=event.owner_id).first()
+            last_message = Message.query.filter_by(group_chat_id=group_chat.id).order_by(Message.sentAt.desc()).first()
+            last_message_sender = User.query.filter_by(id=last_message.sender_id).first()
+            sender_profile = User_Profile.query.filter_by(user_id=last_message_sender.id).first()
+            sender_fullname = sender_profile.name + " " + sender_profile.last_name
+            number_of_messages = Message.query.filter_by(group_chat_id=group_chat.id).count()
+            
+            group_chat_details = {
+                "id": group_chat.id,
+                "event_id": event.id,
+                "event_name": event.name,
+                "owner": owner_profile.name,
+                "owner_id": owner_profile.user_id,
+                "owner_img": owner_profile.profile_image,
+                "sender_last_message": sender_fullname,
+                "last_message": last_message.message if last_message else None,
+                "number_of_messages": number_of_messages
+            }
+            print(group_chat_details)
+            group_chats_list.append(group_chat_details)
+        if group_chats_list == []:
+            return jsonify({"msg": "You are not a member of any event"}), 202
+        return jsonify(group_chats_list), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving group chats",
                         "error": str(e)}), 500

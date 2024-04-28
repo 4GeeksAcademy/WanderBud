@@ -355,7 +355,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Content-Type': 'application/json',
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
 						},
-						body:JSON.stringify({
+						body: JSON.stringify({
 							"msg": message
 						})
 					});
@@ -648,7 +648,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			getOwnerRequest: async () => {
-				const accessToken = localStorage.getItem('token')
+				const accessToken = localStorage.getItem('token');
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/get-owner-request', {
 						method: 'GET',
@@ -656,21 +656,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					if (response.ok) {
+					if (!response.ok) {
+						throw new Error(`Error getting owner request: ${response.statusText}`);
+					} else if (response.status === 200) {
 						const data = await response.json();
-						console.log(data);
 						setStore({ ownerRequest: data });
-					} else {
-						throw new Error('Error getting owner request');
+					} else if (response.status === 202) {
+						setStore({
+							ownerRequest: {
+								msg: "No owner request found"
+							}
+						});
 					}
 				} catch (error) {
 					console.error('Error getting owner request:', error);
 					return [];
 				}
-
 			},
 			getUserRequest: async () => {
-				const accessToken = localStorage.getItem('token')
+				const accessToken = localStorage.getItem('token');
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/get-user-request', {
 						method: 'GET',
@@ -678,40 +682,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					if (response.ok) {
+					if (!response.ok) {
+						throw new Error(`Error getting user request: ${response.statusText}`);
+					} else if (response.status === 200) {
 						const data = await response.json();
-						console.log(data);
 						setStore({ userRequest: data });
-					} else {
-						throw new Error('Error getting user request');
+					} else if (response.status === 202) {
+						setStore({
+							userRequest: {
+								msg: "No applied events found"
+							}
+						});
 					}
 				} catch (error) {
 					console.error('Error getting user request:', error);
 					return [];
 				}
-
 			},
 			getGroupChat: async () => {
-				const accessToken = localStorage.getItem('token')
+				const accessToken = localStorage.getItem('token');
 				try {
-					const response = await fetch(process.env.BACKEND_URL + '/api/get-group-chat', {
+					const response = await fetch(process.env.BACKEND_URL + '/api/get-my-groups-chat', {
 						method: 'GET',
 						headers: {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					if (response.ok) {
+					if (!response.ok) {
+						throw new Error(`Error getting group chat: ${response.statusText}`);
+					} else if (response.status === 200) {
 						const data = await response.json();
 						setStore({ groupChat: data });
-					} else {
-						throw new Error('Error getting group chat');
+					} else if (response.status === 202) {
+						setStore({
+							groupChat: {
+								msg: "No group chat found"
+							}
+						});
 					}
 				} catch (error) {
 					console.error('Error getting group chat:', error);
 					return [];
 				}
-
-			}
+			},
 
 
 		}
