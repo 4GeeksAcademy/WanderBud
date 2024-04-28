@@ -4,15 +4,15 @@ import { FiX, FiCheck } from "react-icons/fi";
 import { Context } from "../../../../store/appContext";
 import { useNavigate } from "react-router-dom";
 
-export const RequestsCard = ({ username, member_id, eventname, img, chatId }) => {
+export const RequestsCard = ({ username, member_id, eventname, img, chatId, event_id }) => {
     const navigate = useNavigate();
     const { actions } = useContext(Context);
 
-    const handleAccept = (member_id) => {
-        // Accept request
+    const handleAccept = (member_id, event_id) => {
+        actions.acceptMember(event_id, member_id);
     }
-    const handleReject = (member_id) => {
-        // Reject request
+    const handleReject = (member_id, event_id) => {
+        actions.rejectMember(event_id, member_id);
     }
 
 
@@ -30,8 +30,8 @@ export const RequestsCard = ({ username, member_id, eventname, img, chatId }) =>
                 </Button>
             </Col>
             <Col md={3} className="d-flex align-items-center justify-content-end">
-                <Button variant="accept" className="rounded-circle me-1" onClick={(e) => handleAccept(member_id)}><FiCheck /></Button>
-                <Button variant="reject" className="rounded-circle" onClick={(e) => handleReject(member_id)}><FiX /></Button>
+                <Button variant="accept" className="rounded-circle me-1" onClick={(e) => handleAccept(member_id, event_id)}><FiCheck /></Button>
+                <Button variant="reject" className="rounded-circle" onClick={(e) => handleReject(member_id, event_id)}><FiX /></Button>
             </Col>
         </div>
     );

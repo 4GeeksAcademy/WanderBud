@@ -28,7 +28,8 @@ class User(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
-        self.id = self.generate_unique_id()
+        if not self.id:
+            self.id = self.generate_unique_id()
 
     def generate_reset_token(self):
         serializer = Serializer(secret_key=current_app.config['JWT_SECRET_KEY'], salt=current_app.config['SECURITY_PASSWORD_SALT'])

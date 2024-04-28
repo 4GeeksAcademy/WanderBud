@@ -88,7 +88,10 @@ def create_event():
         '''Add the owner to the group chat'''
         db.session.add(UsersGroupChat(user_id=owner_id, chat_id=group_chat.id))
         db.session.commit()
-        
+        '''Add the welcome message to the group chat'''
+        message_created = Message(group_chat_id=group_chat.id, sender_id=1, message="Welcome to "+name+"'s event", group_type="Group")
+        db.session.add(message_created)
+        db.session.commit()
 
         return jsonify({"msg": "event created"}), 200
     except Exception as e:
@@ -605,22 +608,18 @@ def get_applied_events():
         Returns:
             A JSON response containing a list of the applied events.
 
-        Example JSON response:
+        Example Response:
             [
                 {
                     "id": 1,
                     "name": "My Event",
+                    "private_chat_id": 1,
                     "owner_id": 1,
+                    "owner_name": "John",
+                    "owner_last_name": "Doe",
+                    "owner_img": "image.jpg",
                     "location": "New York",
-                    "start_date": "2022-12-31",
-                    "start_time": "23:59:59",
-                    "end_date": "2023-01-01",
-                    "end_time": "01:00:00",
-                    "status": "planned",
-                    "timezone": "America/New_York",
-                    "description": "A description of my event",
-                    "event_type_id": 1,
-                    "budget_per_person": 100
+                    "event_type_id": 1
                 }
             ]
         """
@@ -666,22 +665,18 @@ def get_owner_requests():
         Returns:
             A JSON response containing a list of the applied events.
 
-        Example JSON response:
+        Example response:
             [
                 {
                     "id": 1,
                     "name": "My Event",
-                    "owner_id": 1,
+                    "private_chat_id": 1,
+                    "member_id": 1,
+                    "member_name": "John",
+                    "member_last_name": "Doe",
+                    "member_img": "image.jpg",
                     "location": "New York",
-                    "start_date": "2022-12-31",
-                    "start_time": "23:59:59",
-                    "end_date": "2023-01-01",
-                    "end_time": "01:00:00",
-                    "status": "planned",
-                    "timezone": "America/New_York",
-                    "description": "A description of my event",
-                    "event_type_id": 1,
-                    "budget_per_person": 100
+                    "event_type_id": 1
                 }
             ]
         """
@@ -774,7 +769,7 @@ def join_event(event_id):
         return jsonify({"msg": "error joining event",
                         "error": str(e)}), 500
     
-@event_bp.route("/leave-event/<int:event_id>", methods=["POST"])
+@event_bp.route("/leave-event/<int:event_id>", methods=["DELETE"])
 @jwt_required()
 def leave_event(event_id):
     try:
@@ -796,15 +791,17 @@ def leave_event(event_id):
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
         '''Do it if u want to delete your chats'''
-        # user_private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
-        # user_group_chat = GroupChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        user_private_chat = UsersPrivateChat.query.filter_by(user_id=user.id).first()
+        user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id).first()
         if event_member is None:
             return jsonify({"msg": "You are not a member of this event"}), 403
         
         db.session.delete(event_member)
         '''Do it if u want to delete your chats'''
-        # db.session.delete(user_private_chat)
-        # db.session.delete(user_group_chat)
+        if user_private_chat is not None:
+            db.session.delete(user_private_chat)
+        if user_group_chat is not None:
+            db.session.delete(user_group_chat)
         db.session.commit()
         
         return jsonify({"msg": "left event"}), 200
@@ -883,7 +880,7 @@ def accept_member(event_id):
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
-        member_id = request.json.get("member_id", None)
+        member_id = request.json.get("member_id")
         event_member = Event_Member.query.filter_by(user_id=member_id, event_id=event.id).first()
         if  event_member.member_status == "Joined":
             return jsonify({"msg": "This user is already a member of the event"}), 403
@@ -895,12 +892,16 @@ def accept_member(event_id):
             return jsonify({"msg": "This user has not applied to join the event"}), 403
         
         db.session.commit()
+        print("Event member status: ", event_member.member_status)
         
         group_chat = GroupChat.query.filter_by(event_id=event.id).first()
         if group_chat is None:
             return jsonify({"msg": "group chat does not exist"}), 404
+        
+        print("Group chat ID: ", group_chat.id)
         '''Add the user to the group chat'''
         db.session.add(UsersGroupChat(user_id=member_id, chat_id=group_chat.id))
+        print("User added to group chat")
         '''Get the user's name and last name to add it to the join message'''
         user_profile = User_Profile.query.filter_by(user_id=member_id).first()
         username = user_profile.name + " " + user_profile.last_name
@@ -912,7 +913,7 @@ def accept_member(event_id):
         
         return jsonify({"msg": "member accepted"}), 200
     except Exception as e:
-        return jsonify({"msg": "error accepting member",
+        return jsonify({"msg": "error accepting member ",
                         "error": str(e)}), 500
 
 @event_bp.route("/get-my-groups-chat", methods=["GET"])
@@ -948,9 +949,16 @@ def get_my_groups_chat():
             event = Event.query.filter_by(id=group_chat.event_id).first()
             owner_profile = User_Profile.query.filter_by(user_id=event.owner_id).first()
             last_message = Message.query.filter_by(group_chat_id=group_chat.id).order_by(Message.sentAt.desc()).first()
-            last_message_sender = User.query.filter_by(id=last_message.sender_id).first()
-            sender_profile = User_Profile.query.filter_by(user_id=last_message_sender.id).first()
-            sender_fullname = sender_profile.name + " " + sender_profile.last_name
+            if last_message is None:
+                last_message_sender = User.query.filter_by(id=1).first()
+            else:
+                last_message_sender = User.query.filter_by(id=last_message.sender_id).first()
+            sender_fullname = ""
+            if last_message_sender.id is 1:
+                sender_fullname = "System"
+            elif last_message_sender.id is not 1:
+                sender_profile = User_Profile.query.filter_by(user_id=last_message_sender.id).first()
+                sender_fullname = sender_profile.name + " " + sender_profile.last_name
             number_of_messages = Message.query.filter_by(group_chat_id=group_chat.id).count()
             
             group_chat_details = {

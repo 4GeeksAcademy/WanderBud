@@ -60,7 +60,11 @@ def setup_commands(app):
                      is_active=True),
                 User(email="lavacapaca@gmail.com",
                     password="6666",
-                    is_active=True)
+                    is_active=True),
+                User(id=1,
+                     email="system@system.com",
+                     password="system",
+                     is_active=True)
                     # Add more users following the same structure
                      ]
             db.session.add_all(users)

@@ -481,6 +481,9 @@ a {
   justify-content: start;
   border: none;
   box-shadow: none; /* Blue Grotto con baja opacidad */
+  white-space: nowrap; /* Evitar saltos de línea */
+  overflow: hidden; /* Ocultar texto que desborda */
+  text-overflow: ellipsis; /* Mostrar puntos suspensivos */
 }
 .message-container {
   position: fixed;

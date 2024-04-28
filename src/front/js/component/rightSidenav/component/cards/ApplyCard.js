@@ -9,7 +9,7 @@ export const ApplyCard = ({ username, eventname, img, chatId, owner_id, event_id
     const navigate = useNavigate();
 
     const handleLeave = (event_id) => {
-        // Leave request
+        actions.leaveEvent(event_id);
     }
 
     return (

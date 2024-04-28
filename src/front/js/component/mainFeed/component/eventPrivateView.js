@@ -16,9 +16,6 @@ export const EventPrivateView = () => {
   const [eventData, setEventData] = useState({})
   const [ownerData, setOwnerData] = useState({})
   const [requestMessage, setRequestMessage] = useState("")
-  console.log(event_id)
-  console.log(eventData)
-  console.log(ownerData)
 
   useEffect(() => {
     actions.getOneEvent(event_id).then((data) => {
