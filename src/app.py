@@ -11,6 +11,7 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from api import event_bp
 from api import user_bp
+from api import chat_bp
 
 from flask_jwt_extended import JWTManager,create_access_token,get_jwt_identity,jwt_required
 from flask_cors import CORS
@@ -64,7 +65,7 @@ mail = Mail(app)
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(event_bp, url_prefix='/api')
 app.register_blueprint(user_bp, url_prefix='/api')
-
+app.register_blueprint(chat_bp, url_prefix='/api')
 
 # Handle/serialize errors like a JSON object
 

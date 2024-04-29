@@ -11,7 +11,6 @@ export const PasswordRecoveryForm = () => {
   async function handleEmailChange(e) {
     e.preventDefault();
     let emailSent = await actions.passwordRecoverySubmit(email);
-    console.log(emailSent);
     if (emailSent) {
       setMessage("Check your email inbox");
     } else {

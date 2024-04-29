@@ -7,14 +7,12 @@ import { Link, useNavigate } from "react-router-dom";
 export const EventPublicView = () => {
     const { store, actions } = useContext(Context);
     const [buttonStates, setButtonStates] = useState({});
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
 
     useEffect(() => {
         actions.getPublicEvents();
     }, []);
-
-    console.log(store.publicEvents);
 
     return (
         <>
@@ -52,7 +50,7 @@ export const EventPublicView = () => {
                                         <Col xs={4} id="event-userButton">
                                             <Button
                                                 variant="secondary"
-                                            onClick={() => navigate(`/profile/${item.owner.user_id}`)}
+                                                onClick={() => navigate(`/profile/${item.owner.user_id}`)}
                                             >
                                                 {"Visit Profile"}
                                             </Button>

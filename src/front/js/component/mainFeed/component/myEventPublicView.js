@@ -9,31 +9,29 @@ export const MyEventPublicView = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate()
     const [buttonStates, setButtonStates] = useState({});
-    console.log(store.myPublicEvents)
-    console.log(store.joinedPublicEvents)
 
     useEffect(() => {
         actions.getMyPublicEvents();
     }, []);
 
-  
+
 
     return (
         <>
             <Row className="flex-column">
                 {store.myPublicEvents.reverse().map((item, index) => (
                     <Col xs={12} className="mb-3" key={index}>
-                        
-                            <Card className="h-100">
-                                <Card.Body>
-                                    <Row className="justify-content-between">
-                                        <Col xs={9}>
+
+                        <Card className="h-100">
+                            <Card.Body>
+                                <Row className="justify-content-between">
+                                    <Col xs={9}>
                                         <Link to={`/myevent-view/${item.id}/${item.owner.user_id}`}>
                                             <Card.Title className="p-3"><h4>{item.name}</h4></Card.Title>
-                                            </Link>
-                                        </Col>
-                                        <Col xs={3}>
-                                            {/* <Button
+                                        </Link>
+                                    </Col>
+                                    <Col xs={3}>
+                                        {/* <Button
                                                 variant="primary"
                                                 onClick={(e) => {
                                                     e.stopPropagation(); // Evita que el clic se propague al Link
@@ -43,36 +41,36 @@ export const MyEventPublicView = () => {
                                             >
                                                 {"Add to favorites"}
                                             </Button> */}
+                                    </Col>
+                                    <Row id="event-userRow" className="mt-2 ms-1">
+                                        <Col xs={2}>
+                                            <Card.Title className="p-3"><img className="rounded-circle" src={item.owner.profile_image} style={{ width: "100px", height: "100px", objectFit: "cover" }} /></Card.Title>
                                         </Col>
-                                        <Row id="event-userRow" className="mt-2 ms-1">
-                                            <Col xs={2}>
-                                                <Card.Title className="p-3"><img className="rounded-circle" src={item.owner.profile_image} style={{ width: "100px", height: "100px", objectFit: "cover" }} /></Card.Title>
-                                            </Col>
-                                            <Col xs={4} id="event-cardUserName">
-                                                <Card.Title >{item.owner.name}</Card.Title>
-                                            </Col>
-                                            <Col xs={4} id="event-userButton">
+                                        <Col xs={4} id="event-cardUserName">
+                                            <Card.Title >{item.owner.name}</Card.Title>
+                                        </Col>
+                                        <Col xs={4} id="event-userButton">
                                             <Button
                                                 variant="secondary"
-                                            onClick={() => navigate(`/profile/${item.owner.user_id}`)}
+                                                onClick={() => navigate(`/profile/${item.owner.user_id}`)}
                                             >
                                                 {"Visit Profile"}
                                             </Button>
-                                            </Col>
-                                        </Row>
+                                        </Col>
                                     </Row>
-                                    <Card.Text>
-                                        <label>Event Location:</label>
-                                        <p>{item.location}</p>
-                                        <label>Event Schedule:</label>
-                                        <p>{item.start_date}, {item.start_time}-{item.end_time}</p>
-                                        <label>Event description:</label>
-                                        <p>{item.description}</p>
-                                    </Card.Text>
-                                </Card.Body>
-                                <Card.Footer className="border"></Card.Footer>
-                            </Card>
-                       
+                                </Row>
+                                <Card.Text>
+                                    <label>Event Location:</label>
+                                    <p>{item.location}</p>
+                                    <label>Event Schedule:</label>
+                                    <p>{item.start_date}, {item.start_time}-{item.end_time}</p>
+                                    <label>Event description:</label>
+                                    <p>{item.description}</p>
+                                </Card.Text>
+                            </Card.Body>
+                            <Card.Footer className="border"></Card.Footer>
+                        </Card>
+
                     </Col>
                 ))}
             </Row>

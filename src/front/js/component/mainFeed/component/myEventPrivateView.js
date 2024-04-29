@@ -14,9 +14,6 @@ export const MyEventPrivateView = () => {
   const navigate = useNavigate();
   const [eventData, setEventData] = useState({})
   const [ownerData, setOwnerData] = useState({})
-  console.log(event_id)
-  console.log(eventData)
-  console.log(ownerData)
 
   useEffect(() => {
     actions.getOneEvent(event_id).then((data) => {
