@@ -60,7 +60,11 @@ def setup_commands(app):
                      is_active=True),
                 User(email="lavacapaca@gmail.com",
                     password="6666",
-                    is_active=True)
+                    is_active=True),
+                User(id=1,
+                     email="system@system.com",
+                     password="system",
+                     is_active=True)
                     # Add more users following the same structure
                      ]
             db.session.add_all(users)
@@ -147,12 +151,12 @@ def setup_commands(app):
             user_private_chat = [
                 UsersPrivateChat(user=users[2], private_chat=private_chat[0]),
                 UsersPrivateChat(user=users[1], private_chat=private_chat[0]),
-                UsersPrivateChat(user=users[3], private_chat=private_chat[0]),
-                UsersPrivateChat(user=users[1], private_chat=private_chat[0]),
-                UsersPrivateChat(user=users[4], private_chat=private_chat[0]),
-                UsersPrivateChat(user=users[1], private_chat=private_chat[0]),
-                UsersPrivateChat(user=users[5], private_chat=private_chat[0]),
-                UsersPrivateChat(user=users[1], private_chat=private_chat[0]),
+                UsersPrivateChat(user=users[3], private_chat=private_chat[1]),
+                UsersPrivateChat(user=users[1], private_chat=private_chat[1]),
+                UsersPrivateChat(user=users[4], private_chat=private_chat[2]),
+                UsersPrivateChat(user=users[1], private_chat=private_chat[2]),
+                UsersPrivateChat(user=users[5], private_chat=private_chat[3]),
+                UsersPrivateChat(user=users[1], private_chat=private_chat[3]),
                 ]
             private_messages = [
                 Message(sender=users[2], private_chat=private_chat[0], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
@@ -160,20 +164,20 @@ def setup_commands(app):
                 Message(sender=users[2], private_chat=private_chat[0], receiver=users[1] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
                 Message(sender=users[1], private_chat=private_chat[0], receiver=users[2] ,message="¡Perfecto! Nos vemos allí entonces." , group_type="Private"),
                 
-                Message(sender=users[3], private_chat=private_chat[0], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
-                Message(sender=users[1], private_chat=private_chat[0], receiver=users[3] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
-                Message(sender=users[3], private_chat=private_chat[0], receiver=users[1] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
-                Message(sender=users[1], private_chat=private_chat[0], receiver=users[3] ,message="¡Excelente! Nos vemos allí." , group_type="Private"),
+                Message(sender=users[3], private_chat=private_chat[1], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[1], receiver=users[3] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
+                Message(sender=users[3], private_chat=private_chat[1], receiver=users[1] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[1], receiver=users[3] ,message="¡Excelente! Nos vemos allí." , group_type="Private"),
                 
-                Message(sender=users[4], private_chat=private_chat[0], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
-                Message(sender=users[1], private_chat=private_chat[0], receiver=users[4] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
-                Message(sender=users[4], private_chat=private_chat[0], receiver=users[1] ,message="Lo siento, no podré asistir" , group_type="Private"),
-                Message(sender=users[1], private_chat=private_chat[0], receiver=users[4] ,message="Qué lástima, espero verte en el próximo evento." , group_type="Private"),
+                Message(sender=users[4], private_chat=private_chat[2], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[2], receiver=users[4] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
+                Message(sender=users[4], private_chat=private_chat[2], receiver=users[1] ,message="Lo siento, no podré asistir" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[2], receiver=users[4] ,message="Qué lástima, espero verte en el próximo evento." , group_type="Private"),
                 
-                Message(sender=users[5], private_chat=private_chat[0], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
-                Message(sender=users[1], private_chat=private_chat[0], receiver=users[5] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
-                Message(sender=users[5], private_chat=private_chat[0], receiver=users[1] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
-                Message(sender=users[1], private_chat=private_chat[0], receiver=users[5] ,message="¡Genial! Nos vemos allí." , group_type="Private"),
+                Message(sender=users[5], private_chat=private_chat[3], receiver=users[1] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[3], receiver=users[5] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
+                Message(sender=users[5], private_chat=private_chat[3], receiver=users[1] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[3], receiver=users[5] ,message="¡Genial! Nos vemos allí." , group_type="Private"),
                 
                 ]
             db.session.add_all(user_private_chat)
@@ -187,9 +191,7 @@ def setup_commands(app):
             
             user_group_chat = [
                 UsersGroupChat(user=users[1], group_chat=group_chat[0]),
-                UsersGroupChat(user=users[2], group_chat=group_chat[0]),
-                UsersGroupChat(user=users[3], group_chat=group_chat[0]),
-                UsersGroupChat(user=users[5], group_chat=group_chat[0]),
+                UsersGroupChat(user=users[0], group_chat=group_chat[0]),
                 ]
             
             db.session.add_all(user_group_chat)
@@ -197,13 +199,7 @@ def setup_commands(app):
             
             group_messages = [
                 Message(sender=users[1], group_chat=group_chat[0], message="¡Hola a todos! ¿Están listos para el evento de mañana?" , group_type="Group"),
-                Message(sender=users[2], group_chat=group_chat[0], message="¡Hola! Sí, estoy emocionado por la carrera." , group_type="Group"),
-                Message(sender=users[3], group_chat=group_chat[0], message="¡Hola! Yo también, será genial correr juntos." , group_type="Group"),
-                Message(sender=users[5], group_chat=group_chat[0], message="¡Hola! No puedo esperar para verlos a todos." , group_type="Group"),
-                Message(sender=users[1], group_chat=group_chat[0], message="¡Genial! Nos vemos allí." , group_type="Group"),
-                Message(sender=users[2], group_chat=group_chat[0], message="¡Nos vemos!" , group_type="Group"),
-                Message(sender=users[3], group_chat=group_chat[0], message="¡Hasta mañana!" , group_type="Group"),
-                Message(sender=users[5], group_chat=group_chat[0], message="¡Nos vemos!" , group_type="Group"),
+                Message(sender=users[0], group_chat=group_chat[0], message="¡Hola! Sí, estoy emocionado por la carrera." , group_type="Group"),
                 ]
             db.session.add_all(group_messages)
             db.session.commit()

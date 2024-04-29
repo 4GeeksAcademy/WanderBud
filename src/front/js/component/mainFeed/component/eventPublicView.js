@@ -19,10 +19,7 @@ export const EventPublicView = () => {
         actions.getPublicEvents();
     }, []);
 
-    console.log(store.publicEvents);
-
     const filteredEvents = store.publicEvents.filter(item => item.owner.user_id !== currentUserID);
-
     return (
         <>
             <Row className="flex-column">
@@ -59,7 +56,7 @@ export const EventPublicView = () => {
                                         <Col xs={4} id="event-userButton">
                                             <Button
                                                 variant="secondary"
-                                            onClick={() => navigate(`/profile/${item.owner.user_id}`)}
+                                                onClick={() => navigate(`/profile/${item.owner.user_id}`)}
                                             >
                                                 {"Visit Profile"}
                                             </Button>

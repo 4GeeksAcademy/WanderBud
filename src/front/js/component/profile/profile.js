@@ -23,7 +23,6 @@ const Profile = () => {
 
     useEffect(() => {
         funtionsEffect();
-        console.log(profile);
     }, [user_id]);
 
     const funtionsEffect = () => {
@@ -121,11 +120,11 @@ const Profile = () => {
                             </div>
                         </div>
                     </Col>
-                    <Tab.Container defaultActiveKey="my-events">
+                    <Tab.Container defaultActivekey="my-events">
                         <Row className="w-100 justify-content-center m-0 p-0">
                             <Col md={12} className="mt-2 p-2 navtabs">
-                                <Nav variant="pills" defaultActiveKey="for-you" className="row">
-                                    <Nav.Item className="col-4" defaultActiveKey="my-events">
+                                <Nav variant="pills" defaultActivekey="for-you" className="row">
+                                    <Nav.Item className="col-4" defaultActivekey="my-events">
                                         <Nav.Link eventKey="my-events" className="btn btn-navtab w-100">
                                             My events
                                         </Nav.Link>

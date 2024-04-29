@@ -9,7 +9,6 @@ import { JoinEventPublicView } from "./component/joinEventPublicView";
 
 
 export const FeedMain = ({ children }) => {
-    const [activeTab, setActiveTab] = useState('for-you')
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -20,8 +19,8 @@ export const FeedMain = ({ children }) => {
             <Tab.Container defaultActiveKey="for-you">
                 <Row className="w-100">
                     <Col md={12} className="mt-4 p-2 navtabs">
-                        <Nav variant="pills" defaultActiveKey="for-you" className="row">
-                            <Nav.Item className="col-4" defaultActiveKey="for-you">
+                        <Nav variant="pills" className="row">
+                            <Nav.Item className="col-4">
                                 <Nav.Link eventKey="for-you" className="btn btn-navtab w-100">
                                     For you
                                 </Nav.Link>
@@ -38,7 +37,7 @@ export const FeedMain = ({ children }) => {
                             </Nav.Item>
                         </Nav>
                     </Col>
-                    <Tab.Content activeKey={activeTab} className="mt-2">
+                    <Tab.Content className="mt-2">
                         <Tab.Pane eventKey="for-you">
                             <EventPublicView />
                         </Tab.Pane>

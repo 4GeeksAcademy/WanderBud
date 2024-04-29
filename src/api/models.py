@@ -1,5 +1,5 @@
-import datetime
 import random
+from datetime import timezone, datetime
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer as Serializer
@@ -29,7 +29,8 @@ class User(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
-        self.id = self.generate_unique_id()
+        if not self.id:
+            self.id = self.generate_unique_id()
 
     def generate_reset_token(self):
         serializer = Serializer(secret_key=current_app.config['JWT_SECRET_KEY'], salt=current_app.config['SECURITY_PASSWORD_SALT'])
@@ -74,9 +75,10 @@ class User_Profile(db.Model):
 
     def serialize(self):
         return {
+            "user_id": self.user_id,
             "name": self.name,
             "last_name": self.last_name,
-            "birthdate": self.birthdate,
+            "birthdate": self.birthdate.strftime("%Y-%m-%d"),
             "location": self.location,
             "description": self.description,
             "profile_image": self.profile_image,
@@ -106,8 +108,8 @@ class Event(db.Model):
     owner_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
-    start_datetime = db.Column(db.DateTime, nullable=False)
-    end_datetime = db.Column(db.DateTime, nullable=False)
+    start_datetime = db.Column(db.DateTime(timezone=True), nullable=False)
+    end_datetime = db.Column(db.DateTime(timezone=True), nullable=True)
     status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False, default="Planned")
     description = db.Column(db.String(250), nullable=True)
     budget_per_person = db.Column(db.Float, nullable=True)
@@ -135,7 +137,7 @@ class Event(db.Model):
             "owner": self.owner_id,
             "name": self.name,
             "location": self.location,
-            "date": self.start_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+            "date": self.start_datetime.strftime('%Y-%m-%d %H:%M:%S GMT%z'),
             "status": self.status,
             "description": self.description,
             "budget_per_person": self.budget_per_person,
@@ -180,7 +182,7 @@ class PrivateChat(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
-    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     users_chat = db.relationship('UsersPrivateChat', backref='private_chat', lazy=True)
     messages = db.relationship('Message', backref='private_chat', lazy=True)
     
@@ -202,7 +204,7 @@ class PrivateChat(db.Model):
             "id": self.id,
             "event_id": self.event_id,
             "user_id": self.user_id,
-            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M:%S') # "2021-06-01 12:00:00
+            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M:%S GMT%z') # "2021-06-01 12:00:00
         }
 
 class UsersGroupChat(db.Model):
@@ -225,7 +227,7 @@ class GroupChat(db.Model):
     '''This table is used to store the group chats between users'''
     id = db.Column(db.BigInteger, primary_key=True)
     event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
-    createdAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    createdAt = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     users_chat = db.relationship('UsersGroupChat', backref='group_chat', lazy=True)
     messages = db.relationship('Message', backref='group_chat', lazy=True)
     
@@ -245,7 +247,7 @@ class GroupChat(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M:%S'), # "2021-06-01 12:00:00
+            "createdAt": self.createdAt.strftime('%Y-%m-%d %H:%M:%S GMT%z'), # "2021-06-01 12:00:00 GMT-5"
             "event_id": self.event_id
         }
 
@@ -258,9 +260,9 @@ class Message(db.Model):
     receiver_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=True)
     message = db.Column(db.String(250), nullable=False)
     group_type = db.Column(db.Enum("Private","Group", name="group_type"), nullable=False)
-    sentAt = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
-    deliveredAt = db.Column(db.DateTime, nullable=True)
-    readAt = db.Column(db.DateTime, nullable=True)
+    sentAt = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    deliveredAt = db.Column(db.DateTime(timezone=True), nullable=True)
+    readAt = db.Column(db.DateTime(timezone=True), nullable=True)
     
     def __repr__(self):
         return f'<Message {self.id} Chat {self.sender_id} Type {self.group_type}>'
@@ -268,15 +270,29 @@ class Message(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "private_chat_id": self.chat_id,
+            "private_chat_id": self.private_chat_id,
             "group_chat_id": self.group_chat_id,
             "sender_id": self.sender_id,
             "receiver_id": self.receiver_id,
             "message": self.message,
             "group_type": self.group_type,
-            "sentAt": self.sentAt.strftime('%Y-%m-%d %H:%M:%S'),
-            "deliveredAt": self.deliveredAt.strftime('%Y-%m-%d %H:%M:%S') if self.deliveredAt else None,
-            "readAt": self.readAt.strftime('%Y-%m-%d %H:%M:%S') if self.readAt else None
+            "sentAt": self.sentAt.strftime('%Y-%m-%d %H:%M:%S GMT%z'),
+            "deliveredAt": self.deliveredAt.strftime('%Y-%m-%d %H:%M:%S GMT%z') if self.deliveredAt else None,
+            "readAt": self.readAt.strftime('%Y-%m-%d %H:%M:%S GMT%z') if self.readAt else None
         }
     
-    
+
+class UserProfileImage(db.Model):
+    id = db.Column(db.BigInteger, primary_key=True)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    image_path = db.Column(db.String(250), nullable=False)
+
+    def __repr__(self):
+        return f'<UserProfileImage {self.id} User {self.user_id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "image_path": self.image_path
+        }

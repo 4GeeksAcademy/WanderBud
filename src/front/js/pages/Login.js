@@ -25,7 +25,6 @@ export const Login = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(email, password);
     await actions.login(email, password).then((response) => {
       if (response) {
         actions.validateToken()
@@ -96,22 +95,17 @@ export default Login;
 //   const [password, setPassword] = useState("")
 //   const { store, actions } = useContext(Context)
 //   const navigate = useNavigate()
-//   console.log(email);
-//   console.log(password);
 
 //   // const onSuccess = (response) =>{
-//   //   console.log(response);
 //   // }
 
 //   // const onFailure = () =>{
-//   //   console.log("Something went wrong");
 //   // }
 
 
 
 //   async function handleSubmit(e) {
 //     e.preventDefault()
-//     console.log(email, password);
 //     let logged = await actions.login(email, password)
 //     if (logged) {
 //       navigate("/feed")
