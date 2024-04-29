@@ -13,6 +13,7 @@ export const SignUpProfile = () => {
   const [birthdate, setBirthdate] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
+  const [coverImage, setCoverImage] = useState('');
   const [message, setMessage] = useState(null);
   const { actions, store } = useContext(Context);
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export const SignUpProfile = () => {
       birthdate,
       description,
       image,
+      coverImage,
       accessToken
     );
 

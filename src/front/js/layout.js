@@ -17,6 +17,7 @@ import { MyEventPrivateView } from "./component/mainFeed/component/myEventPrivat
 import { EventPrivateView } from "./component/mainFeed/component/eventPrivateView";
 import { JoinEventPrivateView } from "./component/mainFeed/component/joinEventPrivateView";
 import { UpdateProfile } from "./component/profile/updateProfile";
+import { UpdateCoverImage } from "./component/profile/UpdateCoverImage";
 
 import UserProfile from "./component/profile/profile";
 import Profile from "./component/profile/profile";
@@ -45,6 +46,7 @@ const Layout = () => {
                         <Route element={<SignUp />} path="/signup/user" />
                         <Route element={<SignUpProfile />} path="/signup/profile" />
                         <Route element={<UpdateProfile />} path="/update/profile/:user_id" />
+                        <Route element={<UpdateCoverImage />} path="/update-cover/:user_id" />
                         <Route element={<FeedLayout children={<Profile />} />} path="/profile/:user_id" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token" />

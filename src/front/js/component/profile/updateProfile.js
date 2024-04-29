@@ -50,7 +50,7 @@ export const UpdateProfile = () => {
 
     if (newProfile) {
       setMessage(store.message);
-      navigate('/feed');
+      navigate(`/profile/${user_id}`);
     } else {
       setMessage('Failed to create profile, please try again');
     }

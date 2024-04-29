@@ -13,7 +13,7 @@ const Profile = () => {
     const [profileImgH, setProfileImgH] = useState(0);
     const [page, setPage] = useState(0);
     const [profile, setProfile] = useState({});
-    const [cover, setCover] = useState('https://via.placeholder.com/1000');
+    const [coverImage, setCoverImage] = useState('https://via.placeholder.com/1000');
     const [activeTab, setActiveTab] = useState('my-events');
     const client = createClient(process.env.PEXELS_API_KEY);
     const [queryRes, setQueryRes] = useState({});
@@ -83,7 +83,7 @@ const Profile = () => {
             <Container fluid className='d-flex align-items-start justify-content-center'>
                 <Row className='p-3 pt-2'>
                     <Col md={12} className='p-0'>
-                        <button className='btn p-0 m-0 border-0' onClick={() => fetchWallpapers()}>
+                        <button className='btn p-0 m-0 border-0' onClick={() => navigate(`/update-cover/${user_id}`)}>
                             <img
                                 src={profile.cover_image || queryRes?.photos[page].src.original || "https://via.placeholder.com/1000"}
                                 alt="Cover"
@@ -103,7 +103,7 @@ const Profile = () => {
                         <div className="d-flex justify-content-end w-100 py-3">
                             <ButtonGroup aria-label="Basic example" className={'rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} >
                                 <Button variant="primary" onClick={() => navigate(`/update/profile/${user_id}`)}>Edit Profile</Button>
-                                <Button variant="upload">Set Banner</Button>
+                                <Button variant="upload" onClick={() => navigate(`/update-cover/${user_id}`)}>Set Banner</Button>
                             </ButtonGroup>
                         </div>
                         <div className='pt-4 profile-container p-2'>
@@ -144,7 +144,7 @@ const Profile = () => {
                             </Col>
                             <Tab.Content activeKey={activeTab} className="mt-2">
                                 <Tab.Pane eventKey="my-events">
-                                    <MyEventPublicView />
+                                    {userId == user_id ? <MyEventPublicView /> : <p>Content for Tab 2</p>}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Images">
                                     <p>Content for Tab 2</p>

@@ -185,7 +185,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			createUserProfile: async (name, lastName, location, birthdate, description, image, accessToken) => {
+			createUserProfile: async (name, lastName, location, birthdate, description, image, coverImage, accessToken) => {
 				try {
 					console.log(name)
 					console.log(lastName)
@@ -193,6 +193,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(birthdate)
 					console.log(description)
 					console.log(image)
+					console.log(coverImage)
 					console.log(accessToken)
 
 					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile", {
@@ -207,7 +208,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 							birthdate: birthdate,
 							location: location,
 							description: description,
-							profile_image: image
+							profile_image: image,
+							cover_image: coverImage
 						})
 					});
 					const data = await response.json();
@@ -357,10 +359,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"msg": message
 						})
 					});
-
-					if (!response.ok) {
-						throw new Error('Failed to join event');
-					}
 
 					const data = await response.json();
 					if (response.status === 200) {
@@ -629,6 +627,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				birthdate,
 				description,
 				image,
+				coverImage
 			  ) => {
 				const accessToken = localStorage.getItem("token");
 				try {
@@ -644,7 +643,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"location": location,
 							"birthdate": birthdate,
 							"description": description,
-							"profile_image": image
+							"profile_image": image,
+							"cover_image": coverImage
+
 						})
 					});
 					if (response.status === 200) {
