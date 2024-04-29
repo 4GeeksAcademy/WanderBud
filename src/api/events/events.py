@@ -88,7 +88,10 @@ def create_event():
         '''Add the owner to the group chat'''
         db.session.add(UsersGroupChat(user_id=owner_id, chat_id=group_chat.id))
         db.session.commit()
-        
+        '''Add the welcome message to the group chat'''
+        message_created = Message(group_chat_id=group_chat.id, sender_id=1, message="Welcome to "+name+"'s event", group_type="Group")
+        db.session.add(message_created)
+        db.session.commit()
 
         return jsonify({"msg": "event created"}), 200
     except Exception as e:
@@ -232,7 +235,7 @@ def get_event(event_id):
         
         event_details = {
             "id": event.id,
-                "name": event.name,
+            "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
                     "profile_image": owner.profile_image if owner else None,
@@ -355,8 +358,6 @@ def get_event_by_radius():
         """
         user_location = request.args.get("location")
         radius = float(request.args.get("radius"))
-        print(user_location)
-        print(radius)
 
         events = Event.query.all()
         
@@ -367,7 +368,6 @@ def get_event_by_radius():
         for event in events:
             if event.location in events_list_address:
                 owner = User_Profile.query.get(event.owner_id)
-                print(event.location)
                 event_details = {
                     "id": event.id,
                     "name": event.name,
@@ -450,6 +450,7 @@ def update_event(event_id):
 @event_bp.route("/delete-event/<int:event_id>", methods=["DELETE"])
 @jwt_required()
 def delete_event(event_id):
+    print(event_id)
     try:
         """
         Delete a specific event.
@@ -465,7 +466,7 @@ def delete_event(event_id):
         current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
         user = User.query.filter_by(email=current_user).first()
-
+        print(event)
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         
@@ -608,22 +609,18 @@ def get_applied_events():
         Returns:
             A JSON response containing a list of the applied events.
 
-        Example JSON response:
+        Example Response:
             [
                 {
                     "id": 1,
                     "name": "My Event",
+                    "private_chat_id": 1,
                     "owner_id": 1,
+                    "owner_name": "John",
+                    "owner_last_name": "Doe",
+                    "owner_img": "image.jpg",
                     "location": "New York",
-                    "start_date": "2022-12-31",
-                    "start_time": "23:59:59",
-                    "end_date": "2023-01-01",
-                    "end_time": "01:00:00",
-                    "status": "planned",
-                    "timezone": "America/New_York",
-                    "description": "A description of my event",
-                    "event_type_id": 1,
-                    "budget_per_person": 100
+                    "event_type_id": 1
                 }
             ]
         """
@@ -632,14 +629,14 @@ def get_applied_events():
         applied_events = Event.query.join(Event_Member, Event.id == Event_Member.event_id).filter(Event_Member.user_id == user.id, Event_Member.member_status == "Applied").all()
         applied_events_list = []
         for event in applied_events:
-            owner_profile = User_Profile.query.filter_by(user_id=event.owner.id).first()
+            owner_profile = User_Profile.query.filter_by(user_id=event.owner_id).first()
             private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
             private_chat_id = private_chat.id if private_chat else None
             event_details = {
                 "id": event.id,
                 "name": event.name,
                 "private_chat_id": private_chat_id,
-                "owner": event.owner_id,
+                "owner_id": event.owner_id,
                 "owner_name": owner_profile.name,
                 "owner_last_name": owner_profile.last_name,
                 "owner_img": owner_profile.profile_image,
@@ -649,10 +646,10 @@ def get_applied_events():
             applied_events_list.append(event_details)
         
         if applied_events_list == []:
-            return jsonify({"msg": "No applied events found"}), 404
+            return jsonify([]), 202
         
                 
-        return jsonify(applied_events_list)
+        return jsonify(applied_events_list), 200
     except Exception as e:
         return jsonify({"error": str(e)})
     
@@ -669,22 +666,18 @@ def get_owner_requests():
         Returns:
             A JSON response containing a list of the applied events.
 
-        Example JSON response:
+        Example response:
             [
                 {
                     "id": 1,
                     "name": "My Event",
-                    "owner_id": 1,
+                    "private_chat_id": 1,
+                    "member_id": 1,
+                    "member_name": "John",
+                    "member_last_name": "Doe",
+                    "member_img": "image.jpg",
                     "location": "New York",
-                    "start_date": "2022-12-31",
-                    "start_time": "23:59:59",
-                    "end_date": "2023-01-01",
-                    "end_time": "01:00:00",
-                    "status": "planned",
-                    "timezone": "America/New_York",
-                    "description": "A description of my event",
-                    "event_type_id": 1,
-                    "budget_per_person": 100
+                    "event_type_id": 1
                 }
             ]
         """
@@ -720,8 +713,8 @@ def get_owner_requests():
             }
             join_requests.append(event_details)
         if join_requests == []:
-            return jsonify({"msg": "No join requests found"}), 404
-        return jsonify(join_requests)
+            return jsonify([]), 202
+        return jsonify(join_requests),200
     except Exception as e:
         return jsonify({"error": str(e)})
 
@@ -777,7 +770,7 @@ def join_event(event_id):
         return jsonify({"msg": "error joining event",
                         "error": str(e)}), 500
     
-@event_bp.route("/leave-event/<int:event_id>", methods=["POST"])
+@event_bp.route("/leave-event/<int:event_id>", methods=["DELETE"])
 @jwt_required()
 def leave_event(event_id):
     try:
@@ -799,15 +792,17 @@ def leave_event(event_id):
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
         '''Do it if u want to delete your chats'''
-        # user_private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
-        # user_group_chat = GroupChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        user_private_chat = UsersPrivateChat.query.filter_by(user_id=user.id).first()
+        user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id).first()
         if event_member is None:
             return jsonify({"msg": "You are not a member of this event"}), 403
         
         db.session.delete(event_member)
         '''Do it if u want to delete your chats'''
-        # db.session.delete(user_private_chat)
-        # db.session.delete(user_group_chat)
+        if user_private_chat is not None:
+            db.session.delete(user_private_chat)
+        if user_group_chat is not None:
+            db.session.delete(user_group_chat)
         db.session.commit()
         
         return jsonify({"msg": "left event"}), 200
@@ -886,7 +881,7 @@ def accept_member(event_id):
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
-        member_id = request.json.get("member_id", None)
+        member_id = request.json.get("member_id")
         event_member = Event_Member.query.filter_by(user_id=member_id, event_id=event.id).first()
         if  event_member.member_status == "Joined":
             return jsonify({"msg": "This user is already a member of the event"}), 403
@@ -898,12 +893,16 @@ def accept_member(event_id):
             return jsonify({"msg": "This user has not applied to join the event"}), 403
         
         db.session.commit()
+        print("Event member status: ", event_member.member_status)
         
         group_chat = GroupChat.query.filter_by(event_id=event.id).first()
         if group_chat is None:
             return jsonify({"msg": "group chat does not exist"}), 404
+        
+        print("Group chat ID: ", group_chat.id)
         '''Add the user to the group chat'''
         db.session.add(UsersGroupChat(user_id=member_id, chat_id=group_chat.id))
+        print("User added to group chat")
         '''Get the user's name and last name to add it to the join message'''
         user_profile = User_Profile.query.filter_by(user_id=member_id).first()
         username = user_profile.name + " " + user_profile.last_name
@@ -915,5 +914,70 @@ def accept_member(event_id):
         
         return jsonify({"msg": "member accepted"}), 200
     except Exception as e:
-        return jsonify({"msg": "error accepting member",
+        return jsonify({"msg": "error accepting member ",
+                        "error": str(e)}), 500
+
+@event_bp.route("/get-my-groups-chat", methods=["GET"])
+@jwt_required()
+def get_my_groups_chat():
+    try:
+        """
+        Retrieve the group chats that the current user is a part of.
+
+        This function retrieves the group chats that the current user is a part of from the
+        database and returns them as a list of JSON objects.
+
+        Returns:
+            A JSON response containing a list of the group chats that the current user is a part of.
+
+        Example JSON response:
+            [
+                {
+                    "id": 1,
+                    "event_id": 1,
+                    "event_name": "My Event",
+                    "event_owner": "John Doe",
+                    "event_owner_img": "image.jpg"
+                }
+            ]
+        """
+        current_user = get_jwt_identity()
+        user = User.query.filter_by(email=current_user).first()
+        group_chats = GroupChat.query.join(UsersGroupChat, GroupChat.id == UsersGroupChat.chat_id).filter(UsersGroupChat.user_id == user.id).all()
+        group_chats_list = []
+        print(group_chats)
+        for group_chat in group_chats:
+            event = Event.query.filter_by(id=group_chat.event_id).first()
+            owner_profile = User_Profile.query.filter_by(user_id=event.owner_id).first()
+            last_message = Message.query.filter_by(group_chat_id=group_chat.id).order_by(Message.sentAt.desc()).first()
+            if last_message is None:
+                last_message_sender = User.query.filter_by(id=1).first()
+            else:
+                last_message_sender = User.query.filter_by(id=last_message.sender_id).first()
+            sender_fullname = ""
+            if last_message_sender.id is 1:
+                sender_fullname = "System"
+            elif last_message_sender.id is not 1:
+                sender_profile = User_Profile.query.filter_by(user_id=last_message_sender.id).first()
+                sender_fullname = sender_profile.name + " " + sender_profile.last_name
+            number_of_messages = Message.query.filter_by(group_chat_id=group_chat.id).count()
+            
+            group_chat_details = {
+                "id": group_chat.id,
+                "event_id": event.id,
+                "event_name": event.name,
+                "owner": owner_profile.name,
+                "owner_id": owner_profile.user_id,
+                "owner_img": owner_profile.profile_image,
+                "sender_last_message": sender_fullname,
+                "last_message": last_message.message if last_message else None,
+                "number_of_messages": number_of_messages
+            }
+            print(group_chat_details)
+            group_chats_list.append(group_chat_details)
+        if group_chats_list == []:
+            return jsonify({"msg": "You are not a member of any event"}), 202
+        return jsonify(group_chats_list), 200
+    except Exception as e:
+        return jsonify({"msg": "error retrieving group chats",
                         "error": str(e)}), 500

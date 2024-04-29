@@ -135,7 +135,8 @@ def create_user_profile():
             birthdate=data["birthdate"],
             location=data["location"],
             description=data["description"],
-            profile_image=data["profile_image"]
+            profile_image=data["profile_image"],
+            cover_image=data["cover_image"]
         )
         db.session.add(new_user_profile)
         db.session.commit()

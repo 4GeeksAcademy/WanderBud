@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			users: [],
+			appliedPublicEvents: null,
 			publicEvents: [],
 			myPublicEvents: [],
 			joinedPublicEvents: [],
@@ -14,6 +15,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				password: "",
 				id: ""
 			},
+			ownerRequest: null,
+			groupChat: null,
 			favorites: [],
 			auth: false,
 			authProfile: false,
@@ -107,7 +110,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				const actions = getActions()
 				const auth = store.auth;
-				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/password-reset/*', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/valid-token", {
@@ -122,7 +125,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return true;
 					} else {
 						setStore({ auth: false })
-						if (!unloggedPaths.includes(window.location.pathname)) {
+						if ((window.location.pathname).includes('/password-reset')) {
+							return false;
+						}
+						else if (!unloggedPaths.includes(window.location.pathname)) {
 							setStore({ storeShow: true, alertTitle: 'Session Expired', alertBody: 'Your session has expired, please log in again', redirect: '/login' })
 							throw new Error('Token is not valid');
 						} else {
@@ -167,7 +173,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const locationResponse = await fetch('https://freeipapi.com/api/json');
 					const locationData = await locationResponse.json();
 					const location = encodeURIComponent(`${locationData.cityName}, ${locationData.countryName}`)
-					console.log(location)
 					const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&location=${location}`, {
 						method: 'GET',
 						headers: {
@@ -185,16 +190,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			createUserProfile: async (name, lastName, location, birthdate, description, image, accessToken) => {
+			createUserProfile: async (name, lastName, location, birthdate, description, image, coverImage, accessToken) => {
 				try {
-					console.log(name)
-					console.log(lastName)
-					console.log(location)
-					console.log(birthdate)
-					console.log(description)
-					console.log(image)
-					console.log(accessToken)
-
 					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile", {
 						method: 'POST',
 						headers: {
@@ -207,7 +204,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 							birthdate: birthdate,
 							location: location,
 							description: description,
-							profile_image: image
+							profile_image: image,
+							cover_image: coverImage
 						})
 					});
 					const data = await response.json();
@@ -301,7 +299,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			createEvent: async (eventData) => {
-				console.log(eventData);
 				const actions = getActions();
 				const startDate = eventData.startDate.split('T')[0];
 				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
@@ -317,7 +314,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
 				};
-				console.log(eventDataForBackend);
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/create-event', {
 						method: 'POST',
@@ -345,7 +341,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			requestJoinEvent: async (event_id, message) => {
-				console.log(event_id);
 				try {
 					const response = await fetch(process.env.BACKEND_URL + `/api/join-event/${event_id}`, {
 						method: 'POST',
@@ -353,14 +348,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Content-Type': 'application/json',
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
 						},
-						body:JSON.stringify({
-							"msg": message
+						body: JSON.stringify({
+							"message": message
 						})
 					});
-
-					if (!response.ok) {
-						throw new Error('Failed to join event');
-					}
 
 					const data = await response.json();
 					if (response.status === 200) {
@@ -422,13 +413,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						console.log(data);
 						return data.results;
 					} else {
+						const data = await response.json();
+						console.log("Error getting user profile:", data);
 						throw new Error('Error getting public events');
 					}
 				} catch (error) {
-					console.error('Error getting public events:', error);
+					console.error('Error getting user profile:', error);
 					setStore({ message: "Network error, please try again" });
 				}
 			},
@@ -485,9 +477,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						console.log(data)
 						setStore({ joinedPublicEvents: data });
 					} else {
+						const data = await response.json();
+						console.log("Error getting joined events:", data);
 						throw new Error('Error getting public events');
 					}
 				} catch (error) {
@@ -497,7 +490,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			updateEvent: async (eventData, event_id) => {
-				console.log(eventData);
 				const actions = getActions();
 				const startDate = eventData.startDate.split('T')[0];
 				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
@@ -513,10 +505,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
 				};
-				console.log(eventDataForBackend);
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}`, {
-						method: 'POST',
+						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -622,7 +613,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			updateUserProfile: async (userData) => {
+			updateUserProfile: async (
+				name,
+				lastName,
+				location,
+				birthdate,
+				description,
+				image,
+				coverImage
+			) => {
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/update-profile", {
@@ -631,7 +630,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Content-Type': 'application/json',
 							'Authorization': `Bearer ${accessToken}`
 						},
-						body: JSON.stringify(userData)
+						body: JSON.stringify({
+							"name": name,
+							"last_name": lastName,
+							"location": location,
+							"birthdate": birthdate,
+							"description": description,
+							"profile_image": image,
+							"cover_image": coverImage
+
+						})
 					});
 					if (response.status === 200) {
 						const data = await response.json();
@@ -646,7 +654,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			getOwnerRequest: async () => {
-				const accessToken = localStorage.getItem('token')
+				const accessToken = localStorage.getItem('token');
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/get-owner-request', {
 						method: 'GET',
@@ -654,19 +662,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					if (response.ok) {
+					if (!response.ok) {
+						throw new Error(`Error getting owner request: ${response.statusText}`);
+					} else if (response.status === 200) {
 						const data = await response.json();
 						setStore({ ownerRequest: data });
-					} else {
-						throw new Error('Error getting owner request');
+					} else if (response.status === 202) {
+						setStore({
+							ownerRequest: {
+								msg: "No owner request found"
+							}
+						});
 					}
 				} catch (error) {
 					console.error('Error getting owner request:', error);
 					return [];
 				}
-
 			},
-			getUserRequest: async () => {
+			getAppliedEvents: async () => {
 				const accessToken = localStorage.getItem('token')
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/get-user-request', {
@@ -675,19 +688,156 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					if (response.ok) {
+					if (!response.ok) {
+						throw new Error(`Error getting user request: ${response.statusText}`);
+					} else if (response.status === 200) {
 						const data = await response.json();
-						setStore({ userRequest: data });
-					} else {
-						throw new Error('Error getting user request');
+						//	setStore({ appliedPublicEvents: data });
+						//} else {
+						//	throw new Error('Error getting user request');
+						setStore({ appliedPublicEvents: data });
+					} else if (response.status === 202) {
+						setStore({
+							appliedPublicEvents: {
+								msg: "No applied events found"
+							}
+						});
 					}
 				} catch (error) {
 					console.error('Error getting user request:', error);
 					return [];
 				}
+			},
+			getGroupChat: async () => {
+				const accessToken = localStorage.getItem('token');
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/api/get-my-groups-chat', {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (!response.ok) {
+						const data = await response.json();
+						console.error('Error getting group chat:', data);
+						throw new Error(`Error getting group chat: ${response.statusText}`);
+					} else if (response.status === 200) {
+						const data = await response.json();
+						setStore({ groupChat: data });
+					} else if (response.status === 202) {
+						setStore({
+							groupChat: {
+								msg: "No group chat found"
+							}
+						});
+					}
+				} catch (error) {
+					console.error('Error getting group chat:', error);
+					return [];
+				}
+			},
+			acceptMember: async (event_id, member_id) => {
+				const accessToken = localStorage.getItem('token');
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/accept-member/" + event_id, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify({ member_id: member_id })
+					});
+					if (!response.ok) {
+						const error = await response.json();
+						console.error('Error accepting user:', error);
+						throw new Error(`Error accepting user: ${await response.json()}`);
+					} else if (response.status === 200) {
+						const store = getStore();
+						const ownerRequest = store.ownerRequest.filter(request => request.member_id !== member_id);
+						const data = await response.json();
+						setStore({ ownerRequest: ownerRequest });
+						return true;
+					}
+				} catch (error) {
+					console.error('Error accepting user:', error);
+					return false;
+				}
+			},
+			rejectMember: async (event_id, user_id) => {
+				const accessToken = localStorage.getItem('token');
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/reject-member/${event_id}`, {
+						method: 'PUT',
+						headers: {
 
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify({ member_id: user_id })
+					});
+					if (!response.ok) {
+						throw new Error(`Error rejecting user: ${response.statusText}`);
+					} else if (response.status === 200) {
+						const store = getStore();
+						const ownerRequest = store.ownerRequest.filter(request => request.member_id !== user_id);
+						const data = await response.json();
+						setStore({ ownerRequest: ownerRequest });
+						return true;
+					}
+				} catch (error) {
+					console.error('Error rejecting user:', error);
+					return false;
+				}
+			},
+			leaveEvent: async (event_id) => {
+				const accessToken = localStorage.getItem('token');
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/leave-event/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (!response.ok) {
+						const data = await response.json();
+						console.log("Error leaving event:", data);
+						throw new Error(`Error leaving event: ${response.statusText}`);
+					} else if (response.status === 200) {
+						const store = getStore();
+						const appliedPublicEvents = store.appliedPublicEvents.filter(request => request.id !== event_id);
+						const data = await response.json();
+						setStore({ appliedPublicEvents: appliedPublicEvents });
+						return true;
+					}
+				} catch (error) {
+					console.error('Error leaving event:', error);
+					return false;
+				}
 			},
 
+			deleteEvent: async (event_id) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/delete-event/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Error deleting event');
+					}
+				} catch (error) {
+					console.error('Error deleting event:', error);
+					return false;
+				}
+			},
 			addProfileImage: async (image) => {
 				const accessToken = localStorage.getItem("token")
 				try {

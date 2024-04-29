@@ -12,7 +12,6 @@ export const PasswordReset = () => {
   const { actions, store } = useContext(Context);
   const navigate = useNavigate();
   const { token } = useParams();
-  console.log(token);
 
   useEffect(() => {
     // Update message state when store.message changes

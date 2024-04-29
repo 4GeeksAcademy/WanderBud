@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Context } from '../../store/appContext';
 import { Container, Row, Col, Spinner, Button, ButtonGroup, Tab, Nav } from 'react-bootstrap';
 import { FaBirthdayCake, FaMapMarkerAlt } from "react-icons/fa";
 import { createClient } from 'pexels';
+import { MyEventPublicView } from '../mainFeed/component/myEventPublicView';
 import { parse } from 'date-fns';
 import { MyProfileImages } from './myProfileImages';
 
@@ -13,16 +14,16 @@ const Profile = () => {
     const [profileImgH, setProfileImgH] = useState(0);
     const [page, setPage] = useState(0);
     const [profile, setProfile] = useState({});
-    const [cover, setCover] = useState('https://via.placeholder.com/1000');
+    const [coverImage, setCoverImage] = useState('https://via.placeholder.com/1000');
     const [activeTab, setActiveTab] = useState('my-events');
     const client = createClient(process.env.PEXELS_API_KEY);
     const [queryRes, setQueryRes] = useState({});
     const { user_id } = useParams();
+    const navigate = useNavigate()
     const userId = store.userAccount.id;
 
     useEffect(() => {
         funtionsEffect();
-        console.log(profile);
     }, [user_id]);
 
     const funtionsEffect = () => {
@@ -82,7 +83,7 @@ const Profile = () => {
             <Container fluid className='d-flex align-items-start justify-content-center'>
                 <Row className='p-3 pt-2'>
                     <Col md={12} className='p-0'>
-                        <button className='btn p-0 m-0 border-0' onClick={() => fetchWallpapers()}>
+                        <button className='w-100 btn p-0 m-0 border-0' onClick={() => navigate(`/update-cover/${user_id}`)}>
                             <img
                                 src={profile.cover_image || queryRes?.photos[page].src.original || "https://via.placeholder.com/1000"}
                                 alt="Cover"
@@ -101,8 +102,8 @@ const Profile = () => {
                     <Col md={12} className="container-card container-shadow pb-2 rounded-bottom" style={{ marginTop: `${(profileImgH / 2) * -1}px` }}>
                         <div className="d-flex justify-content-end w-100 py-3">
                             <ButtonGroup aria-label="Basic example" className={'rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} >
-                                <Button variant="primary">Edit Profile</Button>
-                                <Button variant="upload">Set Banner</Button>
+                                <Button variant="primary" onClick={() => navigate(`/update/profile/${user_id}`)}>Edit Profile</Button>
+                                <Button variant="upload" onClick={() => navigate(`/update-cover/${user_id}`)}>Set Banner</Button>
                             </ButtonGroup>
                         </div>
                         <div className='pt-4 profile-container p-2'>
@@ -123,11 +124,11 @@ const Profile = () => {
                             </div>
                         </div>
                     </Col>
-                    <Tab.Container defaultActiveKey="my-events">
+                    <Tab.Container defaultActivekey="my-events">
                         <Row className="w-100 justify-content-center m-0 p-0">
                             <Col md={12} className="mt-2 p-2 navtabs">
-                                <Nav variant="pills" defaultActiveKey="for-you" className="row">
-                                    <Nav.Item className="col-4" defaultActiveKey="my-events">
+                                <Nav variant="pills" defaultActivekey="for-you" className="row">
+                                    <Nav.Item className="col-4" defaultActivekey="my-events">
                                         <Nav.Link eventKey="my-events" className="btn btn-navtab w-100">
                                             My events
                                         </Nav.Link>
@@ -146,7 +147,7 @@ const Profile = () => {
                             </Col>
                             <Tab.Content activeKey={activeTab} className="mt-2">
                                 <Tab.Pane eventKey="my-events">
-                                    <p>Content for Tab 1</p>
+                                    {userId == user_id ? <MyEventPublicView /> : <p>Content for Tab 2</p>}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Images">
                                     <MyProfileImages />
