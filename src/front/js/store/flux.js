@@ -794,6 +794,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+			getPrivateChat: async (id) => {
+				const accessToken = localStorage.getItem('token');
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-private-chat/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (!response.ok) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						throw new Error(`Error getting private chat: ${response.statusText}`);
+					} else if (response.status === 200) {
+						const data = await response.json();
+						return data;
+					}
+				} catch (error) {
+					console.error('Error getting private chat:', error);
+					return [];
+				}
+			}
 
 
 		}

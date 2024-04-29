@@ -35,6 +35,7 @@ const injectContext = PassedComponent => {
 					state.actions.getOwnerRequest();
 					state.actions.getUserRequest();
 					state.actions.getGroupChat();
+					state.actions.getPrivateChat(3156719575);
 				}
 			});
 

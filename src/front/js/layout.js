@@ -16,8 +16,8 @@ import { UpdateEvent } from "./component/Events/updateEvent";
 import { MyEventPrivateView } from "./component/mainFeed/component/myEventPrivateView";
 import { EventPrivateView } from "./component/mainFeed/component/eventPrivateView";
 import { JoinEventPrivateView } from "./component/mainFeed/component/joinEventPrivateView";
+import { ChatHandler } from "./component/chats/chatHandler";
 
-import UserProfile from "./component/profile/profile";
 import Profile from "./component/profile/profile";
 
 import { Background } from "./pages/backgroundLoading";
@@ -50,6 +50,7 @@ const Layout = () => {
                         <Route element={<FeedLayout children={<AccountContainer />} to={"/settings/account"} />} path="/settings/account" />
                         <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
                         <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />
+                        <Route element={<FeedLayout children={<ChatHandler />} />} path="/private-chat/:chat_id" />
                         <Route element={<EventPrivateView />} path="/event-view/:event_id/:owner_id" />
                         <Route element={<MyEventPrivateView />} path="/myevent-view/:event_id/:owner_id" />
                         <Route element={<JoinEventPrivateView />} path="/joinevent-view/:event_id/:owner_id" />
