@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, url_for
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.models import db, User, User_Profile, Event, Event_Member
+from api.models import db, User, User_Profile, Event, Event_Member, UserProfileImage
 from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
@@ -135,7 +135,8 @@ def create_user_profile():
             birthdate=data["birthdate"],
             location=data["location"],
             description=data["description"],
-            profile_image=data["profile_image"]
+            profile_image=data["profile_image"],
+            cover_image=data["cover_image"]
         )
         db.session.add(new_user_profile)
         db.session.commit()
@@ -225,5 +226,64 @@ def delete_user():
     db.session.delete(user)
     db.session.commit()
     return jsonify({"msg": "user successfully deleted"}), 200
+
+
+@user_bp.route("/user-profile-image", methods=["POST"])
+@jwt_required()
+def upload_user_profile_image():
+    current_user = get_jwt_identity()
+    data = request.json
+    user = User.query.filter_by(email=current_user).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    
+    if "image_path" not in data:
+        return jsonify({"msg": "image_path is required"}), 400
+    
+    new_profile_image = UserProfileImage(
+        user_id=user.id,
+        image_path=data["image_path"]
+    )
+    db.session.add(new_profile_image)
+    db.session.commit()
+    return jsonify({"msg": "user profile image successfully uploaded"}), 200
+
+@user_bp.route("/user-profile-image/<int:image_id>", methods=["PUT"])
+@jwt_required()
+def update_user_profile_image(image_id):
+    current_user = get_jwt_identity()
+    data = request.json
+    user = User.query.filter_by(email=current_user).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    
+    profile_image = UserProfileImage.query.get(image_id)
+    if profile_image is None:
+        return jsonify({"msg": "image not found"}), 404
+    
+    if profile_image.user_id != user.id:
+        return jsonify({"msg": "you are not authorized to update this image"}), 403
+    
+    if "image_path" not in data:
+        return jsonify({"msg": "image_path is required"}), 400
+    
+    profile_image.image_path = data["image_path"]
+    db.session.commit()
+    return jsonify({"msg": "user profile image successfully updated"}), 200
+
+@user_bp.route("/user-profile-images", methods=["GET"])
+def get_all_user_profile_images():
+    all_profile_images = UserProfileImage.query.all()
+    
+    if not all_profile_images:
+        return jsonify({"msg": "no images found"}), 404
+    
+    serialized_images = [image.serialize() for image in all_profile_images]
+    
+    response_body = {
+        "msg": "ok",
+        "results": serialized_images
+    }
+    return jsonify(response_body), 200
 
 

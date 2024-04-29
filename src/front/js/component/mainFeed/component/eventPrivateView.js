@@ -15,16 +15,43 @@ export const EventPrivateView = () => {
   const [text, setText] = useState("")
   const [eventData, setEventData] = useState({})
   const [ownerData, setOwnerData] = useState({})
-  const [requestMessage, setRequestMessage] = useState("")
-
+  const [eventOwnerID, setEventOwnerID] = useState("")
+  const [eventStatus, setEventStatus] = useState("")
   useEffect(() => {
+    actions.getAppliedEvents();
     actions.getOneEvent(event_id).then((data) => {
       setEventData(data)
       setOwnerData(data.owner)
+      setEventOwnerID(data.owner.user_id)
     })
   }, [])
 
+  useEffect(() => {
+    handleEventStatus();
+  }, [store.appliedPublicEvents])
 
+  const handleEventStatus = () => {
+    if (store.appliedPublicEvents !== null && store.appliedPublicEvents.length > 0) {
+      for (const event of store.appliedPublicEvents) {
+        if (event_id == event.id) {
+          setEventStatus("Applied");
+          break;
+        }
+      }
+    } else {
+      setEventStatus("");
+    }
+  };
+
+  const handleRequestAction = () => {
+    if (eventStatus === "Applied") {
+      actions.leaveEvent(event_id, text);
+      setEventStatus(""); // Cambia el estado a vacío después de dejar el evento
+    } else {
+      actions.requestJoinEvent(event_id, text);
+      setEventStatus("Applied"); // Cambia el estado a "Applied" después de solicitar unirse al evento
+    }
+  };
 
   return (
     <Container fluid className='feed-container'>
@@ -67,14 +94,14 @@ export const EventPrivateView = () => {
                   <Col md={6} className="d-flex justify-content-center">
                     <div className="dropdown">
                       <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style={{ width: "320px" }}>
-                        {requestMessage ? "Pending" : "Event Request"}
+                        {eventStatus ? "Remove Request" : "Event Request"}
                       </button>
                       <form className="dropdown-menu p-2" style={{ width: "312px", height: "300px" }}>
                         <div className="mb-3">
                           <label for="exampleDropdownFormEmail2" className="form-label">Contact the event creator</label>
                           <textarea type="text" className="form-control" id="exampleDropdownFormEmail2" style={{ height: "200px" }} onChange={(e) => setText(e.target.value)} value={text} />
                         </div>
-                        <button type="submit" className="btn btn-primary" onClick={() => { actions.requestJoinEvent(event_id, text) }}>Send</button>
+                        <button type="button" className="btn btn-primary" onClick={handleRequestAction}>{eventStatus ? "Remove Request" : "Send"}</button>
                       </form>
                     </div>
                   </Col>
@@ -90,3 +117,4 @@ export const EventPrivateView = () => {
     </Container>
   );
 }
+

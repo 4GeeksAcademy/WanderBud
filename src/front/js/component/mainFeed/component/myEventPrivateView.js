@@ -22,7 +22,10 @@ export const MyEventPrivateView = () => {
     })
   }, [])
 
-
+  const handleDeleteEvent = (event_id) => {
+    actions.deleteEvent(event_id); 
+    navigate("/feed")
+  }
 
   return (
     <Container fluid className='feed-container'>
@@ -68,6 +71,12 @@ export const MyEventPrivateView = () => {
                       onClick={() => navigate(`/update-event/${event_id}`)}
                     >
                       {"Edit Event"}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() =>{handleDeleteEvent(event_id)}}
+                    >
+                      {"Delete Event"}
                     </Button>
                   </Col>
                 </Row>
