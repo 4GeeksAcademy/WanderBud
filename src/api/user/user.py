@@ -285,4 +285,22 @@ def get_all_user_profile_images():
     }
     return jsonify(response_body), 200
 
+@user_bp.route("/user-profile-image/<int:image_id>", methods=["DELETE"])
+@jwt_required()
+def delete_profile_image(image_id):
 
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    
+    profile_image = UserProfileImage.query.get(image_id)
+    if profile_image is None:
+        return jsonify({"msg": "image not found"}), 404
+    
+    if profile_image.user_id != user.id:
+        return jsonify({"msg": "you are not authorized to delete this image"}), 403
+    
+    db.session.delete(profile_image)
+    db.session.commit()
+    return jsonify({"msg": "user profile image successfully deleted"}), 200
