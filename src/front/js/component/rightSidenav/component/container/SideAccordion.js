@@ -20,9 +20,9 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
     };
 
     const renderUserRequests = () => {
-        if (store.userRequest === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
-        if (store.userRequest.msg === "No applied events found" || store.userRequest.lenght === 0) return <NoRequests title="No has enviado ninguna solicitud" />;
-        return store.userRequest.map((item, index) => (
+        if (store.appliedPublicEvents === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
+        if (store.appliedPublicEvents.msg === "No applied events found" || store.appliedPublicEvents.lenght === 0) return <NoRequests title="No has enviado ninguna solicitud" />;
+        return store.appliedPublicEvents.map((item, index) => (
             <ApplyCard key={index} username={`${item.owner_name} ${item.owner_last_name}`} eventname={item.name} img={item.owner_img} owner_id={item.owner_id} chatId={item.private_chat_id} event_id={item.id} />
         ));
     };

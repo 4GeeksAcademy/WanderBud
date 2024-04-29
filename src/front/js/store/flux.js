@@ -4,7 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			users: [],
-			appliedPublicEvents: [],
+			appliedPublicEvents: null,
 			publicEvents: [],
 			myPublicEvents: [],
 			joinedPublicEvents: [],
@@ -15,7 +15,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				id: ""
 			},
 			ownerRequest: null,
-			userRequest: null,
 			groupChat: null,
 			favorites: [],
 			auth: false,
@@ -110,7 +109,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				const actions = getActions()
 				const auth = store.auth;
-				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/password-reset/*', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/valid-token", {
@@ -125,7 +124,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return true;
 					} else {
 						setStore({ auth: false })
-						if (!unloggedPaths.includes(window.location.pathname)) {
+						if ((window.location.pathname).includes('/password-reset')) {
+							return false;
+						}
+						else if (!unloggedPaths.includes(window.location.pathname)) {
 							setStore({ storeShow: true, alertTitle: 'Session Expired', alertBody: 'Your session has expired, please log in again', redirect: '/login' })
 							throw new Error('Token is not valid');
 						} else {
@@ -346,7 +348,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
 						},
 						body: JSON.stringify({
-							"msg": message
+							"message": message
 						})
 					});
 
@@ -618,7 +620,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				description,
 				image,
 				coverImage
-			  ) => {
+			) => {
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/update-profile", {
@@ -628,7 +630,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						},
 						body: JSON.stringify({
-							"name": name, 
+							"name": name,
 							"last_name": lastName,
 							"location": location,
 							"birthdate": birthdate,
@@ -689,13 +691,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(`Error getting user request: ${response.statusText}`);
 					} else if (response.status === 200) {
 						const data = await response.json();
-					//	setStore({ appliedPublicEvents: data });
-					//} else {
-					//	throw new Error('Error getting user request');
-						setStore({ userRequest: data });
+						//	setStore({ appliedPublicEvents: data });
+						//} else {
+						//	throw new Error('Error getting user request');
+						setStore({ appliedPublicEvents: data });
 					} else if (response.status === 202) {
 						setStore({
-							userRequest: {
+							appliedPublicEvents: {
 								msg: "No applied events found"
 							}
 						});
@@ -802,36 +804,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(`Error leaving event: ${response.statusText}`);
 					} else if (response.status === 200) {
 						const store = getStore();
-						const userRequest = store.userRequest.filter(request => request.id !== event_id);
+						const appliedPublicEvents = store.appliedPublicEvents.filter(request => request.id !== event_id);
 						const data = await response.json();
-						setStore({ userRequest: userRequest });
+						setStore({ appliedPublicEvents: appliedPublicEvents });
 						return true;
 					}
 				} catch (error) {
 					console.error('Error leaving event:', error);
 					return false;
-				}
-			},
-
-			leaveEvent: async (event_id) => {
-				let accessToken = localStorage.getItem("token")
-				try {
-					const response = await fetch(process.env.BACKEND_URL + `/api/leave-event/${event_id}`, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': `Bearer ${accessToken}`
-						}
-					});
-					if (response.ok) {
-						const data = await response.json();
-						return data;
-					} else {
-						throw new Error('Error leaving the event');
-					}
-				} catch (error) {
-					console.error('Error leaving the event:', error);
-					setStore({ message: "Network error, please try again" });
 				}
 			},
 

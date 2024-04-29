@@ -31,15 +31,15 @@ export const EventPrivateView = () => {
   }, [store.appliedPublicEvents])
 
   const handleEventStatus = () => {
-    if (store.appliedPublicEvents.length > 0) { 
+    if (store.appliedPublicEvents !== null && store.appliedPublicEvents.length > 0) {
       for (const event of store.appliedPublicEvents) {
         if (event_id == event.id) {
           setEventStatus("Applied");
-          break; 
+          break;
         }
       }
     } else {
-      setEventStatus(""); 
+      setEventStatus("");
     }
   };
 

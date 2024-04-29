@@ -82,7 +82,7 @@ const Profile = () => {
             <Container fluid className='d-flex align-items-start justify-content-center'>
                 <Row className='p-3 pt-2'>
                     <Col md={12} className='p-0'>
-                        <button className='btn p-0 m-0 border-0' onClick={() => navigate(`/update-cover/${user_id}`)}>
+                        <button className='w-100 btn p-0 m-0 border-0' onClick={() => navigate(`/update-cover/${user_id}`)}>
                             <img
                                 src={profile.cover_image || queryRes?.photos[page].src.original || "https://via.placeholder.com/1000"}
                                 alt="Cover"
