@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { Card, Button } from 'react-bootstrap';
 
-function ImageUploader({ onImageUpload, initialImageUrl }) {
+function CoverImageUploader({ onImageUpload, initialImageUrl }) {
     const [urlImage, setUrlImage] = useState(initialImageUrl || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
 
     useEffect(() => {
@@ -28,7 +28,7 @@ function ImageUploader({ onImageUpload, initialImageUrl }) {
 
     return (
         <div className='d-flex flex-column align-items-center py-0 my-0'>
-            <Card.Img variant="top" className="rounded-circle w-50" src={urlImage} />
+            <Card.Img  className="w-75" src={urlImage} />
             <Card.Body>
                 <Button className='mt-3' variant="upload">
                     <label htmlFor="image-upload" className='m-0'>
@@ -41,4 +41,4 @@ function ImageUploader({ onImageUpload, initialImageUrl }) {
     )
 };
 
-export default ImageUploader;
+export default CoverImageUploader;

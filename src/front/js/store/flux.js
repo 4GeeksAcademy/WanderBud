@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			users: [],
+			appliedPublicEvents: [],
 			publicEvents: [],
 			myPublicEvents: [],
 			joinedPublicEvents: [],
@@ -186,7 +187,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			createUserProfile: async (name, lastName, location, birthdate, description, image, accessToken) => {
+			createUserProfile: async (name, lastName, location, birthdate, description, image, coverImage, accessToken) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile", {
 						method: 'POST',
@@ -200,7 +201,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 							birthdate: birthdate,
 							location: location,
 							description: description,
-							profile_image: image
+							profile_image: image,
+							cover_image: coverImage
 						})
 					});
 					const data = await response.json();
@@ -348,10 +350,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					});
 
-					if (!response.ok) {
-						throw new Error('Failed to join event');
-					}
-
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: "Pending..." });
@@ -419,7 +417,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error('Error getting public events');
 					}
 				} catch (error) {
-					console.error('Error getting public events:', error);
+					console.error('Error getting user profile:', error);
 					setStore({ message: "Network error, please try again" });
 				}
 			},
@@ -506,7 +504,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + `/api/update-event/${event_id}`, {
-						method: 'POST',
+						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
 							'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -612,7 +610,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-			updateUserProfile: async (userData) => {
+			updateUserProfile: async (
+				name,
+				lastName,
+				location,
+				birthdate,
+				description,
+				image,
+				coverImage
+			  ) => {
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/update-profile", {
@@ -621,7 +627,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Content-Type': 'application/json',
 							'Authorization': `Bearer ${accessToken}`
 						},
-						body: JSON.stringify(userData)
+						body: JSON.stringify({
+							"name": name, 
+							"last_name": lastName,
+							"location": location,
+							"birthdate": birthdate,
+							"description": description,
+							"profile_image": image,
+							"cover_image": coverImage
+
+						})
 					});
 					if (response.status === 200) {
 						const data = await response.json();
@@ -661,8 +676,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return [];
 				}
 			},
-			getUserRequest: async () => {
-				const accessToken = localStorage.getItem('token');
+			getAppliedEvents: async () => {
+				const accessToken = localStorage.getItem('token')
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/get-user-request', {
 						method: 'GET',
@@ -674,6 +689,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error(`Error getting user request: ${response.statusText}`);
 					} else if (response.status === 200) {
 						const data = await response.json();
+					//	setStore({ appliedPublicEvents: data });
+					//} else {
+					//	throw new Error('Error getting user request');
 						setStore({ userRequest: data });
 					} else if (response.status === 202) {
 						setStore({
@@ -795,6 +813,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			leaveEvent: async (event_id) => {
+				let accessToken = localStorage.getItem("token")
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/leave-event/${event_id}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const data = await response.json();
+						return data;
+					} else {
+						throw new Error('Error leaving the event');
+					}
+				} catch (error) {
+					console.error('Error leaving the event:', error);
+					setStore({ message: "Network error, please try again" });
+				}
+			},
+
+			deleteEvent: async (event_id) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/delete-event/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Error deleting event');
+					}
+				} catch (error) {
+					console.error('Error deleting event:', error);
+					return false;
+				}
+			},
 
 		}
 	};

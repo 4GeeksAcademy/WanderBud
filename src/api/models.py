@@ -4,6 +4,7 @@ from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
+
 db = SQLAlchemy()
 
 class User(db.Model):
