@@ -278,4 +278,18 @@ class Message(db.Model):
             "readAt": self.readAt.strftime('%Y-%m-%d %H:%M:%S') if self.readAt else None
         }
     
-    
+
+class UserProfileImage(db.Model):
+    id = db.Column(db.BigInteger, primary_key=True)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    image_path = db.Column(db.String(250), nullable=False)
+
+    def __repr__(self):
+        return f'<UserProfileImage {self.id} User {self.user_id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "image_path": self.image_path
+        }
