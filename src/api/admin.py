@@ -1,7 +1,7 @@
   
 import os
 from flask_admin import Admin
-from .models import db, User, User_Profile, Event, Event_Member, Event_Type, UsersPrivateChat, UsersGroupChat, PrivateChat, GroupChat, Message
+from .models import db, User, User_Profile, Event, Event_Member, Event_Type, UsersPrivateChat, UsersGroupChat, PrivateChat, GroupChat, Message, UserProfileImage
 from flask_admin.contrib.sqla import ModelView
 
 def setup_admin(app):
@@ -21,6 +21,7 @@ def setup_admin(app):
     admin.add_view(ModelView(GroupChat, db.session))
     admin.add_view(ModelView(UsersGroupChat, db.session))
     admin.add_view(ModelView(Message, db.session))
+    admin.add_view(ModelView(UserProfileImage, db.session))
 
     # You can duplicate that line to add mew models
     # admin.add_view(ModelView(YourModelName, db.session))
