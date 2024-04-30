@@ -56,7 +56,6 @@ const SignUp = () => {
             >
               {({ handleSubmit, handleChange, values, errors }) => (
                 <Form onSubmit={handleSubmit} className="p-4 py-0">
-                  {/* Campo de Email */}
                   <Form.Group controlId="formEmail">
                     <Form.Control
                       className="form-control mb-3"
