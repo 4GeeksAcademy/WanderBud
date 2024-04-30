@@ -59,10 +59,15 @@ export const Chats = ({ chatData }) => {
     const toggleDropdown = (event) => {
         setDropdownOpen(!dropdownOpen);
     };
+
     const handleTime = (time) => {
-        const strHour = `${new Date(time).getHours()}:${new Date(time).getMinutes()}`;
-        return strHour;
-    }
+        const date = new Date(time);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
+
     const handleLoad = (event) => {
         const width = event.target.offsetWidth;
         setWidht(width);
