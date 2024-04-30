@@ -11,7 +11,7 @@ const SignUp = () => {
 
   const [confirmpassword, setConfirmpassword] = useState('');
 
-  // Esquema de validación con Yup
+
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string()
@@ -36,6 +36,10 @@ const SignUp = () => {
       console.error('Error al crear el usuario:', error);
       alert('Error al crear el usuario');
     }
+  };
+
+  const handleGoHome = () => {
+    navigate("/");
   };
 
   return (
