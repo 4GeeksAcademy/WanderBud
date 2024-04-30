@@ -4,16 +4,26 @@ import { Context } from "../../store/appContext";
 
 
 
-export const MyProfileImages = () => {
+
+export const MyProfileImages = (props) => {
     const { store, actions } = useContext(Context);
+    const userId = store.userAccount.id;
    console.log(store.profileImages)
     let myImages = store.profileImages
 
     useEffect(() => {
-        actions.getProfileImages();
-    }, []);
+        actions.getProfileImages(props.user_id);
+    }, [props.user_id]);
 
-  
+    const handleDeleteImage = (imageId) => {
+      actions.deleteProfileImage(imageId)
+          .then(() => {
+              window.location.reload();
+          })
+          .catch(error => {
+              console.error('Error al eliminar la imagen:', error);
+          });
+  };
 
     return (
       <Container>
@@ -23,10 +33,7 @@ export const MyProfileImages = () => {
               <div style={{ position: 'relative' }}>
                 <Image src={photo.image_path} alt={`Photo ${index}`} fluid />
                 <div style={{ position: 'absolute', top: '5px', right: '5px' }}>
-                  <Button variant="primary" size="sm" onClick={() => onUpdate(index)}>
-                    Update
-                  </Button>
-                  <Button variant="danger" size="sm" onClick={() => actions.deleteProfileImage(photo.id)} style={{ marginLeft: '5px' }}>
+                  <Button variant="danger" className={'rounded-pill ' + (parseInt(userId) === parseInt(props.user_id) ? "" : "hidden")} size="sm" onClick={() => handleDeleteImage(photo.id)} style={{ marginLeft: '5px' }}>
                     Delete
                   </Button>
                 </div>
