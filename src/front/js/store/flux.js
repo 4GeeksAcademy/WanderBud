@@ -1018,6 +1018,55 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 			},
+
+			getFavorites: async () => {
+				const store = getStore();
+				const accessToken = localStorage.getItem("token");
+				const userId = store.userAccount.id; // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/user_favorites/${userId}`, {
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const favorites = await response.json();
+						setStore({ ...store, favorites });
+					} else {
+						throw new Error('Failed to fetch favorites');
+					}
+				} catch (error) {
+					console.error('Error fetching favorites:', error);
+				}
+			},
+
+			addFavoriteEvent: async (userId, eventId) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/add_favorite`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify({ user_id: userId, event_id: eventId })
+					});
+			
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ favorites: [...getStore().favorites, data] });
+						return true;
+					} else {
+						const errorData = await response.json();
+						throw new Error(`Failed to add favorite event: ${errorData.error}`);
+					}
+				} catch (error) {
+					console.error('Error adding favorite event:', error);
+					// Aquí puedes añadir lógica adicional para manejar el error de forma adecuada
+					return false;
+				}
+			},
+
 			getEventChat: async (id) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + `/api/get-group-chat/${id}`, {
