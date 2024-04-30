@@ -20,6 +20,7 @@ class User(db.Model):
     group_chats = db.relationship('UsersGroupChat', backref='user', lazy=True)
     sender = db.relationship('Message', foreign_keys='Message.sender_id' ,backref='sender', lazy=True)
     receiver = db.relationship('Message', foreign_keys='Message.receiver_id',backref='receiver', lazy=True)
+    profile_image = db.relationship('UserProfileImage', backref='user', lazy=True)
 
     def generate_unique_id(self):
         while True:

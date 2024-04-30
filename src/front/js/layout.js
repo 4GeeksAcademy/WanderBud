@@ -25,6 +25,7 @@ import Profile from "./component/profile/profile";
 import { Background } from "./pages/backgroundLoading";
 import { ModalAlert } from "./component/modalAlert";
 import { AccountContainer } from "./component/Settings/account";
+import { HandleProfileImages } from "./component/profile/handleProfileImages";
 
 
 
@@ -47,6 +48,7 @@ const Layout = () => {
                         <Route element={<SignUpProfile />} path="/signup/profile" />
                         <Route element={<UpdateProfile />} path="/update/profile/:user_id" />
                         <Route element={<UpdateCoverImage />} path="/update-cover/:user_id" />
+                        <Route element={<HandleProfileImages />} path="/profile-images/:user_id" />
                         <Route element={<FeedLayout children={<Profile />} />} path="/profile/:user_id" />
                         <Route element={<PasswordRecoveryForm />} path="/password-recovery" />
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
