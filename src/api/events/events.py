@@ -466,7 +466,6 @@ def delete_event(event_id):
         current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
         user = User.query.filter_by(email=current_user).first()
-        print(event)
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         
@@ -474,6 +473,28 @@ def delete_event(event_id):
         # Check if the current user is the owner of the event
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
+        event_member = Event_Member.query.filter_by(event_id=event.id).all()
+        for member in event_member:
+            db.session.delete(member)
+        
+        private_chat = PrivateChat.query.filter_by(event_id=event.id).all()
+        for chat in private_chat:
+            messages = Message.query.filter_by(private_chat_id=chat.id).all()
+            for message in messages:
+                db.session.delete(message)
+            user_private_chat = UsersPrivateChat.query.filter_by(chat_id=chat.id).all()
+            for user_chat in user_private_chat:
+                db.session.delete(user_chat)
+            db.session.delete(chat)
+        group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        if group_chat != None:
+            messages = Message.query.filter_by(group_chat_id=group_chat.id).all()
+            for message in messages:
+                db.session.delete(message)
+            user_group_chat = UsersGroupChat.query.filter_by(chat_id=group_chat.id).all()
+            for user_chat in user_group_chat:
+                db.session.delete(user_chat)
+            db.session.delete(group_chat)
         
         db.session.delete(event)
         db.session.commit()
