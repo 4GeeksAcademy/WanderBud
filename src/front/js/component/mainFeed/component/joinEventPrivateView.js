@@ -86,6 +86,8 @@ export const JoinEventPrivateView = () => {
                       <p>{eventData.start_date + "\n"}, {eventData.end_date}</p>
                       <label>Event description:</label>
                       <p>{eventData.description}</p>
+                      <label>Budget:</label>
+                      <p>{eventData.budget_per_person} €</p>
                     </Card.Text>
                   </Col>
                   <Col md={6} className="d-flex justify-content-center">

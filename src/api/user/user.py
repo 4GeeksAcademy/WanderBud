@@ -271,9 +271,10 @@ def update_user_profile_image(image_id):
     db.session.commit()
     return jsonify({"msg": "user profile image successfully updated"}), 200
 
-@user_bp.route("/user-profile-images", methods=["GET"])
-def get_all_user_profile_images():
-    all_profile_images = UserProfileImage.query.all()
+@user_bp.route("/user-profile-images/<int:owner_id>", methods=["GET"])
+def get_all_user_profile_images(owner_id):
+
+    all_profile_images = UserProfileImage.query.filter_by(user_id=owner_id).all()
     
     if not all_profile_images:
         return jsonify({"msg": "no images found"}), 404

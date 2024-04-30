@@ -36,12 +36,11 @@ export const EventPublicView = () => {
                                     </Col>
                                     <Col xs={3}>
                                         <Button
-                                            variant="primary"
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Evita que el clic se propague al Link
-                                                // Lógica para agregar a favoritos
-                                                // actions.addFavouriteEvent(item.id);
-                                            }}
+                                         variant="primary"
+                                         onClick={(e) => {
+                                             e.stopPropagation(); // Evita que el clic se propague al Link
+                                             actions.addFavoriteEvent(store.userAccount.id, item.id);
+                                         }}
                                         >
                                             {"Add to favorites"}
                                         </Button>

@@ -879,6 +879,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			addProfileImage: async (image) => {
+				console.log(image)
 				const accessToken = localStorage.getItem("token")
 				try {
 					console.log(image)
@@ -906,39 +907,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			updateProfileImage: async (image_id, image) => {
+			getProfileImages: async (user_id) => {
 				const accessToken = localStorage.getItem("token")
+				console.log(user_id)
 				try {
-					console.log(image)
-					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-image/${image_id}`, {
-						method: 'PUT',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': 'Bearer ' + accessToken
-						},
-						body: JSON.stringify({
-
-							"image_path": image
-						})
-					});
-					const data = await response.json();
-					if (response.status === 200) {
-						setStore({ message: data.msg });
-						return true;
-					} else {
-						throw new Error('Error updating image');
-					}
-				} catch (error) {
-					console.error('Error updating image:', error);
-					return false;
-				}
-			},
-
-			getProfileImages: async () => {
-				const accessToken = localStorage.getItem("token")
-				try {
-
-					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-images`, {
+					
+					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-images/${user_id}`, {
 						method: 'GET',
 						headers: {
 							'Content-Type': 'application/json',
@@ -948,9 +922,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: data.msg });
-						setStore({ profileImages: data.results });
-						return true;
-					} else {
+						setStore({ profileImages: data.results});
+						return true;}
+
+					else if (response.status === 404) {
+						setStore({ message: data.msg });
+						setStore({ profileImages: []});
+						return true;}
+					else {
 						throw new Error('Error updating image');
 					}
 				} catch (error) {
@@ -1032,6 +1011,55 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 			},
+
+			getFavorites: async () => {
+				const store = getStore();
+				const accessToken = localStorage.getItem("token");
+				const userId = store.userAccount.id; // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/user_favorites/${userId}`, {
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.ok) {
+						const favorites = await response.json();
+						setStore({ ...store, favorites });
+					} else {
+						throw new Error('Failed to fetch favorites');
+					}
+				} catch (error) {
+					console.error('Error fetching favorites:', error);
+				}
+			},
+
+			addFavoriteEvent: async (userId, eventId) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/add_favorite`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify({ user_id: userId, event_id: eventId })
+					});
+			
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ favorites: [...getStore().favorites, data] });
+						return true;
+					} else {
+						const errorData = await response.json();
+						throw new Error(`Failed to add favorite event: ${errorData.error}`);
+					}
+				} catch (error) {
+					console.error('Error adding favorite event:', error);
+					// Aquí puedes añadir lógica adicional para manejar el error de forma adecuada
+					return false;
+				}
+			},
+
 			getEventChat: async (id) => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + `/api/get-group-chat/${id}`, {

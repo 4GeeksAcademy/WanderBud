@@ -2,6 +2,7 @@ import random
 from datetime import timezone, datetime
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import BigInteger
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
 
@@ -20,6 +21,7 @@ class User(db.Model):
     group_chats = db.relationship('UsersGroupChat', backref='user', lazy=True)
     sender = db.relationship('Message', foreign_keys='Message.sender_id' ,backref='sender', lazy=True)
     receiver = db.relationship('Message', foreign_keys='Message.receiver_id',backref='receiver', lazy=True)
+    profile_image = db.relationship('UserProfileImage', backref='user', lazy=True)
 
     def generate_unique_id(self):
         while True:
@@ -310,3 +312,25 @@ class UserProfileImage(db.Model):
             "user_id": self.user_id,
             "image_path": self.image_path
         }
+    
+class Favorite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(BigInteger, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(BigInteger, db.ForeignKey('event.id'), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('favorite_events', lazy='dynamic'))
+    event = db.relationship('Event', backref=db.backref('favorited_by', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<Favorite user_id={self.user_id}, event_id={self.event_id}>'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "event_id": self.event_id,
+            "user_info": {"id": self.user.id, "email": self.user.email},  
+            "event_info": {"id": self.event.id, "name": self.event.name}  
+        }
+    
+    
