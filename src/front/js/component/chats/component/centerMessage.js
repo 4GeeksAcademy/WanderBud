@@ -33,7 +33,7 @@ export const CenterMessage = ({ day }) => {
 
 
     return (
-        <Row className="justify-content-center align-items-center m-0 my-1 pe-0 ps-2" style={{ height: "fit-content", position: "sticky", top: "13%" }}>
+        <Row className="justify-content-center align-items-end m-0 my-1 pe-0 ps-2" style={{ height: "fit-content", position: "sticky", top: "13%" }}>
             <Col md={11} className="d-flex flex-column align-items-end message-chat">
                 <div className="rounded m-0 p-2 flex-grow-1">
                     <h5 className="m-0" style={{ fontSize: "0.8rem" }}><span class="badge text-bg-secondary">{handleDay(day)}</span></h5>

@@ -273,7 +273,7 @@ class Message(db.Model):
     group_chat_id = db.Column(db.BigInteger, db.ForeignKey('group_chat.id'), nullable=True)
     sender_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     receiver_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=True)
-    message = db.Column(db.String(250), nullable=False)
+    message = db.Column(db.String(500), nullable=False)
     group_type = db.Column(db.Enum("Private","Group", name="group_type"), nullable=False)
     sentAt = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     deliveredAt = db.Column(db.DateTime(timezone=True), nullable=True)
