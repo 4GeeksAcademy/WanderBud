@@ -170,20 +170,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const accessToken = localStorage.getItem("token")
 				const radius = 1000;
 				try {
-					const locationResponse = await fetch('https://freeipapi.com/api/json');
-					const locationData = await locationResponse.json();
-					const location = encodeURIComponent(`${locationData.cityName}, ${locationData.countryName}`)
-					const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&location=${location}`, {
-						method: 'GET',
-						headers: {
-							'Authorization': `Bearer ${accessToken}`
-						},
-					});
-					if (response.ok) {
-						const data = await response.json();
-						setStore({ publicEvents: data });
-					} else {
-						throw new Error('Error getting public events');
+					if (navigator.geolocation) {
+						navigator.geolocation.getCurrentPosition(async (position) => {
+							const { latitude, longitude } = position.coords;
+							const location = encodeURIComponent(`{"lat": ${latitude},"lng": ${longitude}}`);
+							const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&coords=${location}`, {
+								method: 'GET',
+								headers: {
+									'Authorization': `Bearer ${accessToken}`
+								},
+							});
+							if (response.ok) {
+								const data = await response.json();
+								setStore({ publicEvents: data });
+							} else {
+								console.log("Error getting public events:", response);
+								throw new Error('Error getting public events');
+							}
+							console.log(location);
+						}, (error) => {
+							console.error('Error al obtener la ubicación:', error.message);
+						});
+					}
+					else {
+						console.error('Geolocalización no soportada por este navegador.');
 					}
 				} catch (error) {
 					console.error('Error getting public events:', error);
@@ -304,10 +314,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
 				const endDate = eventData.endDate.split('T')[0];
 				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
-				const location = await actions.coordinatesToAddress(eventData.markerPosition);
+				const location = eventData.address;
+				const markerPosition = eventData.markerPosition;
 				const eventDataForBackend = {
 					name: eventData.title,
 					location: location,
+					coords: eventData.markerPosition,
 					start_datetime: startDate + ' ' + startTime,
 					end_datetime: endDate + ' ' + endTime,
 					description: eventData.description,
@@ -490,17 +502,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			updateEvent: async (eventData, event_id) => {
+				console.log(eventData);
+				console.log(event_id);
 				const actions = getActions();
-				const startDate = eventData.startDate.split('T')[0];
-				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
-				const endDate = eventData.endDate.split('T')[0];
-				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
-				const location = await actions.coordinatesToAddress(eventData.markerPosition);
+				const startDate = eventData.startDate
+				const endDate = eventData.endDate
 				const eventDataForBackend = {
 					name: eventData.title,
-					location: location,
-					start_datetime: startDate + ' ' + startTime,
-					end_datetime: endDate + ' ' + endTime,
+					location: eventData.location,
+					coords: eventData.markerPosition,
+					start_datetime: startDate,
+					end_datetime: endDate,
 					description: eventData.description,
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
@@ -521,11 +533,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						window.location.href = '/feed';
 						return true;
 					} else {
-						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error creating event', redirect: '/create-event' });
-						throw new Error('Error creating event');
+						const data = await resp.json();
+						console.log("Error updating event:", data);
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error updating event', redirect: '/update-event/' + event_id });
+						throw new Error('Error updating event');
 					}
 				} catch (error) {
-					console.error('Error creating event:', error);
+					console.error('Error updating event:', error);
 					return false;
 				}
 			},

@@ -23,7 +23,7 @@ export const MyEventPrivateView = () => {
   }, [])
 
   const handleDeleteEvent = (event_id) => {
-    actions.deleteEvent(event_id); 
+    actions.deleteEvent(event_id);
     navigate("/feed")
   }
 
@@ -60,7 +60,7 @@ export const MyEventPrivateView = () => {
                       <label>Event Location:</label>
                       <p>{eventData.location}</p>
                       <label>Event Schedule:</label>
-                      <p>{eventData.start_date}, {eventData.start_time}-{eventData.end_time}</p>
+                      <p>{eventData.start_date + "\n"},{eventData.end_date}</p>
                       <label>Event description:</label>
                       <p>{eventData.description}</p>
                       <label>Budget:</label>
@@ -76,7 +76,7 @@ export const MyEventPrivateView = () => {
                     </Button>
                     <Button
                       variant="secondary"
-                      onClick={() =>{handleDeleteEvent(event_id)}}
+                      onClick={() => { handleDeleteEvent(event_id) }}
                     >
                       {"Delete Event"}
                     </Button>
