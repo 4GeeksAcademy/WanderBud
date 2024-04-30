@@ -127,7 +127,18 @@ class Event(db.Model):
     def __init__(self, *args, **kwargs):
         super(Event, self).__init__(*args, **kwargs)
         self.id = self.generate_unique_id()
-        
+    
+    def actualize_status(self):
+        '''This method is used to actualize the status of the event'''
+        if self.start_datetime > datetime.now(timezone.utc):
+            return "Planned"
+        elif self.start_datetime < datetime.now(timezone.utc) and self.end_datetime > datetime.now(timezone.utc):
+            return "In Progress"
+        elif self.end_datetime < datetime.now(timezone.utc):
+            return "Completed"
+        else:
+            return "Canceled"
+    
     def __repr__(self):
         return f'<Event Id {self.id} {self.name}>'
 
