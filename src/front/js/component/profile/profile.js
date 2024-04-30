@@ -6,6 +6,7 @@ import { FaBirthdayCake, FaMapMarkerAlt } from "react-icons/fa";
 import { createClient } from 'pexels';
 import { MyEventPublicView } from '../mainFeed/component/myEventPublicView';
 import { parse } from 'date-fns';
+import { MyProfileImages } from './myProfileImages';
 
 const Profile = () => {
     const { store, actions } = useContext(Context);
@@ -117,6 +118,9 @@ const Profile = () => {
                                     <FaBirthdayCake className="me-1" />
                                     <span>Birthdate: {formatDate(profile.birthdate)}</span>
                                 </div>
+                                <ButtonGroup aria-label="Basic example" style={{marginLeft: "120px"}} className={'rounded-pill' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} >
+                                    <Button variant="primary" onClick={()=> actions.addProfileImage()}>Upload Images</Button>
+                                </ButtonGroup>
                             </div>
                         </div>
                     </Col>
@@ -146,7 +150,7 @@ const Profile = () => {
                                     {userId == user_id ? <MyEventPublicView /> : <p>Content for Tab 2</p>}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Images">
-                                    <p>Content for Tab 2</p>
+                                    <MyProfileImages />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="favorites">
                                     <p>Content for Tab 3</p>
