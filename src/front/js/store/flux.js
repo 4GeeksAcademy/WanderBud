@@ -882,9 +882,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: data.msg });
-						setStore({ profileImages: data.results });
-						return true;
-					} else {
+						setStore({ profileImages: data.results});
+						return true;}
+
+					else if (response.status === 404) {
+						setStore({ message: data.msg });
+						setStore({ profileImages: []});
+						return true;}
+					else {
 						throw new Error('Error updating image');
 					}
 				} catch (error) {

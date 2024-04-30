@@ -134,7 +134,7 @@ const Profile = () => {
                         <Row className="w-100 justify-content-center m-0 p-0">
                             <Col md={12} className="mt-2 p-2 navtabs">
                                 <Nav variant="pills" defaultActivekey="for-you" className="row">
-                                    <Nav.Item className="col-4" defaultActivekey="my-events">
+                                    <Nav.Item  className={'col-4 rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} defaultActivekey="my-events">
                                         <Nav.Link eventKey="my-events" className="btn btn-navtab w-100">
                                             My events
                                         </Nav.Link>
@@ -144,7 +144,7 @@ const Profile = () => {
                                             Images
                                         </Nav.Link>
                                     </Nav.Item>
-                                    <Nav.Item className="col-4">
+                                    <Nav.Item className={'col-4 rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")}>
                                         <Nav.Link eventKey="favorites" className="btn btn-navtab w-100">
                                             Favorites
                                         </Nav.Link>
