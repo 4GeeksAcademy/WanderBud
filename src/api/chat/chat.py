@@ -150,6 +150,7 @@ def get_private_chat(chat_id):
         "members": [member.serialize() for member in members_chat],
         "messages": messages_list,
         "receiver": receiver.serialize() if receiver else {},
+        "chat_image": receiver.profile_image if receiver else "",
         "event": event.serialize()
     }    
     
@@ -203,7 +204,7 @@ def send_private_message(chat_id):
     if receiver is None:
         return jsonify({"msg": "You are not a member of this chat"}), 404
     
-    event_member = Event_Member.query.filter_by(event_id=chat.event_id, user_id=user.id, member_status='Applied').first()
+    event_member = Event_Member.query.filter_by(event_id=chat.event_id, user_id=user.id).filter(Event_Member.member_status.in_(['Applied', 'Owner'])).first()
     if event_member is None:
         return jsonify({"msg": "You cant send messages to this chat because you has been already accepted"}), 404
     
@@ -335,8 +336,7 @@ def get_group_chat(chat_id):
     members_profile = [User_Profile.query.get(member.user_id).serialize() for member in members]
     
     
-    messages = Message.query.filter_by(group_chat_id=chat_id).all()
-    print(messages[0].serialize())
+    messages = Message.query.filter_by(group_chat_id=chat_id).all()    
     messages_list = [message.serialize() for message in messages]
     messages_list = sorted(messages_list, key=lambda x: x['sentAt'])
     for message in messages_list:
@@ -353,12 +353,14 @@ def get_group_chat(chat_id):
     if event is None:
         return jsonify({"msg": "Event not found"}), 404
 
+    owner_image = User_Profile.query.get(event.owner_id).profile_image
     
     chat_data = {
         "chat_name": event.name,
         "chat_id": chat.id,
         "members": members_profile,
         "messages": messages_list,
+        "chat_image": owner_image,
         "event": event.serialize()
     }
     

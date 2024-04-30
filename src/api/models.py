@@ -127,7 +127,18 @@ class Event(db.Model):
     def __init__(self, *args, **kwargs):
         super(Event, self).__init__(*args, **kwargs)
         self.id = self.generate_unique_id()
-        
+    
+    def actualize_status(self):
+        '''This method is used to actualize the status of the event'''
+        if self.start_datetime > datetime.now(timezone.utc):
+            return "Planned"
+        elif self.start_datetime < datetime.now(timezone.utc) and self.end_datetime > datetime.now(timezone.utc):
+            return "In Progress"
+        elif self.end_datetime < datetime.now(timezone.utc):
+            return "Completed"
+        else:
+            return "Canceled"
+    
     def __repr__(self):
         return f'<Event Id {self.id} {self.name}>'
 
@@ -274,6 +285,7 @@ class Message(db.Model):
             "group_chat_id": self.group_chat_id,
             "sender_id": self.sender_id,
             "receiver_id": self.receiver_id,
+            "sender_img": User_Profile.query.filter_by(user_id=self.sender_id).first().profile_image if User_Profile.query.filter_by(user_id=self.sender_id).first() else None,
             "message": self.message,
             "group_type": self.group_type,
             "sentAt": self.sentAt.strftime('%Y-%m-%d %H:%M:%S GMT%z'),

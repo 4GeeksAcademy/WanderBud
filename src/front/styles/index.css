@@ -57,10 +57,13 @@ body {
   font-size: 1rem;
 }
 .navtabs {
-  background: #189ab42e;
+  background: rgb(22,98,121);
   border-radius: 0.5rem;
   color: #05445e;
-  box-shadow: 0px 0px 12px 4px #189ab42e;
+  box-shadow: 0px 0px 12px 4px rgb(22,98,121);
+  position: sticky;
+  top: 5px;
+  z-index: 1000;
 }
 .container-card h1,
 .container-card h2,
@@ -564,4 +567,73 @@ a {
 }
 .accordion-collapse.show button {
   pointer-events: auto;
+}
+.dropdown-toggle::after {
+  display: none;
+}
+.dropdown-left .dropdown-menu {
+  left: auto !important;
+  right: 0 !important;
+}
+.dropdown-shadow {
+  box-shadow: 0px 0px 10px 4px #05445e; /* Navy Blue con baja opacidad */
+}
+.dropdown-item {
+  color: #05445e; /* Navy Blue */
+}
+.message-chat {
+  width: auto;
+  max-width: 60%;
+}
+.chat-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.chat-bottom {
+  position: absolute;
+  bottom: 0;
+  z-index: 1000;
+}
+.btn-accept-chat {
+  text-align: start;
+  background-color:  #f3f6f6; /* Emerald */
+  color: #05445e; /* Navy Blue */
+  border: none;
+}
+.btn-accept-chat:hover {
+  background-color: #2ecc71; /* Emerald */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-accept-chat:active {
+  background-color: #1b713f; /* Emerald */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-reject-chat {
+  text-align: start;
+  background-color:  #f3f6f6; /* Alizarin */
+  color: #05445e; /* Navy Blue */
+  border: none;
+}
+.btn-reject-chat:hover {
+  background-color: #e74c3c; /* Alizarin */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-reject-chat:active {
+  background-color: #992d22; /* Alizarin */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-info-chat {
+  text-align: start;
+  background-color:  #f3f6f6; /* Belize Hole */
+  color: #05445e; /* Navy Blue */
+  border: none;
+}
+.btn-info-chat:hover {
+  background-color: grey; /* Belize Hole */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-info-chat:active {
+  background-color: rgb(79, 79, 79); /* Belize Hole */
+  color: #f3f6f6; /* Porcelain */
 }
