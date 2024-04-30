@@ -1,6 +1,6 @@
 from enum import Enum
 from flask import request, jsonify, Blueprint # type: ignore
-from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Message , GroupChat, UsersGroupChat, PrivateChat, UsersPrivateChat
+from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Message , GroupChat, UsersGroupChat, PrivateChat, UsersPrivateChat, Favorite
 from flask_jwt_extended import jwt_required, get_jwt_identity # type: ignore # type: ignore
 from datetime import datetime
 from flask_cors import CORS # type: ignore
@@ -1015,3 +1015,35 @@ def get_my_groups_chat():
     except Exception as e:
         return jsonify({"msg": "error retrieving group chats",
                         "error": str(e)}), 500
+    
+
+@event_bp.route('/add_favorite', methods=['POST'])
+@jwt_required()
+def add_favorite():
+    user_id = request.json.get('user_id')
+    event_id = request.json.get('event_id')
+
+    if not user_id or not event_id:
+        return jsonify({'error': 'Faltan datos necesarios'}), 400
+
+    new_favorite = Favorite(user_id=user_id, event_id=event_id)
+    db.session.add(new_favorite)
+    try:
+        db.session.commit()
+        return jsonify(new_favorite.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@event_bp.route('/user_favorites', methods=['GET'])
+@jwt_required()
+def list_favorites():
+    # Obtén el user_id del token JWT
+    user_id = get_jwt_identity()
+
+    # Busca solo los favoritos del usuario autenticado
+    favorites = Favorite.query.filter_by(user_id=user_id).all()
+
+    # Serializa y devuelve la lista de favoritos
+    return jsonify([fav.serialize() for fav in favorites]), 200
