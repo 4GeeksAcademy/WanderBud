@@ -3,13 +3,12 @@ import { Context } from '../../store/appContext';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup'; // Importar Yup para validaciones
+import * as Yup from 'yup';
 
 const SignUp = () => {
   const { actions } = useContext(Context);
   const navigate = useNavigate();
 
-  // Definir estado local para confirmar contraseña
   const [confirmpassword, setConfirmpassword] = useState('');
 
   // Esquema de validación con Yup
@@ -20,7 +19,7 @@ const SignUp = () => {
       .min(6, 'Password must be at least 6 characters')
       .matches(/(?=.*[A-Z])(?=.*\W)/, 'Password must contain at least one uppercase letter and one symbol'),
     confirmpassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match') // Validar si coincide con el campo password
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
       .required('Confirm Password is required'),
   });
 
@@ -45,7 +44,7 @@ const SignUp = () => {
         <Col md={5}>
           <Card className="p-4 justify-content-center w-100 card container-card container-shadow">
             <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Sign Up</h4></Card.Title>
-            {/* Utilizar Formik para manejar el formulario y las validaciones */}
+            {}
             <Formik
               initialValues={{
                 email: '',
@@ -69,9 +68,9 @@ const SignUp = () => {
                     />
                     <ErrorMessage name="email" component="div" className="text-danger" />
                   </Form.Group>
-                  {/* Separador */}
+                  
                   <hr className="border border-secondary mb-3" />
-                  {/* Campo de Contraseña */}
+                  
                   <Form.Group controlId="formPassword">
                     <Form.Control
                       className="form-control mb-3"
@@ -83,7 +82,7 @@ const SignUp = () => {
                     />
                     <ErrorMessage name="password" component="div" className="text-danger" />
                   </Form.Group>
-                  {/* Confirmación de Contraseña */}
+                  
                   <Form.Group controlId="formConfirmPassword">
                     <Form.Control
                       className="form-control mb-3"
@@ -95,10 +94,10 @@ const SignUp = () => {
                     />
                     <ErrorMessage name="confirmpassword" component="div" className="text-danger" />
                   </Form.Group>
-                  {/* Botón de Registro */}
+                  
                   <Button variant="primary" type="submit" className="w-100">
-  Register
-</Button>
+                  Register
+                  </Button>
                 </Form>
               )}
             </Formik>
