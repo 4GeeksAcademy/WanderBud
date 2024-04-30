@@ -86,7 +86,7 @@ export const EventPrivateView = () => {
                       <label>Event Location:</label>
                       <p>{eventData.location}</p>
                       <label>Event Schedule:</label>
-                      <p>{eventData.start_date}, {eventData.start_time}-{eventData.end_time}</p>
+                      <p>{eventData.start_date + "\n"}, {eventData.end_date}</p>
                       <label>Event description:</label>
                       <p>{eventData.description}</p>
                     </Card.Text>

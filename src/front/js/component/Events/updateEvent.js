@@ -9,7 +9,8 @@ import { useParams } from "react-router-dom";
 export const UpdateEvent = () => {
     const { store, actions } = useContext(Context);
     const { event_id } = useParams()
-    console.log(event_id)
+    const [address, setAddress] = useState("")
+
     const [eventData, setEventData] = useState({
         title: "",
         budget: 0,
@@ -20,26 +21,26 @@ export const UpdateEvent = () => {
         typeEvent: "",
         errors: {}
     });
-   
+
     useEffect(() => {
         actions.getOneEvent(event_id).then((data) => {
-            console.log(data)
             const formattedStartDate = new Date(data.start_date).toISOString().slice(0, 16);
             const formattedEndDate = new Date(data.end_date).toISOString().slice(0, 16);
-          setEventData({
-            ...eventData,
-            title: data.name,
-            budget: data.budget_per_person,
-            startDate: formattedStartDate,
-            endDate: formattedEndDate,
-            description: data.description,
-            markerPosition: data.location, 
-            typeEvent: data.event_type_id,
-            errors: data.errors || ""
-          });
+            setEventData({
+                ...eventData,
+                title: data.name,
+                budget: data.budget_per_person,
+                startDate: formattedStartDate,
+                endDate: formattedEndDate,
+                description: data.description,
+                markerPosition: data.coordinates,
+                location: data.location,
+                typeEvent: data.event_type_id,
+                errors: data.errors || ""
+            });
         });
-      }, []);
-   
+    }, []);
+
 
 
 
@@ -62,7 +63,8 @@ export const UpdateEvent = () => {
     };
 
     const handleLocationSelect = location => {
-        setEventData(prevState => ({ ...prevState, markerPosition: location }));
+        setEventData(prevState => ({ ...prevState, markerPosition: location.location }));
+        setEventData(prevState => ({ ...prevState, location: location.address }));
     };
 
     const validateForm = () => {
@@ -79,7 +81,10 @@ export const UpdateEvent = () => {
     };
 
     const createEventHandler = async () => {
-        if (!validateForm()) return;
+        if (!validateForm()) {
+            console.log("Error en la validación");
+            return;
+        };
         try {
             await actions.updateEvent({
                 ...eventData,
@@ -90,7 +95,7 @@ export const UpdateEvent = () => {
         }
     };
 
-    const { title, budget, startDate, endDate, description, errors } = eventData;
+    const { title, budget, startDate, endDate, description, errors, markerPosition } = eventData;
 
     return (
         <Container fluid className="vh-100 d-flex align-items-start justify-content-center create-event">
@@ -192,7 +197,7 @@ export const UpdateEvent = () => {
                             </Form.Group>
                         </Col>
                         <Col md={12} className="mb-2">
-                            <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} />
+                            <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} address={eventData.location} />
                             {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
                         <Button variant="primary" onClick={createEventHandler}>

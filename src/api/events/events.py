@@ -63,11 +63,14 @@ def create_event():
         description = request.json.get("description", None)
         event_type_id = request.json.get("event_type_id", None)
         budget_per_person = request.json.get("budget_per_person", None)
+        coords = request.json.get("coords", None)
         '''Check if the event type exists'''
         new_event = Event(
             name=name,
             owner_id=owner_id,
             location=location,
+            latitude=coords["lat"],
+            longitude=coords["lng"],
             start_datetime=start_datetime,
             end_datetime=end_datetime,
             description=description,
@@ -242,10 +245,12 @@ def get_event(event_id):
                     "user_id": owner.user_id if owner else None
                 },
             "location": event.location,
-            "start_date": event.start_datetime.strftime("%Y-%m-%d"),
-            "start_time": event.start_datetime.strftime("%H:%M:%S"),
-            "end_date": event.end_datetime.strftime("%Y-%m-%d"),
-            "end_time": event.end_datetime.strftime("%H:%M:%S"),
+            "coordinates": {
+                "lat": event.latitude,
+                "lng": event.longitude
+                },
+            "start_date": event.start_datetime,
+            "end_date": event.end_datetime,
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
@@ -352,21 +357,33 @@ def get_event_by_radius():
         Example JSON request:
             {
                 "radius": 100
-                "location": "Carrer de Simancas 50, Hospitalet de Llobregat, Spain"
+                "coords": {
+                    "lat": 40.7128,
+                    "lng": 74.0060
+                }
                     
             }
         """
-        user_location = request.args.get("location")
+        user_location = request.args.get("coords")
         radius = float(request.args.get("radius"))
+        
+        user_location_coords = user_location.split(",")
+        user_location_coords[0] = user_location_coords[0].split(":")[1]
+        user_location_coords[1] = user_location_coords[1].split(":")[1].replace("}","")
+        user_location = {"lat": float(user_location_coords[0]), "lng": float(user_location_coords[1])}
 
         events = Event.query.all()
         
-        events_address = [event.location for event in events]
-        events_list_address = get_address_in_radius(user_location, radius, events_address)
+        event_coords = []
+        for event in events:
+            event_coords.append({"lat": event.latitude, "lng": event.longitude})
+            
+        events_list_address = get_address_in_radius(user_location, radius, event_coords)
 
         events_list = []
         for event in events:
-            if event.location in events_list_address:
+            event_coords = {"lat": event.latitude, "lng": event.longitude}
+            if event_coords in events_list_address:
                 owner = User_Profile.query.get(event.owner_id)
                 event_details = {
                     "id": event.id,
@@ -377,6 +394,10 @@ def get_event_by_radius():
                     "user_id":owner.user_id if owner else None
                 },
                     "location": event.location,
+                    "coordinates": {
+                        "lat": event.latitude,
+                        "lng": event.longitude
+                    },
                     "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                     "start_time": event.start_datetime.strftime("%H:%M:%S"),
                     "end_date": event.end_datetime.strftime("%Y-%m-%d"),
@@ -432,13 +453,17 @@ def update_event(event_id):
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
-        event.name = request.json.get("name", event.name)
-        event.location = request.json.get("location", event.location)
-        event.start_datetime = request.json.get("start_datetime", event.start_datetime.strftime("%Y-%m-%d %H:%M:%S"))
-        event.end_datetime = request.json.get("end_datetime", event.end_datetime.strftime("%Y-%m-%d %H:%M:%S"))
-        event.description = request.json.get("description", event.description)
-        event.event_type_id = request.json.get("event_type_id", event.event_type_id)
-        event.budget_per_person = request.json.get("budget_per_person", event.budget_per_person)
+        print(request.json)
+        
+        event.name = request.json.get("name")
+        event.location = request.json.get("location")
+        event.latitude = request.json.get("coords").get("lat")
+        event.longitude = request.json.get("coords").get("lng")
+        event.start_datetime = request.json.get("start_datetime")
+        event.end_datetime = request.json.get("end_datetime")
+        event.description = request.json.get("description")
+        event.event_type_id = request.json.get("event_type_id")
+        event.budget_per_person = request.json.get("budget_per_person")
         
         db.session.commit()
         
@@ -597,6 +622,10 @@ def get_joined_events():
                     "user_id":owner.user_id if owner else None
                 },
                 "location": event.location,
+                "coordinates": {
+                    "lat": event.latitude,
+                    "lng": event.longitude
+                },
                 "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
                 "end_date": event.end_datetime.strftime("%Y-%m-%d"),
