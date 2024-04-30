@@ -792,15 +792,28 @@ def leave_event(event_id):
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
         '''Do it if u want to delete your chats'''
-        user_private_chat = UsersPrivateChat.query.filter_by(user_id=user.id).first()
-        user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id).first()
+        private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        user_private_chat = UsersPrivateChat.query.filter_by(chat_id=private_chat.id).all()
+        private_chat_messages = Message.query.filter_by(private_chat_id=private_chat.id).all()
+        
+        event_group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        user_group_chat = None
+        if private_chat_messages != None:
+            for message in private_chat_messages:
+                db.session.delete(message)
+        if user_private_chat != None:
+            for chat in user_private_chat:
+                db.session.delete(chat)
+        if event_group_chat != None:
+            user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id, chat_id=event_group_chat.id).first()
         if event_member is None:
             return jsonify({"msg": "You are not a member of this event"}), 403
         
         db.session.delete(event_member)
         '''Do it if u want to delete your chats'''
         if user_private_chat is not None:
-            db.session.delete(user_private_chat)
+            for chat in user_private_chat:
+                db.session.delete(chat)
         if user_group_chat is not None:
             db.session.delete(user_group_chat)
         db.session.commit()

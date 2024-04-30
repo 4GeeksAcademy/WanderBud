@@ -595,3 +595,45 @@ a {
   bottom: 0;
   z-index: 1000;
 }
+.btn-accept-chat {
+  text-align: start;
+  background-color:  #f3f6f6; /* Emerald */
+  color: #05445e; /* Navy Blue */
+  border: none;
+}
+.btn-accept-chat:hover {
+  background-color: #2ecc71; /* Emerald */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-accept-chat:active {
+  background-color: #1b713f; /* Emerald */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-reject-chat {
+  text-align: start;
+  background-color:  #f3f6f6; /* Alizarin */
+  color: #05445e; /* Navy Blue */
+  border: none;
+}
+.btn-reject-chat:hover {
+  background-color: #e74c3c; /* Alizarin */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-reject-chat:active {
+  background-color: #992d22; /* Alizarin */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-info-chat {
+  text-align: start;
+  background-color:  #f3f6f6; /* Belize Hole */
+  color: #05445e; /* Navy Blue */
+  border: none;
+}
+.btn-info-chat:hover {
+  background-color: grey; /* Belize Hole */
+  color: #f3f6f6; /* Porcelain */
+}
+.btn-info-chat:active {
+  background-color: rgb(79, 79, 79); /* Belize Hole */
+  color: #f3f6f6; /* Porcelain */
+}

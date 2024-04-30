@@ -12,7 +12,7 @@ export const RightMessage = ({ member_img, message, hour }) => (
             </div>
         </Col>
         <Col md={1} className="d-flex p-2 justify-content-center">
-            <img src={member_img || "https://via.placeholder.com/150"} alt="profile" className="rounded-circle w-100 ratio ratio-1x1" style={{ objectFit: "cover" }} />
+            <img src={member_img || "https://via.placeholder.com/150"} alt="profile" className="rounded-circle w-100 " style={{ objectFit: "cover", aspectRatio: "1" }} />
         </Col>
     </Row>
 );

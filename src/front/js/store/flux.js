@@ -824,9 +824,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					});
 					if (!response.ok) {
-						const data = await response.json();
-						setStore({ message: data.msg });
-						throw new Error(`Error getting private chat: ${response.statusText}`);
+						if (response.status === 401) {
+							const actions = getActions();
+							await actions.validateToken();
+						} else {
+							const data = await response.json();
+							setStore({ message: data.msg });
+							throw new Error(`Error getting private chat: ${response.statusText}`);
+						}
 					} else if (response.status === 200) {
 						const data = await response.json();
 						return data;
@@ -835,8 +840,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error('Error getting private chat:', error);
 					return [];
 				}
-			}
-
+			},
 			deleteEvent: async (event_id) => {
 				const accessToken = localStorage.getItem("token");
 				try {
@@ -859,9 +863,89 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+			sendMessage: async (chat_id, message, type) => {
+				if (message.trim() === "") {
+					return;
+				}
+				const accessToken = localStorage.getItem('token');
+				if (type === "private") {
+					try {
+						const response = await fetch(process.env.BACKEND_URL + `/api/send-private-message/${chat_id}`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': `Bearer ${accessToken}`
+							},
+							body: JSON.stringify({ message })
+						});
+						if (!response.ok) {
+							const data = await response.json();
+							console.error('Error sending private message:', data);
+							throw new Error(`Error sending private message: ${response.statusText}`);
+						} else if (response.status === 200) {
+							const data = await response.json();
+							return data;
+						}
+					} catch (error) {
+						console.error('Error sending private message:', error);
+						return [];
+					}
+				} else if (type === "group") {
+					try {
+						const response = await fetch(process.env.BACKEND_URL + `/api/send-group-message/${chat_id}`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': `Bearer ${accessToken}`
+							},
+							body: JSON.stringify({ message: message })
+						});
+						if (!response.ok) {
+							const data = await response.json();
+							console.error('Error sending group message:', data);
+							throw new Error(`Error sending group message: ${response.statusText}`);
+						} else if (response.status === 200) {
+							const data = await response.json();
+							return data;
+						}
+					} catch (error) {
+						console.error('Error sending group message:', error);
+						return [];
+					}
+				}
+			},
+			getEventChat: async (id) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-group-chat/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${localStorage.getItem('token')}`
+						}
+					});
+					if (!response.ok) {
+						if (response.status === 401) {
+							const actions = getActions();
+							await actions.validateToken();
+						} else {
+							const data = await response.json();
+							setStore({ message: data.msg });
+							throw new Error(`Error getting event chat: ${response.statusText}`);
+						}
+					} else if (response.status === 200) {
+						const data = await response.json();
+						return data;
+					}
+				} catch (error) {
+					console.error('Error getting event chat:', error);
+					return [];
+				}
+
+			}
 
 		}
-	};
+
+	}
 };
+
 
 export default getState;

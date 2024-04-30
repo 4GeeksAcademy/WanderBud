@@ -274,6 +274,7 @@ class Message(db.Model):
             "group_chat_id": self.group_chat_id,
             "sender_id": self.sender_id,
             "receiver_id": self.receiver_id,
+            "sender_img": User_Profile.query.filter_by(user_id=self.sender_id).first().profile_image if User_Profile.query.filter_by(user_id=self.sender_id).first() else None,
             "message": self.message,
             "group_type": self.group_type,
             "sentAt": self.sentAt.strftime('%Y-%m-%d %H:%M:%S GMT%z'),

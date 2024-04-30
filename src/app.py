@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+from datetime import timedelta
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
@@ -50,6 +51,9 @@ setup_commands(app)
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY").encode('utf-8')
 app.config['SECURITY_PASSWORD_SALT'] = os.getenv('SECURITY_PASSWORD_SALT').encode('utf-8')
 jwt = JWTManager(app)
+
+# Set JWT token expiration time to 1 hour
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=12)
 
 # Configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.fastmail.com'

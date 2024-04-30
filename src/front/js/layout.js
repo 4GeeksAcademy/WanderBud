@@ -54,7 +54,8 @@ const Layout = () => {
                         <Route element={<FeedLayout children={<AccountContainer />} to={"/settings/account"} />} path="/settings/account" />
                         <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
                         <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />
-                        <Route element={<FeedLayout children={<ChatHandler />} />} path="/private-chat/:chat_id" />
+                        <Route element={<FeedLayout children={<ChatHandler />} />} path="/request-chat/:chat_id" />
+                        <Route element={<FeedLayout children={<ChatHandler />} />} path="/event-chat/:chat_id" />
                         <Route element={<EventPrivateView />} path="/event-view/:event_id/:owner_id" />
                         <Route element={<MyEventPrivateView />} path="/myevent-view/:event_id/:owner_id" />
                         <Route element={<JoinEventPrivateView />} path="/joinevent-view/:event_id/:owner_id" />
