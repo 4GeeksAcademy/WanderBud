@@ -466,7 +466,6 @@ def delete_event(event_id):
         current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
         user = User.query.filter_by(email=current_user).first()
-        print(event)
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         
@@ -474,6 +473,28 @@ def delete_event(event_id):
         # Check if the current user is the owner of the event
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
+        event_member = Event_Member.query.filter_by(event_id=event.id).all()
+        for member in event_member:
+            db.session.delete(member)
+        
+        private_chat = PrivateChat.query.filter_by(event_id=event.id).all()
+        for chat in private_chat:
+            messages = Message.query.filter_by(private_chat_id=chat.id).all()
+            for message in messages:
+                db.session.delete(message)
+            user_private_chat = UsersPrivateChat.query.filter_by(chat_id=chat.id).all()
+            for user_chat in user_private_chat:
+                db.session.delete(user_chat)
+            db.session.delete(chat)
+        group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        if group_chat != None:
+            messages = Message.query.filter_by(group_chat_id=group_chat.id).all()
+            for message in messages:
+                db.session.delete(message)
+            user_group_chat = UsersGroupChat.query.filter_by(chat_id=group_chat.id).all()
+            for user_chat in user_group_chat:
+                db.session.delete(user_chat)
+            db.session.delete(group_chat)
         
         db.session.delete(event)
         db.session.commit()
@@ -792,15 +813,28 @@ def leave_event(event_id):
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
         '''Do it if u want to delete your chats'''
-        user_private_chat = UsersPrivateChat.query.filter_by(user_id=user.id).first()
-        user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id).first()
+        private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        user_private_chat = UsersPrivateChat.query.filter_by(chat_id=private_chat.id).all()
+        private_chat_messages = Message.query.filter_by(private_chat_id=private_chat.id).all()
+        
+        event_group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        user_group_chat = None
+        if private_chat_messages != None:
+            for message in private_chat_messages:
+                db.session.delete(message)
+        if user_private_chat != None:
+            for chat in user_private_chat:
+                db.session.delete(chat)
+        if event_group_chat != None:
+            user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id, chat_id=event_group_chat.id).first()
         if event_member is None:
             return jsonify({"msg": "You are not a member of this event"}), 403
         
         db.session.delete(event_member)
         '''Do it if u want to delete your chats'''
         if user_private_chat is not None:
-            db.session.delete(user_private_chat)
+            for chat in user_private_chat:
+                db.session.delete(chat)
         if user_group_chat is not None:
             db.session.delete(user_group_chat)
         db.session.commit()
