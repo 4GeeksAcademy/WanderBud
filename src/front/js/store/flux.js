@@ -687,6 +687,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 								msg: "No owner request found"
 							}
 						});
+					} else {
+						setStore({ ownerRequest: [] })
 					}
 				} catch (error) {
 					console.error('Error getting owner request:', error);
@@ -716,6 +718,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 								msg: "No applied events found"
 							}
 						});
+					} else {
+						setStore({ appliedPublicEvents: [] })
 					}
 				} catch (error) {
 					console.error('Error getting user request:', error);
