@@ -313,8 +313,8 @@ class UserProfileImage(db.Model):
     
 class Favorite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(BigInteger, db.ForeignKey('user.id'), nullable=False)
-    event_id = db.Column(BigInteger, db.ForeignKey('event.id'), nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
 
     user = db.relationship('User', backref=db.backref('favorite_events', lazy='dynamic'))
     event = db.relationship('Event', backref=db.backref('favorited_by', lazy='dynamic'))
@@ -327,8 +327,8 @@ class Favorite(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "event_id": self.event_id,
-            "user_info": {"id": self.user.id, "email": self.user.email},  
-            "event_info": {"id": self.event.id, "name": self.event.name}  
+            "user_info": User_Profile.query.filter_by(user_id=self.user_id).first().serialize(), 
+            "event_info": Event.query.filter_by(id=self.event_id).first().serialize()
         }
     
     

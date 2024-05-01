@@ -1036,14 +1036,49 @@ def add_favorite():
         return jsonify({'error': str(e)}), 500
 
 
-@event_bp.route('/user_favorites', methods=['GET'])
+@event_bp.route('/user_favorites/<int:user_id>', methods=['GET'])
 @jwt_required()
-def list_favorites():
+def list_favorites(user_id):
     # Obtén el user_id del token JWT
-    user_id = get_jwt_identity()
-
+    
     # Busca solo los favoritos del usuario autenticado
     favorites = Favorite.query.filter_by(user_id=user_id).all()
-
+    if favorites is None:
+        return jsonify([]), 202
     # Serializa y devuelve la lista de favoritos
     return jsonify([fav.serialize() for fav in favorites]), 200
+
+
+
+@event_bp.route("/remove-favorite/<int:event_id>", methods=["DELETE"])
+@jwt_required()
+def remove_favorite(event_id):
+    """
+    Remove a specific event from user's favorites.
+
+    This function removes an event from the list of user's favorites in the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
+    email = get_jwt_identity() 
+    user=User.query.filter_by(email=email).first() 
+    
+    
+    if not event_id:
+        return jsonify({'msg': 'Falta el ID del evento'}), 400
+
+    try:
+        # Buscar el registro del favorito en la base de datos
+        favorite = Favorite.query.filter_by(user_id=user.id, event_id=event_id).first()
+        if not favorite:
+            return jsonify({'msg': 'Favorito no encontrado'}), 404
+        
+        db.session.delete(favorite)
+        db.session.commit()
+        
+        return jsonify({'msg': 'Favorito eliminado con éxito'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': 'Error eliminando el favorito', 'error': str(e)}), 500
+
