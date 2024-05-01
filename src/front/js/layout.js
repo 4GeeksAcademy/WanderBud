@@ -63,6 +63,7 @@ const Layout = () => {
                         <Route element={<JoinEventPrivateView />} path="/joinevent-view/:event_id/:owner_id" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Background />} path="/*" />
+                        {/* <Route element={<Background />} path="/googleOauth" /> */}
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>

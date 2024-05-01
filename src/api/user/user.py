@@ -306,3 +306,72 @@ def delete_profile_image(image_id):
     db.session.delete(profile_image)
     db.session.commit()
     return jsonify({"msg": "user profile image successfully deleted"}), 200
+
+def generate_password():
+    # Genera una contraseña aleatoria de 8 caracteres
+    caracteres = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(caracteres) for i in range(8))
+
+@user_bp.route("/google-oauth", methods=["POST"])
+def google_oauth():
+    try:
+        data = request.json
+
+        user = User.query.filter_by(email=data["email"]).first()
+
+        if user is None:
+            password = generate_password()
+            id_unico = generar_id_unico()
+            new_user = User(
+                id=id_unico,
+                email=data["email"],
+                password=password,
+                is_active=True
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({
+                "email": data['email'],
+                "password": password,
+                "is_active": True
+            }), 202
+        
+        else: 
+            access_token = create_access_token(identity=data["email"])
+            return jsonify(access_token=access_token), 200
+        
+    except Exception as e:
+        return jsonify({"msg": "Error en la autenticación o registro con Google", "error": str(e)}), 500
+    
+
+
+# def verify_google_token(access_token):
+#     # URL para verificar el token de acceso con Google
+#     token_info_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={access_token}"
+    
+#     # Realizar la solicitud GET para verificar el token
+#     response = requests.get(token_info_url)
+    
+#     # Verificar si la solicitud fue exitosa y obtener los datos de la respuesta
+#     if response.status_code == 200:
+#         token_info = response.json()
+#         return token_info
+#     else:
+#         # Si la solicitud falla, puedes manejar el error apropiadamente
+#         print("Error al verificar el token:", response.text)
+#         return None
+
+
+# def validate_google_token(access_token):
+#     token_info = verify_google_token(access_token)
+    
+#     if token_info:
+#         # Verificar si el token es válido y está firmado por Google
+#         if token_info.get("iss") == "accounts.google.com" and token_info.get("aud") == "YOUR_CLIENT_ID.apps.googleusercontent.com":
+#             return True
+#         else:
+#             # Si el token no es válido o no está firmado por Google, puedes manejar el error
+#             print("Token no válido o no firmado por Google.")
+#             return False
+#     else:
+#         return False

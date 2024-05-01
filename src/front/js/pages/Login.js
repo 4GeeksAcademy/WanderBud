@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
+import GoogleApp from './Login_Google';
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,17 +12,17 @@ export const Login = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: tokenResponse => {
-      console.log(tokenResponse);
-      // Aquí podrías extraer el token y guardar el estado del usuario o hacer una solicitud a tu backend
-      // actions.loginWithGoogle(tokenResponse.access_token);
-      navigate("/feed");
-    },
-    onError: error => {
-      console.log("Login Failed:", error);
-    }
-  });
+  // const googleLogin = useGoogleLogin({
+  //   onSuccess: tokenResponse => {
+  //     console.log(tokenResponse);
+  //     // Aquí podrías extraer el token y guardar el estado del usuario o hacer una solicitud a tu backend
+  //     // actions.loginWithGoogle(tokenResponse.access_token);
+  //     navigate("/feed");
+  //   },
+  //   onError: error => {
+  //     console.log("Login Failed:", error);
+  //   }
+  // });
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -42,7 +43,7 @@ export const Login = () => {
           <Card className="p-4 justify-content-center w-100 card container-card container-shadow">
             <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Log In</h4></Card.Title>
             <Form onSubmit={handleSubmit} className="p-4 py-0">
-              <Button variant="google" className="w-100" onClick={() => googleLogin()}>Sign in with Google</Button>
+            <GoogleApp />
               <hr className="border border-secondary mb-3" />
               <Form.Group controlId="formBasicEmail" className="mb-3">
                 <Form.Control type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />

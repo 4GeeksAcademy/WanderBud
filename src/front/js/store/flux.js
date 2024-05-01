@@ -77,40 +77,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				store.redirect && window.location.replace(store.redirect);
 			},
-			loginWithGoogle: async (accessToken) => {
-				try {
-					const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ accessToken })
-					});
+			// loginWithGoogle: async (accessToken) => {
+			// 	try {
+			// 		const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
+			// 			method: 'POST',
+			// 			headers: {
+			// 				'Content-Type': 'application/json',
+			// 			},
+			// 			body: JSON.stringify({ accessToken })
+			// 		});
 
-					if (!response.ok) {
-						// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
-						const errorData = await response.json();
-						throw new Error(`Error en la validación del token: ${errorData.message}`);
-					}
+			// 		if (!response.ok) {
+			// 			// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
+			// 			const errorData = await response.json();
+			// 			throw new Error(`Error en la validación del token: ${errorData.message}`);
+			// 		}
 
-					const userData = await response.json();
+			// 		const userData = await response.json();
 
-					// Almacenar datos del usuario y el token en el store
-					setStore({
-						isAuthenticated: true,
-						userData: userData,
-						accessToken: accessToken
-					});
+			// 		// Almacenar datos del usuario y el token en el store
+			// 		setStore({
+			// 			isAuthenticated: true,
+			// 			userData: userData,
+			// 			accessToken: accessToken
+			// 		});
 
-				} catch (error) {
+			// 	} catch (error) {
 
-				}
-			},
+			// 	}
+			// },
 			validateToken: async () => {
 				const store = getStore();
 				const actions = getActions()
 				const auth = store.auth;
-				const unloggedPaths = ['/login', '/password-recovery', '/password-reset/*', '/signup/user', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/googleOauth', '/password-reset/*', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/valid-token", {
@@ -380,7 +380,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			validateUserProfile: async () => {
 				let accessToken = localStorage.getItem("token");
-				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/googleOauth', '/reset-password', '/signup/user', '/', '/background'];
 				try {
 
 					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
@@ -1086,7 +1086,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return [];
 				}
 
+			},
+
+			getGoogleOauth: async (googleData) => {
+				console.log(googleData)
+				try{
+					const response = await fetch(process.env.BACKEND_URL + '/api/google-oauth', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(googleData)
+					});
+
+					const data = await response.json();
+
+					if (response.status == 200){
+						localStorage.setItem("token", data.access_token);
+            			setStore({ auth: true });
+            			getActions().validateToken()
+					}
+					else if (response.status == 202){
+            			getActions().login(data.email, data.password);
+						
+					}
+					
+					else {
+						throw new Error('Google Authentication error');
+					}
+
+				} catch (error) {
+					console.error("google authentication error:", error);
+					return false
+				} 
+
 			}
+
 
 		}
 

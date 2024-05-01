@@ -30,10 +30,10 @@ export const MyProfileImages = (props) => {
         <Row xs={1} md={2} lg={3} xl={4} className="g-4">
           {myImages.map((photo, index) => (
             <Col key={index}>
-              <div style={{ position: 'relative' }}>
-                <Image src={photo.image_path} alt={`Photo ${index}`} fluid />
-                <div style={{ position: 'absolute', top: '5px', right: '5px' }}>
-                  <Button variant="danger" className={'rounded-pill ' + (parseInt(userId) === parseInt(props.user_id) ? "" : "hidden")} size="sm" onClick={() => handleDeleteImage(photo.id)} style={{ marginLeft: '5px' }}>
+              <div style={{ position: 'relative', objectFit: 'cover' }}>
+                <Image src={photo.image_path} alt={`Photo ${index}`} style={{aspectRatio: '1', width: '100%'}} fluid />
+                <div style={{ position: 'relative'}} className="d-flex justify-content-center">
+                  <Button variant="danger" className={'rounded-pill w-75 mt-1' + (parseInt(userId) === parseInt(props.user_id) ? "" : "hidden")} size="sm" onClick={() => handleDeleteImage(photo.id)} style={{ marginLeft: '5px' }}>
                     Delete
                   </Button>
                 </div>
