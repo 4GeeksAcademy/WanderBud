@@ -1,6 +1,6 @@
 from enum import Enum
 from flask import request, jsonify, Blueprint # type: ignore
-from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Message , GroupChat, UsersGroupChat, PrivateChat, UsersPrivateChat
+from api.models import db, User, Event, Event_Type, Event_Member, User_Profile, Message , GroupChat, UsersGroupChat, PrivateChat, UsersPrivateChat, Favorite
 from flask_jwt_extended import jwt_required, get_jwt_identity # type: ignore # type: ignore
 from datetime import datetime
 from flask_cors import CORS # type: ignore
@@ -63,11 +63,14 @@ def create_event():
         description = request.json.get("description", None)
         event_type_id = request.json.get("event_type_id", None)
         budget_per_person = request.json.get("budget_per_person", None)
+        coords = request.json.get("coords", None)
         '''Check if the event type exists'''
         new_event = Event(
             name=name,
             owner_id=owner_id,
             location=location,
+            latitude=coords["lat"],
+            longitude=coords["lng"],
             start_datetime=start_datetime,
             end_datetime=end_datetime,
             description=description,
@@ -242,10 +245,12 @@ def get_event(event_id):
                     "user_id": owner.user_id if owner else None
                 },
             "location": event.location,
-            "start_date": event.start_datetime.strftime("%Y-%m-%d"),
-            "start_time": event.start_datetime.strftime("%H:%M:%S"),
-            "end_date": event.end_datetime.strftime("%Y-%m-%d"),
-            "end_time": event.end_datetime.strftime("%H:%M:%S"),
+            "coordinates": {
+                "lat": event.latitude,
+                "lng": event.longitude
+                },
+            "start_date": event.start_datetime,
+            "end_date": event.end_datetime,
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
@@ -352,21 +357,33 @@ def get_event_by_radius():
         Example JSON request:
             {
                 "radius": 100
-                "location": "Carrer de Simancas 50, Hospitalet de Llobregat, Spain"
+                "coords": {
+                    "lat": 40.7128,
+                    "lng": 74.0060
+                }
                     
             }
         """
-        user_location = request.args.get("location")
+        user_location = request.args.get("coords")
         radius = float(request.args.get("radius"))
+        
+        user_location_coords = user_location.split(",")
+        user_location_coords[0] = user_location_coords[0].split(":")[1]
+        user_location_coords[1] = user_location_coords[1].split(":")[1].replace("}","")
+        user_location = {"lat": float(user_location_coords[0]), "lng": float(user_location_coords[1])}
 
         events = Event.query.all()
         
-        events_address = [event.location for event in events]
-        events_list_address = get_address_in_radius(user_location, radius, events_address)
+        event_coords = []
+        for event in events:
+            event_coords.append({"lat": event.latitude, "lng": event.longitude})
+            
+        events_list_address = get_address_in_radius(user_location, radius, event_coords)
 
         events_list = []
         for event in events:
-            if event.location in events_list_address:
+            event_coords = {"lat": event.latitude, "lng": event.longitude}
+            if event_coords in events_list_address:
                 owner = User_Profile.query.get(event.owner_id)
                 event_details = {
                     "id": event.id,
@@ -377,6 +394,10 @@ def get_event_by_radius():
                     "user_id":owner.user_id if owner else None
                 },
                     "location": event.location,
+                    "coordinates": {
+                        "lat": event.latitude,
+                        "lng": event.longitude
+                    },
                     "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                     "start_time": event.start_datetime.strftime("%H:%M:%S"),
                     "end_date": event.end_datetime.strftime("%Y-%m-%d"),
@@ -432,13 +453,17 @@ def update_event(event_id):
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
         
-        event.name = request.json.get("name", event.name)
-        event.location = request.json.get("location", event.location)
-        event.start_datetime = request.json.get("start_datetime", event.start_datetime.strftime("%Y-%m-%d %H:%M:%S"))
-        event.end_datetime = request.json.get("end_datetime", event.end_datetime.strftime("%Y-%m-%d %H:%M:%S"))
-        event.description = request.json.get("description", event.description)
-        event.event_type_id = request.json.get("event_type_id", event.event_type_id)
-        event.budget_per_person = request.json.get("budget_per_person", event.budget_per_person)
+        print(request.json)
+        
+        event.name = request.json.get("name")
+        event.location = request.json.get("location")
+        event.latitude = request.json.get("coords").get("lat")
+        event.longitude = request.json.get("coords").get("lng")
+        event.start_datetime = request.json.get("start_datetime")
+        event.end_datetime = request.json.get("end_datetime")
+        event.description = request.json.get("description")
+        event.event_type_id = request.json.get("event_type_id")
+        event.budget_per_person = request.json.get("budget_per_person")
         
         db.session.commit()
         
@@ -466,7 +491,6 @@ def delete_event(event_id):
         current_user = get_jwt_identity()
         event = Event.query.filter_by(id=event_id).first()
         user = User.query.filter_by(email=current_user).first()
-        print(event)
         if event is None:
             return jsonify({"msg": "event does not exist"}), 404
         
@@ -474,6 +498,28 @@ def delete_event(event_id):
         # Check if the current user is the owner of the event
         if event.owner_id != user.id:
             return jsonify({"msg": "You are not the owner of this event"}), 403
+        event_member = Event_Member.query.filter_by(event_id=event.id).all()
+        for member in event_member:
+            db.session.delete(member)
+        
+        private_chat = PrivateChat.query.filter_by(event_id=event.id).all()
+        for chat in private_chat:
+            messages = Message.query.filter_by(private_chat_id=chat.id).all()
+            for message in messages:
+                db.session.delete(message)
+            user_private_chat = UsersPrivateChat.query.filter_by(chat_id=chat.id).all()
+            for user_chat in user_private_chat:
+                db.session.delete(user_chat)
+            db.session.delete(chat)
+        group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        if group_chat != None:
+            messages = Message.query.filter_by(group_chat_id=group_chat.id).all()
+            for message in messages:
+                db.session.delete(message)
+            user_group_chat = UsersGroupChat.query.filter_by(chat_id=group_chat.id).all()
+            for user_chat in user_group_chat:
+                db.session.delete(user_chat)
+            db.session.delete(group_chat)
         
         db.session.delete(event)
         db.session.commit()
@@ -576,6 +622,10 @@ def get_joined_events():
                     "user_id":owner.user_id if owner else None
                 },
                 "location": event.location,
+                "coordinates": {
+                    "lat": event.latitude,
+                    "lng": event.longitude
+                },
                 "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
                 "end_date": event.end_datetime.strftime("%Y-%m-%d"),
@@ -792,15 +842,28 @@ def leave_event(event_id):
         
         event_member = Event_Member.query.filter_by(user_id=user.id, event_id=event.id).first()
         '''Do it if u want to delete your chats'''
-        user_private_chat = UsersPrivateChat.query.filter_by(user_id=user.id).first()
-        user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id).first()
+        private_chat = PrivateChat.query.filter_by(user_id=user.id, event_id=event.id).first()
+        user_private_chat = UsersPrivateChat.query.filter_by(chat_id=private_chat.id).all()
+        private_chat_messages = Message.query.filter_by(private_chat_id=private_chat.id).all()
+        
+        event_group_chat = GroupChat.query.filter_by(event_id=event.id).first()
+        user_group_chat = None
+        if private_chat_messages != None:
+            for message in private_chat_messages:
+                db.session.delete(message)
+        if user_private_chat != None:
+            for chat in user_private_chat:
+                db.session.delete(chat)
+        if event_group_chat != None:
+            user_group_chat = UsersGroupChat.query.filter_by(user_id=user.id, chat_id=event_group_chat.id).first()
         if event_member is None:
             return jsonify({"msg": "You are not a member of this event"}), 403
         
         db.session.delete(event_member)
         '''Do it if u want to delete your chats'''
         if user_private_chat is not None:
-            db.session.delete(user_private_chat)
+            for chat in user_private_chat:
+                db.session.delete(chat)
         if user_group_chat is not None:
             db.session.delete(user_group_chat)
         db.session.commit()
@@ -981,3 +1044,70 @@ def get_my_groups_chat():
     except Exception as e:
         return jsonify({"msg": "error retrieving group chats",
                         "error": str(e)}), 500
+    
+
+@event_bp.route('/add_favorite', methods=['POST'])
+@jwt_required()
+def add_favorite():
+    user_id = request.json.get('user_id')
+    event_id = request.json.get('event_id')
+
+    if not user_id or not event_id:
+        return jsonify({'error': 'Faltan datos necesarios'}), 400
+
+    new_favorite = Favorite(user_id=user_id, event_id=event_id)
+    db.session.add(new_favorite)
+    try:
+        db.session.commit()
+        return jsonify(new_favorite.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@event_bp.route('/user_favorites/<int:user_id>', methods=['GET'])
+@jwt_required()
+def list_favorites(user_id):
+    # Obtén el user_id del token JWT
+    
+    # Busca solo los favoritos del usuario autenticado
+    favorites = Favorite.query.filter_by(user_id=user_id).all()
+    if favorites is None:
+        return jsonify([]), 202
+    # Serializa y devuelve la lista de favoritos
+    return jsonify([fav.serialize() for fav in favorites]), 200
+
+
+
+@event_bp.route("/remove-favorite/<int:event_id>", methods=["DELETE"])
+@jwt_required()
+def remove_favorite(event_id):
+    """
+    Remove a specific event from user's favorites.
+
+    This function removes an event from the list of user's favorites in the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
+    email = get_jwt_identity() 
+    user=User.query.filter_by(email=email).first() 
+    
+    
+    if not event_id:
+        return jsonify({'msg': 'Falta el ID del evento'}), 400
+
+    try:
+        # Buscar el registro del favorito en la base de datos
+        favorite = Favorite.query.filter_by(user_id=user.id, event_id=event_id).first()
+        if not favorite:
+            return jsonify({'msg': 'Favorito no encontrado'}), 404
+        
+        db.session.delete(favorite)
+        db.session.commit()
+        
+        return jsonify({'msg': 'Favorito eliminado con éxito'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': 'Error eliminando el favorito', 'error': str(e)}), 500
+

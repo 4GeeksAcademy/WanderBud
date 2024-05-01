@@ -14,6 +14,7 @@ export const CreateEvent = () => {
         endDate: new Date().toISOString().slice(0, 16),
         description: "",
         markerPosition: "",
+        address: "",
         typeEvent: "",
         errors: {}
     });
@@ -37,7 +38,8 @@ export const CreateEvent = () => {
     };
 
     const handleLocationSelect = location => {
-        setEventData(prevState => ({ ...prevState, markerPosition: location }));
+        setEventData(prevState => ({ ...prevState, markerPosition: location.location }));
+        setEventData(prevState => ({ ...prevState, address: location.address }));
     };
 
     const validateForm = () => {

@@ -9,6 +9,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			myPublicEvents: [],
 			joinedPublicEvents: [],
 			publicEventData: {},
+			profileImages: [],
 			userAccount: {
 				email: "",
 				password: "",
@@ -16,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			ownerRequest: null,
 			groupChat: null,
-			favorites: [],
+			favorites: null,
 			auth: false,
 			authProfile: false,
 			storeShow: false,
@@ -169,20 +170,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const accessToken = localStorage.getItem("token")
 				const radius = 1000;
 				try {
-					const locationResponse = await fetch('https://freeipapi.com/api/json');
-					const locationData = await locationResponse.json();
-					const location = encodeURIComponent(`${locationData.cityName}, ${locationData.countryName}`)
-					const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&location=${location}`, {
-						method: 'GET',
-						headers: {
-							'Authorization': `Bearer ${accessToken}`
-						},
-					});
-					if (response.ok) {
-						const data = await response.json();
-						setStore({ publicEvents: data });
-					} else {
-						throw new Error('Error getting public events');
+					if (navigator.geolocation) {
+						navigator.geolocation.getCurrentPosition(async (position) => {
+							const { latitude, longitude } = position.coords;
+							const location = encodeURIComponent(`{"lat": ${latitude},"lng": ${longitude}}`);
+							const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&coords=${location}`, {
+								method: 'GET',
+								headers: {
+									'Authorization': `Bearer ${accessToken}`
+								},
+							});
+							if (response.ok) {
+								const data = await response.json();
+								setStore({ publicEvents: data });
+							} else {
+								console.log("Error getting public events:", response);
+								throw new Error('Error getting public events');
+							}
+							console.log(location);
+						}, (error) => {
+							console.error('Error al obtener la ubicación:', error.message);
+						});
+					}
+					else {
+						console.error('Geolocalización no soportada por este navegador.');
 					}
 				} catch (error) {
 					console.error('Error getting public events:', error);
@@ -229,7 +240,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(userData)
 					});
-					if (resp.ok) {
+					if (resp.status === 200) {
 						const newUser = await resp.json();
 						setStore({ users: [...getStore().users, newUser] });
 						const actions = getActions();
@@ -303,10 +314,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
 				const endDate = eventData.endDate.split('T')[0];
 				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
-				const location = await actions.coordinatesToAddress(eventData.markerPosition);
+				const location = eventData.address;
+				const markerPosition = eventData.markerPosition;
 				const eventDataForBackend = {
 					name: eventData.title,
 					location: location,
+					coords: eventData.markerPosition,
 					start_datetime: startDate + ' ' + startTime,
 					end_datetime: endDate + ' ' + endTime,
 					description: eventData.description,
@@ -489,17 +502,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			updateEvent: async (eventData, event_id) => {
+				console.log(eventData);
+				console.log(event_id);
 				const actions = getActions();
-				const startDate = eventData.startDate.split('T')[0];
-				const startTime = eventData.startDate.split('T')[1]?.split('.')[0] + ':00';
-				const endDate = eventData.endDate.split('T')[0];
-				const endTime = eventData.endDate.split('T')[1]?.split('.')[0] + ':00';
-				const location = await actions.coordinatesToAddress(eventData.markerPosition);
+				const startDate = eventData.startDate
+				const endDate = eventData.endDate
 				const eventDataForBackend = {
 					name: eventData.title,
-					location: location,
-					start_datetime: startDate + ' ' + startTime,
-					end_datetime: endDate + ' ' + endTime,
+					location: eventData.location,
+					coords: eventData.markerPosition,
+					start_datetime: startDate,
+					end_datetime: endDate,
 					description: eventData.description,
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
@@ -520,11 +533,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						window.location.href = '/feed';
 						return true;
 					} else {
-						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error creating event', redirect: '/create-event' });
-						throw new Error('Error creating event');
+						const data = await resp.json();
+						console.log("Error updating event:", data);
+						setStore({ storeShow: true, alertTitle: 'Error', alertBody: 'Error updating event', redirect: '/update-event/' + event_id });
+						throw new Error('Error updating event');
 					}
 				} catch (error) {
-					console.error('Error creating event:', error);
+					console.error('Error updating event:', error);
 					return false;
 				}
 			},
@@ -814,7 +829,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
-
+			getPrivateChat: async (id) => {
+				const accessToken = localStorage.getItem('token');
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-private-chat/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (!response.ok) {
+						if (response.status === 401) {
+							const actions = getActions();
+							await actions.validateToken();
+						} else {
+							const data = await response.json();
+							setStore({ message: data.msg });
+							throw new Error(`Error getting private chat: ${response.statusText}`);
+						}
+					} else if (response.status === 200) {
+						const data = await response.json();
+						return data;
+					}
+				} catch (error) {
+					console.error('Error getting private chat:', error);
+					return [];
+				}
+			},
 			deleteEvent: async (event_id) => {
 				const accessToken = localStorage.getItem("token");
 				try {
@@ -837,9 +878,263 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+			addProfileImage: async (image) => {
+				console.log(image)
+				const accessToken = localStorage.getItem("token")
+				try {
+					console.log(image)
+					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile-image", {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + accessToken
+						},
+						body: JSON.stringify({
+
+							"image_path": image
+						})
+					});
+					const data = await response.json();
+					if (response.status === 200) {
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Error uploading image');
+					}
+				} catch (error) {
+					console.error('Error uploading image:', error);
+					return false;
+				}
+			},
+
+			getProfileImages: async (user_id) => {
+				const accessToken = localStorage.getItem("token")
+				console.log(user_id)
+				try {
+
+					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-images/${user_id}`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + accessToken
+						},
+					});
+					const data = await response.json();
+					if (response.status === 200) {
+						setStore({ message: data.msg });
+						setStore({ profileImages: data.results });
+						return true;
+					}
+
+					else if (response.status === 404) {
+						setStore({ message: data.msg });
+						setStore({ profileImages: [] });
+						return true;
+					}
+					else {
+						throw new Error('Error updating image');
+					}
+				} catch (error) {
+					console.error('Error updating image:', error);
+					return false;
+				}
+			},
+
+			deleteProfileImage: async (image_id) => {
+				const accessToken = localStorage.getItem("token")
+				try {
+
+					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-image/${image_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + accessToken
+						},
+					});
+					const data = await response.json();
+					if (response.status === 200) {
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Error deleting image');
+					}
+				} catch (error) {
+					console.error('Error deleting image:', error);
+					return false;
+				}
+			}, sendMessage: async (chat_id, message, type) => {
+				if (message.trim() === "") {
+					return;
+				}
+				const accessToken = localStorage.getItem('token');
+				if (type === "private") {
+					try {
+						const response = await fetch(process.env.BACKEND_URL + `/api/send-private-message/${chat_id}`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': `Bearer ${accessToken}`
+							},
+							body: JSON.stringify({ message })
+						});
+						if (!response.ok) {
+							const data = await response.json();
+							console.error('Error sending private message:', data);
+							throw new Error(`Error sending private message: ${response.statusText}`);
+						} else if (response.status === 200) {
+							const data = await response.json();
+							return data;
+						}
+					} catch (error) {
+						console.error('Error sending private message:', error);
+						return [];
+					}
+				} else if (type === "group") {
+					try {
+						const response = await fetch(process.env.BACKEND_URL + `/api/send-group-message/${chat_id}`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': `Bearer ${accessToken}`
+							},
+							body: JSON.stringify({ message: message })
+						});
+						if (!response.ok) {
+							const data = await response.json();
+							console.error('Error sending group message:', data);
+							throw new Error(`Error sending group message: ${response.statusText}`);
+						} else if (response.status === 200) {
+							const data = await response.json();
+							return data;
+						}
+					} catch (error) {
+						console.error('Error sending group message:', error);
+						return [];
+					}
+				}
+			},
+
+			getFavorites: async () => {
+				const store = getStore();
+				const accessToken = localStorage.getItem("token");
+				const userId = store.userAccount.id;  // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+
+				if (!userId) {
+					console.error('User ID is not available in the store.');
+					return;
+				}
+
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/user_favorites/${userId}`, {
+						method: 'GET',  // Especifica explícitamente el método HTTP
+						headers: {
+							'Authorization': `Bearer ${accessToken}`,
+							'Content-Type': 'application/json'  // Especifica el tipo de contenido esperado
+						}
+					});
+
+					if (response.ok) {
+						const favoritesData = await response.json();
+						setStore({ ...store, favorites: favoritesData });  // Asegúrate de actualizar correctamente la propiedad 'favorites' en el store
+					} else {
+						const errorData = await response.json();  // Captura y muestra la respuesta de error del servidor
+						console.error('Failed to fetch favorites:', errorData);
+						throw new Error('Failed to fetch favorites');
+					}
+				} catch (error) {
+					console.error('Error fetching favorites:', error);
+				}
+			},
+
+
+			addFavoriteEvent: async (userId, eventId) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/add_favorite`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						},
+						body: JSON.stringify({ user_id: userId, event_id: eventId })
+					});
+
+					if (response.ok) {
+						const data = await response.json();
+						setStore({ favorites: [...getStore().favorites, data] });
+						return true;
+					} else {
+						const errorData = await response.json();
+						throw new Error(`Failed to add favorite event: ${errorData.error}`);
+					}
+				} catch (error) {
+					console.error('Error adding favorite event:', error);
+					// Aquí puedes añadir lógica adicional para manejar el error de forma adecuada
+					return false;
+				}
+			},
+
+
+			removeFavoriteEvent: async (event_id) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/remove-favorite/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						const store = getStore();
+						const favorites = store.favorites;
+						favorites = favorites.filter(item => item.event_id === event_id)
+						setStore({ favorites: favorites })
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Failed to remove the favorite');
+					}
+				} catch (error) {
+					console.error('Error removing favorite:', error);
+					return false;
+				}
+			},
+
+
+			getEventChat: async (id) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/get-group-chat/${id}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${localStorage.getItem('token')}`
+						}
+					});
+					if (!response.ok) {
+						if (response.status === 401) {
+							const actions = getActions();
+							await actions.validateToken();
+						} else {
+							const data = await response.json();
+							setStore({ message: data.msg });
+							throw new Error(`Error getting event chat: ${response.statusText}`);
+						}
+					} else if (response.status === 200) {
+						const data = await response.json();
+						return data;
+					}
+				} catch (error) {
+					console.error('Error getting event chat:', error);
+					return [];
+				}
+
+			}
 
 		}
-	};
+
+	}
 };
+
 
 export default getState;

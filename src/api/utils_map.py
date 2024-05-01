@@ -41,6 +41,7 @@ def calculate_distance(coords1, coords2):
     Returns:
         float: The distance between the two points in kilometers.
     """
+    
     lat1 = math.radians(coords1["lat"])
     lon1 = math.radians(coords1["lng"])
     lat2 = math.radians(coords2["lat"])
@@ -52,19 +53,18 @@ def calculate_distance(coords1, coords2):
     distance = 6371 * c  # Earth's radius in kilometers
     return distance
 
-def get_address_in_radius(location, radius_in_km, list_of_locations):
-    location_coords = address_to_coordinates(location)
+def get_address_in_radius(coords, radius_in_km, list_of_coords):
+    location_coords = coords
     locations_in_radius = []
-    for loc in list_of_locations:
-        loc_coords = address_to_coordinates(loc)
-        if loc_coords is not None:
-            distance = calculate_distance(location_coords, loc_coords)
+    for coords in list_of_coords:
+        if coords is not None:
+            distance = calculate_distance(location_coords, coords)
             if distance <= radius_in_km:
-                locations_in_radius.append(loc)
+                locations_in_radius.append(coords)
     return locations_in_radius
 
 
-def addres_to_timezone(addres):
+def addres_to_timezone(coords):
     """
     Get the timezone of a given set of coordinates.
 
@@ -80,7 +80,6 @@ def addres_to_timezone(addres):
     """
     start_time = time.time()
     tf = TimezoneFinder()
-    coords = address_to_coordinates(addres)
     timezone = tf.timezone_at(lng=coords["lng"], lat=coords["lat"])
     end_time = time.time()
     execution_time = end_time - start_time

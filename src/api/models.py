@@ -2,6 +2,7 @@ import random
 from datetime import timezone, datetime
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import BigInteger
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
 
@@ -20,6 +21,7 @@ class User(db.Model):
     group_chats = db.relationship('UsersGroupChat', backref='user', lazy=True)
     sender = db.relationship('Message', foreign_keys='Message.sender_id' ,backref='sender', lazy=True)
     receiver = db.relationship('Message', foreign_keys='Message.receiver_id',backref='receiver', lazy=True)
+    profile_image = db.relationship('UserProfileImage', backref='user', lazy=True)
 
     def generate_unique_id(self):
         while True:
@@ -108,6 +110,8 @@ class Event(db.Model):
     owner_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
     start_datetime = db.Column(db.DateTime(timezone=True), nullable=False)
     end_datetime = db.Column(db.DateTime(timezone=True), nullable=True)
     status = db.Column(db.Enum("Planned","Completed","Canceled","In Progress", name="status"), nullable=False, default="Planned")
@@ -127,7 +131,18 @@ class Event(db.Model):
     def __init__(self, *args, **kwargs):
         super(Event, self).__init__(*args, **kwargs)
         self.id = self.generate_unique_id()
-        
+    
+    def actualize_status(self):
+        '''This method is used to actualize the status of the event'''
+        if self.start_datetime > datetime.now(timezone.utc):
+            return "Planned"
+        elif self.start_datetime < datetime.now(timezone.utc) and self.end_datetime > datetime.now(timezone.utc):
+            return "In Progress"
+        elif self.end_datetime < datetime.now(timezone.utc):
+            return "Completed"
+        else:
+            return "Canceled"
+    
     def __repr__(self):
         return f'<Event Id {self.id} {self.name}>'
 
@@ -274,6 +289,7 @@ class Message(db.Model):
             "group_chat_id": self.group_chat_id,
             "sender_id": self.sender_id,
             "receiver_id": self.receiver_id,
+            "sender_img": User_Profile.query.filter_by(user_id=self.sender_id).first().profile_image if User_Profile.query.filter_by(user_id=self.sender_id).first() else None,
             "message": self.message,
             "group_type": self.group_type,
             "sentAt": self.sentAt.strftime('%Y-%m-%d %H:%M:%S GMT%z'),
@@ -296,3 +312,25 @@ class UserProfileImage(db.Model):
             "user_id": self.user_id,
             "image_path": self.image_path
         }
+    
+class Favorite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('favorite_events', lazy='dynamic'))
+    event = db.relationship('Event', backref=db.backref('favorited_by', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<Favorite user_id={self.user_id}, event_id={self.event_id}>'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "event_id": self.event_id,
+            "user_info": User_Profile.query.filter_by(user_id=self.user_id).first().serialize(), 
+            "event_info": Event.query.filter_by(id=self.event_id).first().serialize()
+        }
+    
+    

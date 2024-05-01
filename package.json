@@ -84,6 +84,7 @@
 		"bootstrap": "^5.3.3",
 		"core-js": "^3.37.0",
 		"date-fns": "^3.6.0",
+		"formik": "^2.4.6",
 		"gapi-script": "^1.2.0",
 		"pexels": "^1.4.0",
 		"prop-types": "^15.6.1",
@@ -95,6 +96,7 @@
 		"react-google-login": "^5.2.2",
 		"react-icons": "^5.1.0",
 		"react-polyfills": "0.0.1",
-		"react-router-dom": "^6.22.3"
+		"react-router-dom": "^6.22.3",
+		"yup": "^1.4.0"
 	}
 }

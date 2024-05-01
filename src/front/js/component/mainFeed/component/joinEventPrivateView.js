@@ -29,15 +29,15 @@ export const JoinEventPrivateView = () => {
   }, [])
 
   const handleRequestMessage = () => {
-    if (store.joinedPublicEvents.length > 0) { 
+    if (store.joinedPublicEvents.length > 0) {
       for (const event of store.joinedPublicEvents) {
         if (event_id == event.id) {
           setEventStatus("I joined this event");
-          break; 
+          break;
         }
       }
     } else {
-      setEventStatus(""); 
+      setEventStatus("");
     }
   };
 
@@ -57,35 +57,37 @@ export const JoinEventPrivateView = () => {
           <LeftSidenav />
         </Col>
         <Col md={6} className="p-0 h-100">
-        {eventData && ownerData ?
-          (<Row id="event-private">          
-            <Col md={12} className="p-5 ">
-              <h1 className="text-center">{eventData.name}</h1>
-              <Row id="event-userRow" className="mt-4 ms-1">
-                <Col xs={2}>
-                  <Card.Title className="p-3"><img className="rounded-circle" src={ownerData.profile_image} style={{ width: "100px", height: "100px", objectFit: "cover" }} /></Card.Title>
-                </Col>
-                <Col xs={4} id="event-cardUserName">
-                  <Card.Title >{ownerData.name}</Card.Title>
-                </Col>
-                <Col xs={4} id="event-userButton">
-                <Button
+          {eventData && ownerData ?
+            (<Row id="event-private">
+              <Col md={12} className="p-5 ">
+                <h1 className="text-center">{eventData.name}</h1>
+                <Row id="event-userRow" className="mt-4 ms-1">
+                  <Col xs={2}>
+                    <Card.Title className="p-3"><img className="rounded-circle" src={ownerData.profile_image} style={{ width: "100px", height: "100px", objectFit: "cover" }} /></Card.Title>
+                  </Col>
+                  <Col xs={4} id="event-cardUserName">
+                    <Card.Title >{ownerData.name}</Card.Title>
+                  </Col>
+                  <Col xs={4} id="event-userButton">
+                    <Button
                       variant="secondary"
                       onClick={() => navigate(`/profile/${ownerData.user_id}`)}
                     >
                       {"Visit Profile"}
                     </Button>
-                </Col>
-              </Row>
-              <Row className="mt-5">
-                <Col md={6}>
-                  <Card.Text>
-                    <label>Event Location:</label>
-                    <p>{eventData.location}</p>
-                    <label>Event Schedule:</label>
-                    <p>{eventData.start_date}, {eventData.start_time}-{eventData.end_time}</p>
-                    <label>Event description:</label>
-                    <p>{eventData.description}</p>
+                  </Col>
+                </Row>
+                <Row className="mt-5">
+                  <Col md={6}>
+                    <Card.Text>
+                      <label>Event Location:</label>
+                      <p>{eventData.location}</p>
+                      <label>Event Schedule:</label>
+                      <p>{eventData.start_date + "\n"}, {eventData.end_date}</p>
+                      <label>Event description:</label>
+                      <p>{eventData.description}</p>
+                      <label>Budget:</label>
+                      <p>{eventData.budget_per_person} €</p>
                     </Card.Text>
                   </Col>
                   <Col md={6} className="d-flex justify-content-center">

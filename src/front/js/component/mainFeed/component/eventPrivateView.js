@@ -52,7 +52,7 @@ export const EventPrivateView = () => {
       setEventStatus("Applied"); // Cambia el estado a "Applied" después de solicitar unirse al evento
     }
   };
-
+  console.log(eventData)
   return (
     <Container fluid className='feed-container'>
       <Row className="vh-100 scrollbar">
@@ -86,9 +86,11 @@ export const EventPrivateView = () => {
                       <label>Event Location:</label>
                       <p>{eventData.location}</p>
                       <label>Event Schedule:</label>
-                      <p>{eventData.start_date}, {eventData.start_time}-{eventData.end_time}</p>
+                      <p>{eventData.start_date + "\n"}, {eventData.end_date}</p>
                       <label>Event description:</label>
                       <p>{eventData.description}</p>
+                      <label>Budget:</label>
+                      <p>{eventData.budget_per_person} €</p>
                     </Card.Text>
                   </Col>
                   <Col md={6} className="d-flex justify-content-center">

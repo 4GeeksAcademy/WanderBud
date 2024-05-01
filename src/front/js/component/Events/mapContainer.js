@@ -4,9 +4,9 @@ import { Form } from 'react-bootstrap';
 
 const libraries = ["places"];
 
-const MapContainer = ({ selectedLocation, onLocationSelect }) => {
+const MapContainer = ({ selectedLocation, onLocationSelect, address }) => {
     const [currentPosition, setCurrentPosition] = useState(null);
-    const [autocomplete, setAutocomplete] = useState(null);
+    const [autocomplete, setAutocomplete] = useState(address);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
                 lng: place.geometry.location.lng()
             };
             setCurrentPosition(location);
-            onLocationSelect(location);
+            onLocationSelect({ location, address: autocomplete.gm_accessors_.place.hs.formattedPrediction });
         } else {
             setError('Autocompletado aún no cargado.');
         }
@@ -68,7 +68,7 @@ const MapContainer = ({ selectedLocation, onLocationSelect }) => {
             >
                 {selectedLocation && <Marker position={selectedLocation} />}
                 <Autocomplete onLoad={handleAutocompleteLoad} onPlaceChanged={handlePlaceChanged}>
-                    <Form.Control type="text" placeholder="Buscar lugares cerca..." style={searchStyles} />
+                    <Form.Control type="text" placeholder="Buscar lugares cerca..." style={searchStyles} defaultValue={address} onChange={(e) => address = e.target.value} />
                 </Autocomplete>
             </GoogleMap>
             {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
