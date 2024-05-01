@@ -12,7 +12,7 @@ const googleClientId = "467490747977-ibcvrqifhfoj80vm3j3publt6egneu0s.apps.googl
 
 // Renderizar tu aplicación React
 ReactDOM.render(
-  <GoogleOAuthProvider clientId={googleClientId}>
+  <GoogleOAuthProvider clientId={process.env.GOOGLE_OAUTH_ID}>
     <Layout />
   </GoogleOAuthProvider>,
   document.querySelector("#app")

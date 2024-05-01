@@ -17,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			ownerRequest: null,
 			groupChat: null,
-			favorites: [],
+			favorites: null,
 			auth: false,
 			authProfile: false,
 			storeShow: false,
@@ -63,6 +63,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						localStorage.setItem("token", data.access_token);
 						setStore({ auth: true });
+						actions.validateToken()
 						return true;
 					} else {
 						throw new Error('Login failed');
@@ -77,40 +78,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				store.redirect && window.location.replace(store.redirect);
 			},
-			loginWithGoogle: async (accessToken) => {
-				try {
-					const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ accessToken })
-					});
-
-					if (!response.ok) {
-						// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
-						const errorData = await response.json();
-						throw new Error(`Error en la validación del token: ${errorData.message}`);
-					}
-
-					const userData = await response.json();
-
-					// Almacenar datos del usuario y el token en el store
-					setStore({
-						isAuthenticated: true,
-						userData: userData,
-						accessToken: accessToken
-					});
-
-				} catch (error) {
-
-				}
-			},
+			
 			validateToken: async () => {
 				const store = getStore();
 				const actions = getActions()
 				const auth = store.auth;
-				const unloggedPaths = ['/login', '/password-recovery', '/password-reset/*', '/signup/user', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/googleOauth', '/password-reset/*', '/signup/user', '/', '/background'];
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/valid-token", {
@@ -240,7 +213,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(userData)
 					});
-					if (resp.ok) {
+					if (resp.status === 200) {
 						const newUser = await resp.json();
 						setStore({ users: [...getStore().users, newUser] });
 						const actions = getActions();
@@ -380,15 +353,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			validateUserProfile: async () => {
 				let accessToken = localStorage.getItem("token");
-				const unloggedPaths = ['/login', '/password-recovery', '/reset-password', '/signup/user', '/', '/background'];
+				const unloggedPaths = ['/login', '/password-recovery', '/googleOauth', '/reset-password', '/signup/user', '/', '/background'];
 				try {
 
-					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+					const response = await fetch(process.env.BACKEND_URL + "/api/validate-profile", {
 						method: 'GET',
 						headers: {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
+					console.log("ValidateProfile:" + response.status)
 					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
 						setStore({ authProfile: false });
 						setStore({ storeShow: true, alertTitle: 'Register not completed', alertBody: 'Please complete your profile', redirect: '/signup/profile' });
@@ -687,6 +661,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 								msg: "No owner request found"
 							}
 						});
+					} else {
+						setStore({ ownerRequest: [] })
 					}
 				} catch (error) {
 					console.error('Error getting owner request:', error);
@@ -716,6 +692,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 								msg: "No applied events found"
 							}
 						});
+					} else {
+						setStore({ appliedPublicEvents: [] })
 					}
 				} catch (error) {
 					console.error('Error getting user request:', error);
@@ -911,7 +889,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const accessToken = localStorage.getItem("token")
 				console.log(user_id)
 				try {
-					
+
 					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-images/${user_id}`, {
 						method: 'GET',
 						headers: {
@@ -922,13 +900,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: data.msg });
-						setStore({ profileImages: data.results});
-						return true;}
+						setStore({ profileImages: data.results });
+						return true;
+					}
 
 					else if (response.status === 404) {
 						setStore({ message: data.msg });
-						setStore({ profileImages: []});
-						return true;}
+						setStore({ profileImages: [] });
+						return true;
+					}
 					else {
 						throw new Error('Error updating image');
 					}
@@ -1015,23 +995,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getFavorites: async () => {
 				const store = getStore();
 				const accessToken = localStorage.getItem("token");
-				const userId = store.userAccount.id; // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+				const userId = store.userAccount.id;  // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+
+				if (!userId) {
+					console.error('User ID is not available in the store.');
+					return;
+				}
+
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/user_favorites/${userId}`, {
+						method: 'GET',  // Especifica explícitamente el método HTTP
 						headers: {
-							'Authorization': `Bearer ${accessToken}`
+							'Authorization': `Bearer ${accessToken}`,
+							'Content-Type': 'application/json'  // Especifica el tipo de contenido esperado
 						}
 					});
+
 					if (response.ok) {
-						const favorites = await response.json();
-						setStore({ ...store, favorites });
+						const favoritesData = await response.json();
+						setStore({ ...store, favorites: favoritesData });  // Asegúrate de actualizar correctamente la propiedad 'favorites' en el store
 					} else {
+						const errorData = await response.json();  // Captura y muestra la respuesta de error del servidor
+						console.error('Failed to fetch favorites:', errorData);
 						throw new Error('Failed to fetch favorites');
 					}
 				} catch (error) {
 					console.error('Error fetching favorites:', error);
 				}
 			},
+
 
 			addFavoriteEvent: async (userId, eventId) => {
 				const accessToken = localStorage.getItem("token");
@@ -1044,7 +1036,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({ user_id: userId, event_id: eventId })
 					});
-			
+
 					if (response.ok) {
 						const data = await response.json();
 						setStore({ favorites: [...getStore().favorites, data] });
@@ -1059,6 +1051,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+
+
+			removeFavoriteEvent: async (event_id) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/remove-favorite/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						const store = getStore();
+						const favorites = store.favorites;
+						favorites = favorites.filter(item => item.event_id === event_id)
+						setStore({ favorites: favorites })
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Failed to remove the favorite');
+					}
+				} catch (error) {
+					console.error('Error removing favorite:', error);
+					return false;
+				}
+			},
+
 
 			getEventChat: async (id) => {
 				try {
@@ -1086,7 +1107,44 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return [];
 				}
 
+			},
+
+			getGoogleOauth: async (googleData) => {
+				console.log(googleData)
+				try{
+					const response = await fetch(process.env.BACKEND_URL + '/api/google-oauth', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(googleData)
+					});
+
+					const data = await response.json();
+
+					if (response.status == 200){
+						localStorage.setItem("token", data.access_token);
+            			setStore({ auth: true });
+            			getActions().validateToken()
+					}
+					else if (response.status == 202){
+						const actions = getActions()
+            			actions.login(data.email, data.password);
+						
+						
+					}
+					
+					else {
+						throw new Error('Google Authentication error');
+					}
+
+				} catch (error) {
+					console.error("google authentication error:", error);
+					return false
+				} 
+
 			}
+
 
 		}
 

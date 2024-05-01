@@ -1,16 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Context } from '../../store/appContext';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
-import { Formik, Field, ErrorMessage } from 'formik';
+import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 const SignUp = () => {
   const { actions } = useContext(Context);
   const navigate = useNavigate();
-
-  const [confirmpassword, setConfirmpassword] = useState('');
-
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -23,24 +20,23 @@ const SignUp = () => {
       .required('Confirm Password is required'),
   });
 
-  const handleSubmit = async (userData) => {
+  const handleSubmit = async (values) => {
     try {
-      const success = await actions.createUser(userData);
-      if (success) {
+      const { email, password } = values;
+      const response = await actions.createUser({ email, password, is_active: true });
+  
+      if (response) {
         navigate("/signup/profile");
         alert('Usuario creado correctamente');
       } else {
-        alert('Error al crear el usuario');
+        alert('Error al crear el usuario: ' + response.error);
       }
     } catch (error) {
-      console.error('Error al crear el usuario:', error);
-      alert('Error al crear el usuario');
+      console.error('Error en la solicitud createUser:', error);
+      alert('Error al crear el usuario. Por favor, inténtalo de nuevo.');
     }
   };
-
-  const handleGoHome = () => {
-    navigate("/");
-  };
+  
 
   return (
     <Container fluid className="container-fluid">
@@ -48,21 +44,15 @@ const SignUp = () => {
         <Col md={5}>
           <Card className="p-4 justify-content-center w-100 card container-card container-shadow">
             <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Sign Up</h4></Card.Title>
-            {}
             <Formik
-              initialValues={{
-                email: '',
-                password: '',
-                confirmpassword: '',
-              }}
+              initialValues={{ email: '', password: '', confirmpassword: '' }}
               validationSchema={validationSchema}
-              onSubmit={(values) => handleSubmit(values)}
+              onSubmit={handleSubmit}
             >
               {({ handleSubmit, handleChange, values, errors }) => (
                 <Form onSubmit={handleSubmit} className="p-4 py-0">
                   <Form.Group controlId="formEmail">
                     <Form.Control
-                      className="form-control mb-3"
                       type="email"
                       name="email"
                       value={values.email}
@@ -76,7 +66,6 @@ const SignUp = () => {
                   
                   <Form.Group controlId="formPassword">
                     <Form.Control
-                      className="form-control mb-3"
                       type="password"
                       name="password"
                       value={values.password}
@@ -88,7 +77,6 @@ const SignUp = () => {
                   
                   <Form.Group controlId="formConfirmPassword">
                     <Form.Control
-                      className="form-control mb-3"
                       type="password"
                       name="confirmpassword"
                       value={values.confirmpassword}
@@ -99,7 +87,7 @@ const SignUp = () => {
                   </Form.Group>
                   
                   <Button variant="primary" type="submit" className="w-100">
-                  Register
+                    Register
                   </Button>
                 </Form>
               )}
@@ -111,5 +99,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
-
+export default SignUp

@@ -20,6 +20,7 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
     };
 
     const renderUserRequests = () => {
+        console.log(store.appliedPublicEvents)
         if (store.appliedPublicEvents === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
         if (store.appliedPublicEvents.msg === "No applied events found" || store.appliedPublicEvents.lenght === 0) return <NoRequests title="No has enviado ninguna solicitud" />;
         return store.appliedPublicEvents.map((item, index) => (
@@ -28,6 +29,7 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
     };
 
     const renderOwnerRequests = () => {
+        console.log(store.ownerRequest)
         if (store.ownerRequest === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
         if (store.ownerRequest.msg === "No owner request found" || store.ownerRequest.lenght === 0) return <NoRequests title="No te han enviado ninguna solictud" />;
         return store.ownerRequest.map((item, index) => (

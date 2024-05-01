@@ -14,6 +14,7 @@ import { SignUpProfile } from "./pages/signUp/signUpProfile";
 import { FeedMain } from "./component/mainFeed/feedMain";
 import { UpdateEvent } from "./component/Events/updateEvent";
 import { MyEventPrivateView } from "./component/mainFeed/component/myEventPrivateView";
+
 import { EventPrivateView } from "./component/mainFeed/component/eventPrivateView";
 import { JoinEventPrivateView } from "./component/mainFeed/component/joinEventPrivateView";
 import { ChatHandler } from "./component/chats/chatHandler";
@@ -65,6 +66,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Background />} path="/googleOAuth" />
                         <Route element={<Background />} path="/*" />
+                        <Route element={<Background />} path="/googleOauth" />
                     </Routes>
                 </ScrollToTop>
             </BrowserRouter>
