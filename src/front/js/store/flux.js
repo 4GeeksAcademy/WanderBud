@@ -240,7 +240,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify(userData)
 					});
-					if (resp.ok) {
+					if (resp.status === 200) {
 						const newUser = await resp.json();
 						setStore({ users: [...getStore().users, newUser] });
 						const actions = getActions();
