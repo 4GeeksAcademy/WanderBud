@@ -7,6 +7,10 @@ import { createClient } from 'pexels';
 import { MyEventPublicView } from '../mainFeed/component/myEventPublicView';
 import { parse } from 'date-fns';
 import { MyProfileImages } from './myProfileImages';
+import EventFavorite from './eventFavorite';
+
+
+
 
 const Profile = () => {
     const { store, actions } = useContext(Context);
@@ -23,10 +27,15 @@ const Profile = () => {
     const userId = store.userAccount.id;
     console.log(user_id)
     console.log(userId)
-    
+
     useEffect(() => {
         funtionsEffect();
     }, [user_id]);
+
+    useEffect(() => {
+        actions.getFavorites();
+    }, []);
+    
 
     // useEffect(() => {
     //     actions.getProfileImages(user_id);
@@ -124,8 +133,8 @@ const Profile = () => {
                                     <FaBirthdayCake className="me-1" />
                                     <span>Birthdate: {formatDate(profile.birthdate)}</span>
                                 </div>
-                                <ButtonGroup aria-label="Basic example" style={{marginLeft: "120px"}} className={'rounded-pill' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} >
-                                    <Button variant="primary" className={'rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} onClick={()=> navigate(`/profile-images/${user_id}`)}>Upload Images</Button>
+                                <ButtonGroup aria-label="Basic example" style={{ marginLeft: "120px" }} className={'rounded-pill' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} >
+                                    <Button variant="primary" className={'rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} onClick={() => navigate(`/profile-images/${user_id}`)}>Upload Images</Button>
                                 </ButtonGroup>
                             </div>
                         </div>
@@ -134,7 +143,7 @@ const Profile = () => {
                         <Row className="w-100 justify-content-center m-0 p-0">
                             <Col md={12} className="mt-2 p-2 navtabs">
                                 <Nav variant="pills" defaultActivekey="for-you" className="row">
-                                    <Nav.Item  className={'col-4 rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} defaultActivekey="my-events">
+                                    <Nav.Item className={'col-4 rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} defaultActivekey="my-events">
                                         <Nav.Link eventKey="my-events" className="btn btn-navtab w-100">
                                             My events
                                         </Nav.Link>
@@ -144,10 +153,11 @@ const Profile = () => {
                                             Images
                                         </Nav.Link>
                                     </Nav.Item>
-                                    <Nav.Item className={'col-4 rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")}>
-                                        <Nav.Link eventKey="favorites" className="btn btn-navtab w-100">
+                                    <Nav.Item className={'col-4 rounded-pill ' + (parseInt(userId) === parseInt(user_id) ? "" : "hidden")} defaultActivekey="Favorites">
+                                        <Nav.Link eventKey="favorites" onClick={() => setActiveTab('favorites')} className="btn btn-navtab w-100">
                                             Favorites
                                         </Nav.Link>
+
                                     </Nav.Item>
                                 </Nav>
                             </Col>
@@ -156,10 +166,10 @@ const Profile = () => {
                                     {userId == user_id ? <MyEventPublicView /> : <p>Content for Tab 2</p>}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Images">
-                                    <MyProfileImages user_id={user_id}/>
+                                    <MyProfileImages user_id={user_id} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="favorites">
-                                    <p>Content for Tab 3</p>
+                                    <EventFavorite />
                                 </Tab.Pane>
                             </Tab.Content>
                         </Row>
