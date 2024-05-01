@@ -83,6 +83,7 @@ def setup_commands(app):
             db.session.commit()
             
             event_types = [
+                Event_Type(name="Marathon"),
                 Event_Type(name="Cine"),
                 Event_Type(name="Bar"),
                 Event_Type(name="Surf"),
@@ -93,7 +94,14 @@ def setup_commands(app):
                 Event_Type(name="Theater"),
                 Event_Type(name="Conference"),
                 Event_Type(name="Workshop"),
-                Event_Type(name="Other")
+                Event_Type(name="Music"),
+                Event_Type(name="Food"),
+                Event_Type(name="Art"),
+                Event_Type(name="Travel"),
+                Event_Type(name="Technology"),
+                Event_Type(name="Fashion"),
+                Event_Type(name="Gaming"),
+                Event_Type(name="Networking")
                 ]
           
 

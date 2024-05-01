@@ -305,6 +305,7 @@ def get_my_events():
                 "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
+                    "last_name": owner.last_name if owner else "",
                     "profile_image": owner.profile_image if owner else None,
                     "user_id":owner.user_id if owner else None
                 },
@@ -390,6 +391,7 @@ def get_event_by_radius():
                     "name": event.name,
                     "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
+                    "last_name": owner.last_name if owner else "",
                     "profile_image": owner.profile_image if owner else None,
                     "user_id":owner.user_id if owner else None
                 },

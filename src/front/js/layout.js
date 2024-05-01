@@ -26,7 +26,7 @@ import { Background } from "./pages/backgroundLoading";
 import { ModalAlert } from "./component/modalAlert";
 import { AccountContainer } from "./component/Settings/account";
 import { HandleProfileImages } from "./component/profile/handleProfileImages";
-
+import EventCard from "./component/Events/eventCard";
 
 
 
@@ -58,10 +58,12 @@ const Layout = () => {
                         <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/request-chat/:chat_id" />
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/event-chat/:chat_id" />
+                        <Route element={<FeedLayout children={<EventCard />} />} path="/demo" />
                         <Route element={<EventPrivateView />} path="/event-view/:event_id/:owner_id" />
                         <Route element={<MyEventPrivateView />} path="/myevent-view/:event_id/:owner_id" />
                         <Route element={<JoinEventPrivateView />} path="/joinevent-view/:event_id/:owner_id" />
                         <Route element={<Login />} path="/login" />
+                        <Route element={<Background />} path="/googleOAuth" />
                         <Route element={<Background />} path="/*" />
                     </Routes>
                 </ScrollToTop>
