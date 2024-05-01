@@ -17,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			ownerRequest: null,
 			groupChat: null,
-			favorites: [],
+			favorites: null,
 			auth: false,
 			authProfile: false,
 			storeShow: false,
@@ -911,7 +911,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const accessToken = localStorage.getItem("token")
 				console.log(user_id)
 				try {
-					
+
 					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-images/${user_id}`, {
 						method: 'GET',
 						headers: {
@@ -922,13 +922,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					if (response.status === 200) {
 						setStore({ message: data.msg });
-						setStore({ profileImages: data.results});
-						return true;}
+						setStore({ profileImages: data.results });
+						return true;
+					}
 
 					else if (response.status === 404) {
 						setStore({ message: data.msg });
-						setStore({ profileImages: []});
-						return true;}
+						setStore({ profileImages: [] });
+						return true;
+					}
 					else {
 						throw new Error('Error updating image');
 					}
@@ -1015,23 +1017,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getFavorites: async () => {
 				const store = getStore();
 				const accessToken = localStorage.getItem("token");
-				const userId = store.userAccount.id; // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+				const userId = store.userAccount.id;  // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+
+				if (!userId) {
+					console.error('User ID is not available in the store.');
+					return;
+				}
+
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/user_favorites/${userId}`, {
+						method: 'GET',  // Especifica explícitamente el método HTTP
 						headers: {
-							'Authorization': `Bearer ${accessToken}`
+							'Authorization': `Bearer ${accessToken}`,
+							'Content-Type': 'application/json'  // Especifica el tipo de contenido esperado
 						}
 					});
+
 					if (response.ok) {
-						const favorites = await response.json();
-						setStore({ ...store, favorites });
+						const favoritesData = await response.json();
+						setStore({ ...store, favorites: favoritesData });  // Asegúrate de actualizar correctamente la propiedad 'favorites' en el store
 					} else {
+						const errorData = await response.json();  // Captura y muestra la respuesta de error del servidor
+						console.error('Failed to fetch favorites:', errorData);
 						throw new Error('Failed to fetch favorites');
 					}
 				} catch (error) {
 					console.error('Error fetching favorites:', error);
 				}
 			},
+
 
 			addFavoriteEvent: async (userId, eventId) => {
 				const accessToken = localStorage.getItem("token");
@@ -1044,7 +1058,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({ user_id: userId, event_id: eventId })
 					});
-			
+
 					if (response.ok) {
 						const data = await response.json();
 						setStore({ favorites: [...getStore().favorites, data] });
@@ -1059,6 +1073,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			},
+
+
+			removeFavoriteEvent: async (event_id) => {
+				const accessToken = localStorage.getItem("token");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/api/remove-favorite/${event_id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${accessToken}`
+						}
+					});
+					if (response.status === 200) {
+						const data = await response.json();
+						const store = getStore();
+						const favorites = store.favorites;
+						favorites = favorites.filter(item => item.event_id === event_id)
+						setStore({ favorites: favorites })
+						setStore({ message: data.msg });
+						return true;
+					} else {
+						throw new Error('Failed to remove the favorite');
+					}
+				} catch (error) {
+					console.error('Error removing favorite:', error);
+					return false;
+				}
+			},
+
 
 			getEventChat: async (id) => {
 				try {
