@@ -14,17 +14,6 @@ export const Home = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();  // Hook para navegar
 
-   
-    // const handleGoogleLogin = useGoogleLogin({
-    //     onSuccess: tokenResponse => {
-    //         decodedToken = jwtDecode(tokenResponse.access_token);
-    //         console.log(decodedToken);
-    //         actions.getGoogleOauth(decodedToken);
-    //     },
-    //     onError: error => {
-    //         console.error('Google login failed:', error);
-    //     }
-    // });
 
     return (
         <Container fluid className="container-fluid">
@@ -37,10 +26,10 @@ export const Home = () => {
                     <Card className="p-4 d-flex flex-column justify-content-between align-items-center card h-100 container-card container-shadow">
                         <Card.Title className="text-center mb-4 subtitle subtitle-bold">Connect. Create. Celebrate.</Card.Title>
                         <Link to="/login" className="btn btn-secondary btn-block rounded-pill mb-3 w-75">Login</Link>
-                        {/* <Button onClick={handleGoogleLogin} className="btn-block btn-google rounded-pill mb-3 w-75">
-                            <FontAwesomeIcon icon={faGoogle} className="me-2" /> Sign in with Google
-                        </Button> */}
-                        <GoogleApp />
+                        <div className="btn-block btn-google rounded-pill mb-3 w-75">
+                            <GoogleApp />
+                        </div>
+
                         <div className="d-flex w-75 mb-3 justify-content-center ">
                             <hr className="w-25 me-2" />
                             <span className="text-center align-content-center">If you don't have one</span>

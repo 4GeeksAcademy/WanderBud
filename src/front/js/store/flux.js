@@ -63,6 +63,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						localStorage.setItem("token", data.access_token);
 						setStore({ auth: true });
+						actions.validateToken()
 						return true;
 					} else {
 						throw new Error('Login failed');
@@ -77,35 +78,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				store.redirect && window.location.replace(store.redirect);
 			},
-			// loginWithGoogle: async (accessToken) => {
-			// 	try {
-			// 		const response = await fetch(process.env.BACKEND_URL + '/api/valid-token', {
-			// 			method: 'POST',
-			// 			headers: {
-			// 				'Content-Type': 'application/json',
-			// 			},
-			// 			body: JSON.stringify({ accessToken })
-			// 		});
-
-			// 		if (!response.ok) {
-			// 			// Mejor manejo del estado de error, lanzar error con mensaje del servidor si es posible
-			// 			const errorData = await response.json();
-			// 			throw new Error(`Error en la validación del token: ${errorData.message}`);
-			// 		}
-
-			// 		const userData = await response.json();
-
-			// 		// Almacenar datos del usuario y el token en el store
-			// 		setStore({
-			// 			isAuthenticated: true,
-			// 			userData: userData,
-			// 			accessToken: accessToken
-			// 		});
-
-			// 	} catch (error) {
-
-			// 	}
-			// },
+			
 			validateToken: async () => {
 				const store = getStore();
 				const actions = getActions()
@@ -383,12 +356,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const unloggedPaths = ['/login', '/password-recovery', '/googleOauth', '/reset-password', '/signup/user', '/', '/background'];
 				try {
 
-					const response = await fetch(process.env.BACKEND_URL + "/api/profile-view", {
+					const response = await fetch(process.env.BACKEND_URL + "/api/validate-profile", {
 						method: 'GET',
 						headers: {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
+					console.log("ValidateProfile:" + response.status)
 					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
 						setStore({ authProfile: false });
 						setStore({ storeShow: true, alertTitle: 'Register not completed', alertBody: 'Please complete your profile', redirect: '/signup/profile' });
@@ -1107,7 +1081,9 @@ const getState = ({ getStore, getActions, setStore }) => {
             			getActions().validateToken()
 					}
 					else if (response.status == 202){
-            			getActions().login(data.email, data.password);
+						const actions = getActions()
+            			actions.login(data.email, data.password);
+						
 						
 					}
 					

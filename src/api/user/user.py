@@ -343,7 +343,22 @@ def google_oauth():
     except Exception as e:
         return jsonify({"msg": "Error en la autenticación o registro con Google", "error": str(e)}), 500
     
-
+@user_bp.route("/validate-profile", methods=["GET"])
+@jwt_required()
+def get_validate_profile():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(email=current_user).first()
+    user_profile = User_Profile.query.filter_by(user_id=user.id).first()
+    if user is None:
+        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+            
+    if user_profile is None: 
+        return jsonify({"msg": "this user does not have a profile yet"}), 404 
+    response_body = {
+        "msg": "ok",
+        "results": user_profile.serialize()
+    }
+    return jsonify(response_body), 200
 
 # def verify_google_token(access_token):
 #     # URL para verificar el token de acceso con Google
