@@ -235,15 +235,28 @@ def get_event(event_id):
        
 
         owner = User_Profile.query.get(event.owner_id)
+        members = Event_Member.query.filter_by(event_id=event.id, member_status="Accepted").all()
+        members_list = []
+        for member in members:
+            member_profile = User_Profile.query.get(member.user_id)
+            members_list.append({
+                "user_id": member.user_id,
+                "name": member_profile.name,
+                "last_name": member_profile.last_name,
+                "profile_image": member_profile.profile_image,
+                "status": member.member_status
+            })
         
         event_details = {
             "id": event.id,
             "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
+                    "last_name": owner.last_name if owner else "",
                     "profile_image": owner.profile_image if owner else None,
                     "user_id": owner.user_id if owner else None
                 },
+            "members": members_list,
             "location": event.location,
             "coordinates": {
                 "lat": event.latitude,

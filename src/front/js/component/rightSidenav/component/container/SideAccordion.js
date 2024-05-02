@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ApplyCard } from "../cards/ApplyCard";
 import { GroupCard } from "../cards/GroupsCard";
 import { RequestsCard } from "../cards/RequestCard";
@@ -6,7 +6,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { Context } from "../../../../store/appContext";
 
 export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scrollbar }) => {
-    const { store } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const startDate = new Date().toLocaleDateString();
     const endDate = new Date().toLocaleDateString();
     const eventdate = `${startDate}${startDate === endDate ? "" : ` ${endDate}`}`;
@@ -18,6 +18,20 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
             </div>
         );
     };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (title === "Solicitudes Enviadas") {
+                actions.getAppliedEvents();
+            } else if (title === "Solicitudes Owner") {
+                actions.getOwnerRequest();
+            } else {
+                actions.getGroupChat();
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [store.appliedPublicEvents, store.ownerRequest, store.groupChat]);
+
 
     const renderUserRequests = () => {
         if (store.appliedPublicEvents === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;

@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import SidebarButton from './component/SidebarButton';
 import SettingsButton from './component/SettingsButton';
 import { Context } from '../../store/appContext';
+import icon from '../../../img/WanderBud.png';
 
 const LeftSidenav = ({ changeContent }) => {
     const { store, actions } = useContext(Context);
@@ -48,8 +49,8 @@ const LeftSidenav = ({ changeContent }) => {
 
     return (
         <Navbar expand="lg" className="flex-column justify-content-between vh-100 p-0">
-            <Navbar.Brand href="/" className="w-100 text-center m-0">
-                <h1>W</h1>
+            <Navbar.Brand href="/feed" className="w-100 text-center m-0">
+                <img src={icon} alt="logo" className="image-logo" />
             </Navbar.Brand>
             <Nav className="p-0 d-flex flex-column w-100 justify-content-start align-items-center h-100">
                 <SidebarButton to='/feed' icon={<FaHome className='me-2' />} text='Feed' w="75" variant={'sidenav'} handlePath={handlePath} />
