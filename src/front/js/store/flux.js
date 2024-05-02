@@ -371,7 +371,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("ValidateProfile:" + response.status)
 					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
 						setStore({ authProfile: false });
-						setStore({ storeShow: true, alertTitle: 'Register not completed', alertBody: 'Please complete your profile', redirect: '/signup/profile' });
+						setStore({ storeShow: true, alertTitle: 'Welcome to WanderBud', alertBody: 'Please complete your profile and join our community!', redirect: '/signup/profile' });
 					}
 					else if (response.status === 200 && unloggedPaths.includes(window.location.pathname)) {
 						setStore({ authProfile: true });
