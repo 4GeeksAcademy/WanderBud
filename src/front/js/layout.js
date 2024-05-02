@@ -20,7 +20,9 @@ import { JoinEventPrivateView } from "./component/mainFeed/component/joinEventPr
 import { ChatHandler } from "./component/chats/chatHandler";
 import { UpdateProfile } from "./component/profile/updateProfile";
 import { UpdateCoverImage } from "./component/profile/UpdateCoverImage";
-
+import NewsContainer from "./component/Settings/news";
+import PrivacyContainer from "./component/Settings/privacy";
+import AboutUsContainer from "./component/Settings/aboutUs";
 import Profile from "./component/profile/profile";
 
 import { Background } from "./pages/backgroundLoading";
@@ -28,6 +30,7 @@ import { ModalAlert } from "./component/modalAlert";
 import { AccountContainer } from "./component/Settings/account";
 import { HandleProfileImages } from "./component/profile/handleProfileImages";
 import EventCard from "./component/Events/eventCard";
+
 
 
 
@@ -55,8 +58,11 @@ const Layout = () => {
                         <Route element={<PasswordReset />} path="/password-reset/:token" />
                         <Route element={<FeedLayout children={<FeedMain />} />} path="/feed" />
                         <Route element={<FeedLayout children={<AccountContainer />} to={"/settings/account"} />} path="/settings/account" />
+                        <Route element={<FeedLayout children={<NewsContainer />} to={"/settings/news"} />} path="/settings/news" />
+                        <Route element={<FeedLayout children={<PrivacyContainer />} to={"/settings/privacy"} />} path="/settings/privacy" />
+                        <Route element={<FeedLayout children={<AboutUsContainer />} to={"/settings/about"} />} path="/settings/about" />
                         <Route element={<FeedLayout children={<CreateEvent />} />} path="/create-event" />
-                        <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />
+                        <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />privacy
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/request-chat/:chat_id" />
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/event-chat/:chat_id" />
                         <Route element={<FeedLayout children={<EventCard />} />} path="/demo" />

@@ -13,9 +13,9 @@ const SettingsButton = ({ settings, settingsBtn, handleSettings, settingsOptions
         </Link>
         <Nav.Item className={settingsOptions + " setting-option"}>
             <SidebarButton to='/settings/account' text='Account' w="100" variant={'navtab'} handlePath={handlePath} />
-            <SidebarButton to='/settings/notifications' text='Notifications' w="100" variant={'navtab'} handlePath={handlePath} />
+            <SidebarButton to='/settings/news' text='News' w="100" variant={'navtab'} handlePath={handlePath} />
             <SidebarButton to='/settings/privacy' text='Privacy' w="100" variant={'navtab'} handlePath={handlePath} />
-            <SidebarButton to='/settings/security' text='Security' w="100" variant={'navtab'} handlePath={handlePath} />
+            <SidebarButton to='/settings/about' text='About Us' w="100" variant={'navtab'} handlePath={handlePath} />
             <Button variant="logout" className='w-100' onClick={handleLogout}>
                 Log out
             </Button>
