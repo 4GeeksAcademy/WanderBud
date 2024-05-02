@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Context } from '../../store/appContext';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 const SignUp = () => {
   const { actions } = useContext(Context);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false); // Estado para controlar visibilidad
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -36,7 +37,6 @@ const SignUp = () => {
       alert('Error al crear el usuario. Por favor, inténtalo de nuevo.');
     }
   };
-  
 
   return (
     <Container fluid className="container-fluid">
@@ -64,9 +64,9 @@ const SignUp = () => {
                   
                   <hr className="border border-secondary mb-3" />
                   
-                  <Form.Group controlId="formPassword">
+                  <Form.Group controlId="formPassword" className="mb-3"> {/* Agregar margen inferior */}
                     <Form.Control
-                      type="password"
+                      type={showPassword ? "text" : "password"} // Controlar tipo de entrada
                       name="password"
                       value={values.password}
                       onChange={handleChange}
@@ -75,9 +75,9 @@ const SignUp = () => {
                     <ErrorMessage name="password" component="div" className="text-danger" />
                   </Form.Group>
                   
-                  <Form.Group controlId="formConfirmPassword">
+                  <Form.Group controlId="formConfirmPassword" className="mb-3"> {/* Agregar margen inferior */}
                     <Form.Control
-                      type="password"
+                      type={showPassword ? "text" : "password"} // Controlar tipo de entrada
                       name="confirmpassword"
                       value={values.confirmpassword}
                       onChange={handleChange}
@@ -85,6 +85,11 @@ const SignUp = () => {
                     />
                     <ErrorMessage name="confirmpassword" component="div" className="text-danger" />
                   </Form.Group>
+
+                  {/* Botón para alternar la visibilidad de la contraseña */}
+                  <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} className="mb-3">
+                    {showPassword ? 'Hide Password' : 'Show Password'}
+                  </Button>
                   
                   <Button variant="primary" type="submit" className="w-100">
                     Register
@@ -99,4 +104,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp
+export default SignUp;
