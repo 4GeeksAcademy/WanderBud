@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AspectRatio, Button, Card, Box, CardContent, CardOverflow, IconButton, Typography, Avatar, Stack } from "@mui/joy";
 import Collapse from "@mui/material/Collapse";
 import { BookmarkAdd, Image } from "@mui/icons-material";
+import { CssVarsProvider } from "@mui/joy";
 import { Context } from "../../store/appContext";
 
 export default function EventCard({ event }) {
@@ -11,6 +12,17 @@ export default function EventCard({ event }) {
     const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false)
     const [isExpandedF, setIsExpandedF] = useState(false)
+    const [isFavorite, setIsFavorite] = useState(false)
+
+    useEffect(() => {
+        if (store.favorites !== null) {
+            setIsFavorite(store.favorites.some(favorite => favorite.id === event.id));
+        } else {
+            actions.getFavorites(); // Asegúrate de que esta acción esté definida y traiga los eventos favoritos del usuario.
+            // O simplemente dejar que isFavorite se mantenga en su estado actual (probablemente false).
+            console.log("Favorites is null");
+        }
+    }, [store.favorites, event.id]);
 
     const handleMouseEnter = () => {
         setIsExpanded(true);
@@ -49,9 +61,22 @@ export default function EventCard({ event }) {
         return `${startFormatted} to ${endFormatted}, ${end.getFullYear()}`;
     }
 
+    const handleFavorite = () => {
+        if (isFavorite) {
+            actions.removeFavoriteEvent(event.id);
+            setIsFavorite(false);
+        }
+        else {
+            actions.addFavoriteEvent(event.id);
+            setIsFavorite(true);
+        }
+
+    }
+
+
     return (
-        <Card sx={{ width: "100%", minHeight: "100%", overflow: "hidden", my: 3 }} variant="soft">
-            <CardOverflow variant="soft" sx={{ overflow: "hidden", pb: 1 }}>
+        <Card sx={{ width: "100%", minHeight: "100%", overflow: "hidden", my: 3 }} variant="soft" className="container-card container-shadow">
+            <CardOverflow sx={{ overflow: "hidden", pb: 1 }}>
                 <AspectRatio
                     minHeight="20%"
                     maxHeight="20%"
@@ -120,9 +145,9 @@ export default function EventCard({ event }) {
                         </Collapse>
                     </IconButton>
                     <IconButton
-                        aria-label="bookmark Bahamas Islands"
+                        aria-label="bookmark"
                         variant="plain"
-                        color="neutral"
+                        color={isFavorite ? "error.dark" : "neutral"}
                         size="sl"
                         sx={{
                             ml: 2,
@@ -130,18 +155,24 @@ export default function EventCard({ event }) {
                             p: 0.5,
                             borderRadius: 50,
                             width: "fit-content",
-                            display: userId !== event.owner.id ? "flex" : "none"
+                            display: userId !== event.owner.user_id ? "flex" : "none",
+                            color: isFavorite ? "#f3f6f6" : "black",
+                            backgroundColor: isFavorite ? "#992d22" : "",
+                            "&:hover": {
+                                backgroundColor: isFavorite ? "#992d22" : "",
+                                color: isFavorite ? "#f3f6f6" : "black",
+                            }
                         }}
                         onMouseEnter={handleMouseEnterF}
                         onMouseLeave={handleMouseLeaveF}
-                        onClick={() => { {/* setFavorite*/ } }}
+                        onClick={() => { handleFavorite() }}
                     >
                         <Collapse in={isExpandedF} orientation="horizontal">
-                            <Typography level="body-sm" sx={{ color: "black", pl: 1 }} noWrap>
-                                Add to Favorites
+                            <Typography level="body-sm" sx={{ pl: 1, color: isFavorite ? "#f3f6f6" : "black" }} noWrap>
+                                {isFavorite ? "Remove favorites" : "Add to favorites"}
                             </Typography>
                         </Collapse>
-                        <BookmarkAdd sx={{ color: "black" }} />
+                        <BookmarkAdd />
                     </IconButton>
                 </Stack>
                 <Stack
@@ -175,7 +206,7 @@ export default function EventCard({ event }) {
                             size="md"
                             color="primary"
                             aria-label="Explore Bahamas Islands"
-                            sx={{ ml: "auto", alignSelf: "center", fontWeight: 600 }}
+                            sx={{ ml: "auto", alignSelf: "center", fontWeight: 600, backgroundColor: "#189ab4", color: "#f3f6f6", "&:hover": { backgroundColor: "#107c91" } }}
                             onClick={() => { navigate(`/event/${event.id}`) }}
                         >
                             Explore

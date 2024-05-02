@@ -13,15 +13,13 @@ export const HandleProfileImages = () => {
   const [message, setMessage] = useState("")
   const { user_id } = useParams()
   const navigate = useNavigate();
-  console.log(image)
-  console.log(user_id)
 
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
   };
 
   const handleProfileCreation = async (e) => {
-    e.preventDefault();  
+    e.preventDefault();
     let newImage = await actions.addProfileImage(image);
 
     if (newImage) {
@@ -40,7 +38,7 @@ export const HandleProfileImages = () => {
             <Card.Body>
               <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Upload Image</h4></Card.Title>
               <div className="image mb-3">
-                <CoverImageUploader onImageUpload={handleImageChange}/>
+                <CoverImageUploader onImageUpload={handleImageChange} />
               </div>
               <Form onSubmit={handleProfileCreation} className="p-4 py-0 form">
                 <Button variant="primary" type="submit" block className="w-100 button-primary">

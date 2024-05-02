@@ -74,7 +74,6 @@ export const AccountContainer = () => {
     useEffect(() => {
         actions.getUserAccount().then(resp => {
             if (resp) {
-                console.log(resp);
                 setData(store.userAccount);
                 setEmail(store.userAccount.email);
             }

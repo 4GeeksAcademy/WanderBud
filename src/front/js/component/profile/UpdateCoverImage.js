@@ -18,30 +18,28 @@ export const UpdateCoverImage = () => {
   const { actions, store } = useContext(Context);
   const { user_id } = useParams()
   const navigate = useNavigate();
-  console.log(coverImage)
-  console.log(user_id)
   const handleImageChange = (imageUrl) => {
     setCoverImage(imageUrl);
   };
 
   useEffect(() => {
     actions.getUserProfile(user_id).then((data) => {
-        const birthdateDate = new Date(data.birthdate);
-        const formattedBirthdate = birthdateDate.toISOString().split('T')[0];
-        setName(data.name); 
-        setLastName(data.last_name);
-        setLocation(data.location);
-        setDescription(data.description);
-        setBirthdate(formattedBirthdate);
-        setImage(data.profile_image)
-        setCoverImage(data.cover_image)
+      const birthdateDate = new Date(data.birthdate);
+      const formattedBirthdate = birthdateDate.toISOString().split('T')[0];
+      setName(data.name);
+      setLastName(data.last_name);
+      setLocation(data.location);
+      setDescription(data.description);
+      setBirthdate(formattedBirthdate);
+      setImage(data.profile_image)
+      setCoverImage(data.cover_image)
 
 
     });
   }, []);
 
   const handleProfileCreation = async (e) => {
-    e.preventDefault();  
+    e.preventDefault();
     let newProfile = await actions.updateUserProfile(
       name,
       lastName,
@@ -68,7 +66,7 @@ export const UpdateCoverImage = () => {
             <Card.Body>
               <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Edit Cover Image</h4></Card.Title>
               <div className="image mb-3">
-                <CoverImageUploader onImageUpload={handleImageChange} initialImageUrl={coverImage}/>
+                <CoverImageUploader onImageUpload={handleImageChange} initialImageUrl={coverImage} />
               </div>
               <Form onSubmit={handleProfileCreation} className="p-4 py-0 form">
                 <Button variant="primary" type="submit" block className="w-100 button-primary">

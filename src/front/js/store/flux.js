@@ -1,3 +1,4 @@
+import { UsbRounded } from "@mui/icons-material";
 import { id } from "date-fns/locale";
 
 const getState = ({ getStore, getActions, setStore }) => {
@@ -15,6 +16,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				password: "",
 				id: ""
 			},
+			loaded: false,
 			ownerRequest: null,
 			groupChat: null,
 			favorites: null,
@@ -31,6 +33,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			accessToken: null,
 		},
 		actions: {
+			setLoaded: (value) => {
+				setStore({ loaded: value });
+			},
 			onCreateEvent: () => {
 				window.location.href = '/create-event';
 			},
@@ -78,7 +83,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				store.redirect && window.location.replace(store.redirect);
 			},
-			
+
 			validateToken: async () => {
 				const store = getStore();
 				const actions = getActions()
@@ -139,39 +144,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ message: "Network error, please try again" });
 				}
 			},
-			getPublicEvents: async () => {
-				const accessToken = localStorage.getItem("token")
+			getPublicEvents: async (page) => {
+				const accessToken = localStorage.getItem("token");
 				const radius = 1000;
-				try {
+				return new Promise((resolve, reject) => {
 					if (navigator.geolocation) {
 						navigator.geolocation.getCurrentPosition(async (position) => {
-							const { latitude, longitude } = position.coords;
-							const location = encodeURIComponent(`{"lat": ${latitude},"lng": ${longitude}}`);
-							const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&coords=${location}`, {
-								method: 'GET',
-								headers: {
-									'Authorization': `Bearer ${accessToken}`
-								},
-							});
-							if (response.ok) {
-								const data = await response.json();
-								setStore({ publicEvents: data });
-							} else {
-								console.log("Error getting public events:", response);
-								throw new Error('Error getting public events');
+							try {
+								const { latitude, longitude } = position.coords;
+								const location = encodeURIComponent(`{"lat": ${latitude},"lng": ${longitude}}`);
+								const response = await fetch(process.env.BACKEND_URL + `/api/get-event-by-radius?radius=${radius}&coords=${location}&page=${page}`, {
+									method: 'GET',
+									headers: {
+										'Authorization': `Bearer ${accessToken}`
+									},
+								});
+								if (response.ok) {
+									resolve(await response.json());
+								} else {
+									console.log("Error getting public events:", response);
+									reject(new Error('Error getting public events'));
+								}
+							} catch (error) {
+								console.error('Error getting public events:', error);
+								reject(error);
 							}
-							console.log(location);
 						}, (error) => {
-							console.error('Error al obtener la ubicación:', error.message);
+							console.error('Error obtaining location:', error.message);
+							reject(error);
 						});
+					} else {
+						console.error('Geolocation not supported by this browser.');
+						reject(new Error('Geolocation not supported by this browser.'));
 					}
-					else {
-						console.error('Geolocalización no soportada por este navegador.');
-					}
-				} catch (error) {
-					console.error('Error getting public events:', error);
-					setStore({ message: "Network error, please try again" });
-				}
+				});
 			},
 			createUserProfile: async (name, lastName, location, birthdate, description, image, coverImage, accessToken) => {
 				try {
@@ -442,7 +448,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						setStore({ myPublicEvents: data });
+						return data;
 					} else {
 						throw new Error('Error getting public events');
 					}
@@ -463,7 +469,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						const data = await response.json();
-						setStore({ joinedPublicEvents: data });
+						return data;
 					} else {
 						const data = await response.json();
 						console.log("Error getting joined events:", data);
@@ -476,8 +482,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			updateEvent: async (eventData, event_id) => {
-				console.log(eventData);
-				console.log(event_id);
 				const actions = getActions();
 				const startDate = eventData.startDate
 				const endDate = eventData.endDate
@@ -487,7 +491,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					coords: eventData.markerPosition,
 					start_datetime: startDate,
 					end_datetime: endDate,
-					description: eventData.description,
+					descriptaion: eventData.description,
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
 				};
@@ -857,10 +861,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			addProfileImage: async (image) => {
-				console.log(image)
 				const accessToken = localStorage.getItem("token")
 				try {
-					console.log(image)
 					const response = await fetch(process.env.BACKEND_URL + "/api/user-profile-image", {
 						method: 'POST',
 						headers: {
@@ -887,7 +889,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			getProfileImages: async (user_id) => {
 				const accessToken = localStorage.getItem("token")
-				console.log(user_id)
 				try {
 
 					const response = await fetch(process.env.BACKEND_URL + `/api/user-profile-images/${user_id}`, {
@@ -995,7 +996,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getFavorites: async () => {
 				const store = getStore();
 				const accessToken = localStorage.getItem("token");
-				const userId = store.userAccount.id;  // Asegúrate de que el ID del usuario está correctamente almacenado en el store
+				let userId = store.userAccount.id;  // Asegúrate de que el ID del usuario está correctamente almacenado en el store
 
 				if (!userId) {
 					console.error('User ID is not available in the store.');
@@ -1006,8 +1007,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/user_favorites/${userId}`, {
 						method: 'GET',  // Especifica explícitamente el método HTTP
 						headers: {
-							'Authorization': `Bearer ${accessToken}`,
-							'Content-Type': 'application/json'  // Especifica el tipo de contenido esperado
+							'Content-Type': 'application/json',  // Especifica el tipo de contenido esperado
+							'Authorization': `Bearer ${accessToken}`
+
 						}
 					});
 
@@ -1025,7 +1027,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 
-			addFavoriteEvent: async (userId, eventId) => {
+			addFavoriteEvent: async (eventId) => {
+				let userId = getStore().userAccount.id;
 				const accessToken = localStorage.getItem("token");
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/add_favorite`, {
@@ -1067,7 +1070,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						const data = await response.json();
 						const store = getStore();
 						const favorites = store.favorites;
-						favorites = favorites.filter(item => item.event_id === event_id)
+						favorites = favorites.filter(item => item.id === event_id)
+						console.log(favorites)
 						setStore({ favorites: favorites })
 						setStore({ message: data.msg });
 						return true;
@@ -1110,8 +1114,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getGoogleOauth: async (googleData) => {
-				console.log(googleData)
-				try{
+				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/google-oauth', {
 						method: 'POST',
 						headers: {
@@ -1122,18 +1125,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					const data = await response.json();
 
-					if (response.status == 200){
+					if (response.status == 200) {
 						localStorage.setItem("token", data.access_token);
-            			setStore({ auth: true });
-            			getActions().validateToken()
+						setStore({ auth: true });
+						getActions().validateToken()
 					}
-					else if (response.status == 202){
+					else if (response.status == 202) {
 						const actions = getActions()
-            			actions.login(data.email, data.password);
-						
-						
+						actions.login(data.email, data.password);
+
+
 					}
-					
+
 					else {
 						throw new Error('Google Authentication error');
 					}
@@ -1141,7 +1144,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error("google authentication error:", error);
 					return false
-				} 
+				}
 
 			}
 

@@ -31,15 +31,12 @@ export const Chats = ({ chatData }) => {
         }
         event.preventDefault();
         if (event.key === "Enter") {
-            console.log(message);
-            console.log(chat);
             actions.sendMessage(chat.chat_id, message, type).then((resp) => {
                 setMessages([...messages, resp]);
                 setMessage("");
             }
             )
         } else if (event.type === "click") {
-            console.log(message);
             actions.sendMessage(chat.chat_id, message, "private").then((resp) => {
                 setMessages([...messages, resp]);
                 setMessage("");
@@ -129,7 +126,6 @@ export const Chats = ({ chatData }) => {
                 )
             }
         } else {
-            console.log(chat.members);
             return (
                 <>
                     <Dropdown.Item className="p-0"><Button variant="info-chat" className="w-100 rounded-0" onClick={(e) => { setModalShow(true) }}>More...</Button></Dropdown.Item>

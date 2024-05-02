@@ -52,7 +52,6 @@ export const EventPrivateView = () => {
       setEventStatus("Applied"); // Cambia el estado a "Applied" después de solicitar unirse al evento
     }
   };
-  console.log(eventData)
   return (
     <Container fluid className='feed-container'>
       <Row className="vh-100 scrollbar">

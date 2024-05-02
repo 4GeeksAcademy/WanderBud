@@ -17,28 +17,27 @@ export const UpdateProfile = () => {
   const { actions, store } = useContext(Context);
   const { user_id } = useParams()
   const navigate = useNavigate();
-  console.log(image)
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
   };
 
   useEffect(() => {
     actions.getUserProfile(user_id).then((data) => {
-        const birthdateDate = new Date(data.birthdate);
-        const formattedBirthdate = birthdateDate.toISOString().split('T')[0];
-        setName(data.name); 
-        setLastName(data.last_name);
-        setLocation(data.location);
-        setDescription(data.description);
-        setBirthdate(formattedBirthdate);
-        setImage(data.profile_image)
+      const birthdateDate = new Date(data.birthdate);
+      const formattedBirthdate = birthdateDate.toISOString().split('T')[0];
+      setName(data.name);
+      setLastName(data.last_name);
+      setLocation(data.location);
+      setDescription(data.description);
+      setBirthdate(formattedBirthdate);
+      setImage(data.profile_image)
 
 
     });
   }, []);
 
   const handleProfileCreation = async (e) => {
-    e.preventDefault();  
+    e.preventDefault();
     let newProfile = await actions.updateUserProfile(
       name,
       lastName,
@@ -64,7 +63,7 @@ export const UpdateProfile = () => {
             <Card.Body>
               <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Edit Profile</h4></Card.Title>
               <div className="image mb-3">
-                <ImageUploader onImageUpload={handleImageChange} initialImageUrl={image}/>
+                <ImageUploader onImageUpload={handleImageChange} initialImageUrl={image} />
               </div>
               <Form onSubmit={handleProfileCreation} className="p-4 py-0 form">
                 <Form.Group controlId="firstName">

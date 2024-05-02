@@ -15,10 +15,6 @@ export const JoinEventPrivateView = () => {
   const [eventData, setEventData] = useState({})
   const [ownerData, setOwnerData] = useState({})
   const [eventStatus, setEventStatus] = useState("")
-  console.log(event_id)
-  console.log(eventData)
-  console.log(ownerData)
-  console.log(store.joinedPublicEvents)
 
   useEffect(() => {
     actions.getJoinedPublicEvents();

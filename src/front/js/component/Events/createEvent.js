@@ -3,7 +3,7 @@ import { Context } from "../../store/appContext";
 import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
 import MapContainer from "./mapContainer";
 import "../../../styles/event.css";
-import { EventPublicView } from "../mainFeed/component/eventPublicView";
+import { EventPublicView } from "../mainFeed/component/eventCardHandler";
 
 export const CreateEvent = () => {
     const { store, actions } = useContext(Context);
