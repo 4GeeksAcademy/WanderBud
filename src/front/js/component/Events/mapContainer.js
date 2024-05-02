@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
 import { Form } from 'react-bootstrap';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { MyLocation } from '@mui/icons-material';
+import L from 'leaflet';
+
 
 const libraries = ["places"];
 
@@ -34,6 +38,11 @@ const MapContainer = ({ selectedLocation, onLocationSelect, address }) => {
     const handleAutocompleteLoad = autocomplete => {
         setAutocomplete(autocomplete);
     };
+
+    const myLocationIcon = L.divIcon({
+        className: 'my-location-icon',
+        html: renderToStaticMarkup(<MyLocation color='primary' />),
+    });
 
     const handlePlaceChanged = () => {
         if (autocomplete !== null) {

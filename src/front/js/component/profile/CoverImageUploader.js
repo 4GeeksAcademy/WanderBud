@@ -21,14 +21,13 @@ function CoverImageUploader({ onImageUpload, initialImageUrl }) {
 
         const response = await axios.post("https://api.cloudinary.com/v1_1/dkfphx3dm/image/upload", data);
 
-        console.log(response.data);
         setUrlImage(response.data.secure_url);
         onImageUpload(response.data.secure_url);
     }
 
     return (
         <div className='d-flex flex-column align-items-center py-0 my-0'>
-            <Card.Img  className="w-75" src={urlImage} />
+            <Card.Img className="w-75" src={urlImage} />
             <Card.Body>
                 <Button className='mt-3' variant="upload">
                     <label htmlFor="image-upload" className='m-0'>

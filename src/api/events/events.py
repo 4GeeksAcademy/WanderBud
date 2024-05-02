@@ -305,6 +305,7 @@ def get_my_events():
                 "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
+                    "last_name": owner.last_name if owner else "",
                     "profile_image": owner.profile_image if owner else None,
                     "user_id":owner.user_id if owner else None
                 },
@@ -320,7 +321,7 @@ def get_my_events():
             })
             
             if events_list == []:
-                return jsonify({"msg": "You have no events"}), 404
+                return jsonify([]), 404
             
         return jsonify(events_list), 200
     except Exception as e:
@@ -331,57 +332,29 @@ def get_my_events():
 @jwt_required()
 def get_event_by_radius():
     try:
-        """
-        Retrieve events within a given radius.
-
-        This function retrieves events within a given radius of the current user's location
-        from the database and returns them as a list of JSON objects.
-
-        Returns:
-            A JSON response containing a list of events within the given radius.
-
-        Example JSON response:
-            [
-                {
-                    "id": 1,
-                    "name": "My Event",
-                    "location": "New York",
-                    "start_datetime": "2022-12-31 23:59:59",
-                    "end_datetime": "2023-01-01 01:00:00",
-                    "status": "planned",
-                    "description": "A description of my event",
-                    "event_type_id": 1,
-                    "budget_per_person": 100
-                }
-            ]
-        Example JSON request:
-            {
-                "radius": 100
-                "coords": {
-                    "lat": 40.7128,
-                    "lng": 74.0060
-                }
-                    
-            }
-        """
         user_location = request.args.get("coords")
         radius = float(request.args.get("radius"))
+        page = int(request.args.get("page", 1))  # Página predeterminada es 1 si no se proporciona
         
         user_location_coords = user_location.split(",")
         user_location_coords[0] = user_location_coords[0].split(":")[1]
         user_location_coords[1] = user_location_coords[1].split(":")[1].replace("}","")
         user_location = {"lat": float(user_location_coords[0]), "lng": float(user_location_coords[1])}
-
-        events = Event.query.all()
         
-        event_coords = []
-        for event in events:
-            event_coords.append({"lat": event.latitude, "lng": event.longitude})
-            
+        user = User.query.filter_by(email=get_jwt_identity()).first()
+        
+
+        all_events = Event.query.filter(Event.owner_id!=user.id)  # Paginación de 10 eventos por página
+        
+        events = all_events.paginate(page=page, per_page=100)
+        
+        
+        event_coords = [{"lat": event.latitude, "lng": event.longitude} for event in events.items]
+        
         events_list_address = get_address_in_radius(user_location, radius, event_coords)
 
         events_list = []
-        for event in events:
+        for event in events.items:
             event_coords = {"lat": event.latitude, "lng": event.longitude}
             if event_coords in events_list_address:
                 owner = User_Profile.query.get(event.owner_id)
@@ -389,10 +362,11 @@ def get_event_by_radius():
                     "id": event.id,
                     "name": event.name,
                     "owner": {
-                    "name": owner.name if owner else None,  # Handle potential missing owner
-                    "profile_image": owner.profile_image if owner else None,
-                    "user_id":owner.user_id if owner else None
-                },
+                        "name": owner.name if owner else None,  # Handle potential missing owner
+                        "last_name": owner.last_name if owner else "",
+                        "profile_image": owner.profile_image if owner else None,
+                        "user_id": owner.user_id if owner else None
+                    },
                     "location": event.location,
                     "coordinates": {
                         "lat": event.latitude,
@@ -409,12 +383,12 @@ def get_event_by_radius():
                 }
                 events_list.append(event_details)
                 
-            if events_list == []:
-                return jsonify({"msg": "No events found in the given radius"}), 404    
+        if not events_list:
+            return jsonify({"msg": "No events found in the given radius"}), 404    
         return jsonify(events_list), 200
     except Exception as e:
-        return jsonify({"msg": "error retrieving events",
-                        "error": str(e)}), 500
+        return jsonify({"msg": "Error retrieving events", "error": str(e)}), 500
+
         
 @event_bp.route("/update-event/<int:event_id>", methods=["PUT"])
 @jwt_required()
@@ -639,7 +613,7 @@ def get_joined_events():
             joined_events_list.append(event_details)
             
             if joined_events_list == []:
-                return jsonify({"msg": "No joined events found"}), 404
+                return jsonify([]), 404
             
                 
         return jsonify(joined_events_list)
@@ -1054,7 +1028,10 @@ def add_favorite():
 
     if not user_id or not event_id:
         return jsonify({'error': 'Faltan datos necesarios'}), 400
-
+    
+    favorites = Favorite.query.filter_by(user_id=user_id, event_id=event_id).first()
+    if favorites:
+        return jsonify({'error': 'El evento ya está en tus favoritos'}), 400
     new_favorite = Favorite(user_id=user_id, event_id=event_id)
     db.session.add(new_favorite)
     try:
@@ -1074,9 +1051,34 @@ def list_favorites(user_id):
     favorites = Favorite.query.filter_by(user_id=user_id).all()
     if favorites is None:
         return jsonify([]), 202
-    # Serializa y devuelve la lista de favoritos
-    return jsonify([fav.serialize() for fav in favorites]), 200
-
+    list_favorites = []
+    for favorite in favorites:
+        event = Event.query.filter_by(id=favorite.event_id).first()
+        owner = User_Profile.query.filter_by(user_id=event.owner_id).first()
+        
+        event_details = {
+            "id": event.id,
+            "name": event.name,
+                "owner": {
+                    "name": owner.name if owner else None,  # Handle potential missing owner
+                    "profile_image": owner.profile_image if owner else None,
+                    "user_id": owner.user_id if owner else None
+                },
+            "location": event.location,
+            "coordinates": {
+                "lat": event.latitude,
+                "lng": event.longitude
+                },
+            "start_date": event.start_datetime,
+            "end_date": event.end_datetime,
+            "status": event.status,
+            "description": event.description,
+            "event_type_id": event.event_type_id,
+            "budget_per_person": str(event.budget_per_person)
+        }
+        list_favorites.append(event_details)
+        
+    return jsonify(list_favorites), 200
 
 
 @event_bp.route("/remove-favorite/<int:event_id>", methods=["DELETE"])

@@ -4,7 +4,7 @@ import { Context } from '../../store/appContext';
 import { Container, Row, Col, Spinner, Button, ButtonGroup, Tab, Nav } from 'react-bootstrap';
 import { FaBirthdayCake, FaMapMarkerAlt } from "react-icons/fa";
 import { createClient } from 'pexels';
-import { MyEventPublicView } from '../mainFeed/component/myEventPublicView';
+import { EventCardHandler } from '../mainFeed/component/eventCardHandler';
 import { parse } from 'date-fns';
 import { MyProfileImages } from './myProfileImages';
 import EventFavorite from './eventFavorite';
@@ -25,8 +25,6 @@ const Profile = () => {
     const { user_id } = useParams();
     const navigate = useNavigate()
     const userId = store.userAccount.id;
-    console.log(user_id)
-    console.log(userId)
 
     useEffect(() => {
         funtionsEffect();
@@ -35,7 +33,7 @@ const Profile = () => {
     useEffect(() => {
         actions.getFavorites();
     }, []);
-    
+
 
     // useEffect(() => {
     //     actions.getProfileImages(user_id);
@@ -163,7 +161,7 @@ const Profile = () => {
                             </Col>
                             <Tab.Content activeKey={activeTab} className="mt-2">
                                 <Tab.Pane eventKey="my-events">
-                                    {userId == user_id ? <MyEventPublicView /> : <p>Content for Tab 2</p>}
+                                    {userId == user_id ? <EventCardHandler tab={"my-events"} /> : <p>Content for Tab 2</p>}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Images">
                                     <MyProfileImages user_id={user_id} />

@@ -21,7 +21,6 @@ function ImageUploader({ onImageUpload, initialImageUrl }) {
 
         const response = await axios.post("https://api.cloudinary.com/v1_1/dkfphx3dm/image/upload", data);
 
-        console.log(response.data);
         setUrlImage(response.data.secure_url);
         onImageUpload(response.data.secure_url);
     }

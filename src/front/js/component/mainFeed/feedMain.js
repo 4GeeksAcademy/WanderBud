@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Row, Nav, Tab } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { FaPlusCircle } from 'react-icons/fa'
-import { MyEventPublicView } from "./component/myEventPublicView";
-import { EventPublicView } from "./component/eventPublicView";
-import { JoinEventPublicView } from "./component/joinEventPublicView";
+import { EventCardHandler } from "./component/eventCardHandler";
 
 
 
@@ -39,13 +35,13 @@ export const FeedMain = ({ children }) => {
                     </Col>
                     <Tab.Content className="mt-2">
                         <Tab.Pane eventKey="for-you">
-                            <EventPublicView />
+                            <EventCardHandler tab="for-you" />
                         </Tab.Pane>
                         <Tab.Pane eventKey="Joined">
-                            <JoinEventPublicView />
+                            <EventCardHandler tab="Joined" />
                         </Tab.Pane>
                         <Tab.Pane eventKey="my-events">
-                            <MyEventPublicView />
+                            <EventCardHandler tab="my-events" />
                         </Tab.Pane>
                     </Tab.Content>
                 </Row>
