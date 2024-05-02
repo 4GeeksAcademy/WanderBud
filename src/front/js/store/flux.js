@@ -201,6 +201,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						setStore({ message: data.msg });
 						setStore({ authProfile: true });
+						setStore({ userAccount: { ...getStore().userAccount, id: data.user_id } });
 						return true;
 					} else {
 						throw new Error('Error creating user profile');

@@ -9,13 +9,13 @@ const EventFavorite = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const { userId } = useParams()
-    console.log(store.favorites);
+    
     useEffect(() => {
 
         actions.getFavorites(userId);  // Asegúrate de que esta acción esté definida y traiga los eventos favoritos del usuario.
     }, [userId, store.favorites]);
 
-    console.log(userId);
+    
     const favoriteEvents = store.favorites
 
 

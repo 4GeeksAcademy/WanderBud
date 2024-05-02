@@ -140,7 +140,7 @@ def create_user_profile():
         )
         db.session.add(new_user_profile)
         db.session.commit()
-        return jsonify({"msg": "user profile successfully created"}), 200
+        return jsonify({"msg": "user profile successfully created","user_id": user.id}), 200
 
 @user_bp.route("/update-profile", methods=["PUT"])
 @jwt_required()
