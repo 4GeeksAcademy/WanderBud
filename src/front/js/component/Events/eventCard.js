@@ -88,9 +88,9 @@ export default function EventCard({ event }) {
                 >
                     <Box
                         component="img"
-                        src="https://www.soycorredor.es/uploads/s1/10/96/70/78/como-entrenar-un-maraton.jpeg"
+                        src={event.image || "https://via.placeholder.com/500"}
                         sx={{
-                            objectPosition: "50% 15%",
+                            objectPosition: "50% 50%",
                             borderRadius: 0,
                             backgroundColor: "transparent"
                         }}
@@ -129,7 +129,7 @@ export default function EventCard({ event }) {
                     >
                         <Avatar
                             alt="User"
-                            src={event.owner.profile_image}
+                            src={event.owner?.profile_image || "https://via.placeholder.com/500"}
                             sx={{ width: 80, height: 80, aspectRatio: "1/1" }}
                         />
                         <Collapse in={isExpanded} orientation="horizontal">
@@ -149,6 +149,7 @@ export default function EventCard({ event }) {
                         variant="plain"
                         color={isFavorite ? "error.dark" : "neutral"}
                         size="sl"
+                        disabled={event.placeholder}
                         sx={{
                             ml: 2,
                             mr: 1,
@@ -182,23 +183,23 @@ export default function EventCard({ event }) {
                 >
                     <div>
                         <Typography level="title-lg" sx={{ mt: 0.5 }}>
-                            {event.name}
+                            {event.name || event.title || "Event Name"}
                         </Typography>
-                        <Typography level="body-xs">{formatDateRange(event.start_date, event.end_date)}</Typography>
+                        <Typography level="body-xs">{formatDateRange(event.start_date || event.startDate, event.end_date || event.endDate)}</Typography>
                         <Typography
                             level="body-sm"
                             sx={{ mt: 0.5, fontWeight: 500 }}
                             textColor="common.black"
                         >
-                            {event.description}
+                            {event.description || event.description || "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet"}
                         </Typography>
-                        <Typography level="body-xs">{event.location}</Typography>
+                        <Typography level="body-xs">{event.location || "New York, USA"}</Typography>
                     </div>
                     <CardContent orientation="horizontal" sx={{ width: "100%" }}>
                         <div>
                             <Typography level="body-xs">Budget:</Typography>
                             <Typography fontSize="lg" fontWeight="lg">
-                                ${event.budget_per_person}
+                                ${event.budget_per_person || event.budget || "10"}
                             </Typography>
                         </div>
                         <Button
@@ -206,6 +207,7 @@ export default function EventCard({ event }) {
                             size="md"
                             color="primary"
                             aria-label="Explore Bahamas Islands"
+                            disabled={event.placeholder}
                             sx={{ ml: "auto", alignSelf: "center", fontWeight: 600, backgroundColor: "#189ab4", color: "#f3f6f6", "&:hover": { backgroundColor: "#107c91" } }}
                             onClick={() => { navigate(`/event/${event.id}`) }}
                         >

@@ -76,9 +76,9 @@ const MapContainer = ({ selectedLocation, onLocationSelect, address }) => {
                 options={mapOptions}
             >
                 {selectedLocation && <Marker position={selectedLocation} />}
-                <Autocomplete onLoad={handleAutocompleteLoad} onPlaceChanged={handlePlaceChanged}>
+                {onLocationSelect && <Autocomplete onLoad={handleAutocompleteLoad} onPlaceChanged={handlePlaceChanged}>
                     <Form.Control type="text" placeholder="Buscar lugares cerca..." style={searchStyles} defaultValue={address} onChange={(e) => address = e.target.value} />
-                </Autocomplete>
+                </Autocomplete>}
             </GoogleMap>
             {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
         </LoadScript>

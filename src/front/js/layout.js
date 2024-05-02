@@ -13,10 +13,6 @@ import { CreateEvent } from "./component/Events/createEvent";
 import { SignUpProfile } from "./pages/signUp/signUpProfile";
 import { FeedMain } from "./component/mainFeed/feedMain";
 import { UpdateEvent } from "./component/Events/updateEvent";
-import { MyEventPrivateView } from "./component/mainFeed/component/myEventPrivateView";
-
-import { EventPrivateView } from "./component/mainFeed/component/eventPrivateView";
-import { JoinEventPrivateView } from "./component/mainFeed/component/joinEventPrivateView";
 import { ChatHandler } from "./component/chats/chatHandler";
 import { UpdateProfile } from "./component/profile/updateProfile";
 import { UpdateCoverImage } from "./component/profile/UpdateCoverImage";
@@ -30,6 +26,7 @@ import { ModalAlert } from "./component/modalAlert";
 import { AccountContainer } from "./component/Settings/account";
 import { HandleProfileImages } from "./component/profile/handleProfileImages";
 import EventCard from "./component/Events/eventCard";
+import EventPage from "./component/mainFeed/component/eventPage";
 
 
 
@@ -66,9 +63,7 @@ const Layout = () => {
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/request-chat/:chat_id" />
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/event-chat/:chat_id" />
                         <Route element={<FeedLayout children={<EventCard />} />} path="/demo" />
-                        <Route element={<EventPrivateView />} path="/event-view/:event_id/:owner_id" />
-                        <Route element={<MyEventPrivateView />} path="/myevent-view/:event_id/:owner_id" />
-                        <Route element={<JoinEventPrivateView />} path="/joinevent-view/:event_id/:owner_id" />
+                        <Route element={<FeedLayout children={<EventPage />} />} path="/event/:event_id" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Background />} path="/googleOAuth" />
                         <Route element={<Background />} path="/*" />
