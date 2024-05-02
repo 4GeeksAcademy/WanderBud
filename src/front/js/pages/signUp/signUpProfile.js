@@ -17,6 +17,8 @@ export const SignUpProfile = () => {
   const [message, setMessage] = useState(null);
   const { actions, store } = useContext(Context);
   const navigate = useNavigate();
+  
+  
 
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
@@ -38,7 +40,7 @@ export const SignUpProfile = () => {
 
     if (newProfile) {
       setMessage(store.message);
-      navigate('/feed');
+      navigate(`/profile/${store.userAccount.id}`);
     } else {
       setMessage('Failed to create profile, please try again');
     }
