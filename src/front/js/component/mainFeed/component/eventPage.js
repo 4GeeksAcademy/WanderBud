@@ -185,8 +185,11 @@ export default function EventPage() {
                   mt: 0.8
                 }}>
                   <Typography level="h4">{eventData.name}</Typography>
-                  <Typography level="body-sm" sx={{ mt: 0, fontWeight: "body-lg" }}>
+                  <Typography level="body-sm" sx={{ mt: 0, fontWeight: "body-xs" }}>
                     {formatDateRange(eventData.start_date, eventData.end_date)}
+                  </Typography>
+                  <Typography level="body-xs" sx={{ mt: 0, fontWeight: "body-xs" }}>
+                    {eventData.location_name}
                   </Typography>
                 </Box>
               </CardContent>
@@ -214,7 +217,7 @@ export default function EventPage() {
               </Typography>
             </CardContent>
             <AspectRatio ratio="21/5">
-              <MapContainer selectedLocation={eventData.coordinates} addres={eventData.location} />
+              <MapContainer selectedLocation={eventData.coordinates} address={eventData.location} />
             </AspectRatio>
             <CardContent orientation="horizontal" sx={{ width: "100%" }}>
               <div>

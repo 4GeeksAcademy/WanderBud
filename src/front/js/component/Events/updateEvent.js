@@ -37,7 +37,8 @@ export const UpdateEvent = () => {
                 description: data.description,
                 markerPosition: data.coordinates,
                 location: data.location,
-                typeEvent: data.event_type_id,
+                place_name: data.location_name,
+                typeEvent: data.event_type_id - 1,
                 event_type_name: data.event_type_name,
                 errors: data.errors || "",
                 owner: {
@@ -71,13 +72,15 @@ export const UpdateEvent = () => {
     }, []);
 
     const handleInputChange = e => {
+        console.log(eventData)
         const { name, value } = e.target;
         setEventData(prevState => ({ ...prevState, [name]: value }));
     };
 
     const handleLocationSelect = location => {
         setEventData(prevState => ({ ...prevState, markerPosition: location.location }));
-        setEventData(prevState => ({ ...prevState, location: location.address }));
+        setEventData(prevState => ({ ...prevState, location: location.address.address }));
+        setEventData(prevState => ({ ...prevState, place_name: location.address.name || location.address.address }));
     };
 
     const validateForm = () => {
