@@ -26,7 +26,7 @@ export const Home = () => {
                     <Card className="p-4 d-flex flex-column justify-content-between align-items-center card h-100 container-card container-shadow">
                         <Card.Title className="text-center mb-4 subtitle subtitle-bold">Connect. Create. Celebrate.</Card.Title>
                         <Link to="/login" className="btn btn-secondary btn-block rounded-pill mb-3 w-75">Login</Link>
-                        <div className="btn-block btn-google rounded-pill mb-3 w-75">
+                        <div className="btn p-0 btn-google rounded-pill mb-3 w-75" style={{ overflow: "hidden" }}>
                             <GoogleApp />
                         </div>
 

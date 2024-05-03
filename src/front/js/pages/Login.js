@@ -32,7 +32,9 @@ export const Login = () => {
           <Card className="p-4 justify-content-center w-100 card container-card container-shadow">
             <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Log In</h4></Card.Title>
             <Form onSubmit={handleSubmit} className="p-4 py-0">
-            <GoogleApp />
+              <Button variant='google' className='rounded-pill w-100 p-0 m-0' style={{ overflow: "hidden" }}>
+                <GoogleApp />
+              </Button>
               <hr className="border border-secondary mb-3" />
               <Form.Group controlId="formBasicEmail" className="mb-3">
                 <Form.Control type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />

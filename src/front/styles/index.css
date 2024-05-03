@@ -637,3 +637,7 @@ a {
   background-color: rgb(79, 79, 79); /* Belize Hole */
   color: #f3f6f6; /* Porcelain */
 }
+.image-logo{
+  filter: drop-shadow(2px 4px 6px #05445e);
+  height: 70px;
+}

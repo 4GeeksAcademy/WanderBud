@@ -169,6 +169,7 @@ def get_all_events():
         events_list = []
         for event in events:
             owner = User_Profile.query.get(event.owner_id)
+            event_type_name = Event_Type.query.get(event.event_type_id).name
             events_list.append({
                 "id": event.id,
                 "name": event.name,
@@ -185,6 +186,7 @@ def get_all_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
+                "event_type_name": event_type_name,
                 "budget_per_person": str(event.budget_per_person)
             })
         
@@ -235,15 +237,28 @@ def get_event(event_id):
        
 
         owner = User_Profile.query.get(event.owner_id)
+        members = Event_Member.query.filter_by(event_id=event.id, member_status="Accepted").all()
+        members_list = []
+        for member in members:
+            member_profile = User_Profile.query.get(member.user_id)
+            members_list.append({
+                "user_id": member.user_id,
+                "name": member_profile.name,
+                "last_name": member_profile.last_name,
+                "profile_image": member_profile.profile_image,
+                "status": member.member_status
+            })
         
         event_details = {
             "id": event.id,
             "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
+                    "last_name": owner.last_name if owner else "",
                     "profile_image": owner.profile_image if owner else None,
                     "user_id": owner.user_id if owner else None
                 },
+            "members": members_list,
             "location": event.location,
             "coordinates": {
                 "lat": event.latitude,
@@ -254,6 +269,7 @@ def get_event(event_id):
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
+            "event_type_name": Event_Type.query.get(event.event_type_id).name,
             "budget_per_person": str(event.budget_per_person)
         }
         
@@ -317,6 +333,7 @@ def get_my_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
+                "event_type_name": Event_Type.query.get(event.event_type_id).name,
                 "budget_per_person": str(event.budget_per_person)
             })
             
@@ -379,6 +396,7 @@ def get_event_by_radius():
                     "status": event.status,
                     "description": event.description,
                     "event_type_id": event.event_type_id,
+                    "event_type_name": Event_Type.query.get(event.event_type_id).name,
                     "budget_per_person": str(event.budget_per_person)
                 }
                 events_list.append(event_details)

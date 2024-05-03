@@ -119,7 +119,7 @@ const Profile = () => {
                                 <Button variant="upload" onClick={() => navigate(`/update-cover/${user_id}`)}>Set Banner</Button>
                             </ButtonGroup>
                         </div>
-                        <div className='pt-4 profile-container p-2'>
+                        <div className='pt-4 profile-container p-2 mt-2'>
                             <h3>{profile.name} {profile.last_name}</h3>
                             <p>{profile.description}</p>
                             <div className='d-flex flex-row align-items-center span-container p-0'>

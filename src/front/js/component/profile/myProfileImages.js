@@ -8,7 +8,7 @@ import { Context } from "../../store/appContext";
 export const MyProfileImages = (props) => {
     const { store, actions } = useContext(Context);
     const userId = store.userAccount.id;
-   console.log(store.profileImages)
+  
     let myImages = store.profileImages
 
     useEffect(() => {

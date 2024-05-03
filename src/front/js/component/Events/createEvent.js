@@ -3,20 +3,29 @@ import { Context } from "../../store/appContext";
 import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
 import MapContainer from "./mapContainer";
 import "../../../styles/event.css";
-import { EventPublicView } from "../mainFeed/component/eventCardHandler";
+import EventCard from "./eventCard";
 
 export const CreateEvent = () => {
     const { store, actions } = useContext(Context);
     const [eventData, setEventData] = useState({
         title: "",
         budget: 0,
-        startDate: new Date().toISOString().slice(0, 16),
-        endDate: new Date().toISOString().slice(0, 16),
+        startDate: new Date().toISOString().slice(0, 16) || Date.now().toISOString().slice(0, 16),
+        endDate: new Date().toISOString().slice(0, 16) || Date.now().toISOString().slice(0, 16),
         description: "",
         markerPosition: "",
         address: "",
         typeEvent: "",
-        errors: {}
+        event_type_name: "",
+        errors: {},
+        owner: {
+            user_id: store.userAccount.id,
+            profile_image: "",
+            name: "John",
+            last_name: "Doe",
+
+        },
+        placeholder: "Create"
     });
     const [eventType, setEventType] = useState([]);
     const [eventTypeId, setEventTypeId] = useState([]);
@@ -75,7 +84,7 @@ export const CreateEvent = () => {
                 <Col md={12} className="mt-3">
                     <h2 className="text-center">Create Event</h2>
                 </Col>
-                <Col md={12} className="mt-5">
+                <Col md={12} className="mt-2">
                     <Card className="p-4 row flex-row h-100 container-card container-shadow">
                         <Col md={8} className="m-0 mb-2">
                             <Form.Group controlId="title">
@@ -172,11 +181,9 @@ export const CreateEvent = () => {
                             <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} />
                             {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
-                        <Button variant="primary" onClick={createEventHandler}>
-                            Create Event
-                        </Button>
                     </Card>
                 </Col>
+                <EventCard event={eventData} handleClick={createEventHandler} />
             </Row>
         </Container>
     );

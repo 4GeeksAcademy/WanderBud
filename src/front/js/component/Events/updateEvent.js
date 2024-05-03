@@ -4,12 +4,14 @@ import { Form, Button, Row, Col, Container, Card } from "react-bootstrap";
 import MapContainer from "./mapContainer";
 import "../../../styles/event.css";
 import { useParams } from "react-router-dom";
+import EventCard from "./eventCard";
 
 
 export const UpdateEvent = () => {
     const { store, actions } = useContext(Context);
     const { event_id } = useParams()
     const [address, setAddress] = useState("")
+    const [loaded, setLoaded] = useState(false)
 
     const [eventData, setEventData] = useState({
         title: "",
@@ -36,8 +38,19 @@ export const UpdateEvent = () => {
                 markerPosition: data.coordinates,
                 location: data.location,
                 typeEvent: data.event_type_id,
-                errors: data.errors || ""
+                event_type_name: data.event_type_name,
+                errors: data.errors || "",
+                owner: {
+                    user_id: store.userAccount.id,
+                    profile_image: "",
+                    name: "John",
+                    last_name: "Doe",
+
+                },
+                placeholder: "Edit"
+
             });
+            setLoaded(true)
         });
     }, []);
 
@@ -103,7 +116,7 @@ export const UpdateEvent = () => {
                 <Col md={12} className="mt-3">
                     <h2 className="text-center">Update Event</h2>
                 </Col>
-                <Col md={12} className="mt-5">
+                <Col md={12} className="mt-2">
                     <Card className="p-4 row flex-row h-100 container-card container-shadow">
                         <Col md={8} className="m-0 mb-2">
                             <Form.Group controlId="title">
@@ -200,11 +213,9 @@ export const UpdateEvent = () => {
                             <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} address={eventData.location} />
                             {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
-                        <Button variant="primary" onClick={createEventHandler}>
-                            Update Event
-                        </Button>
                     </Card>
                 </Col>
+                {loaded ? <EventCard event={eventData} handleClick={createEventHandler} /> : null}
             </Row>
         </Container>
     );

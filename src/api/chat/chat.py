@@ -151,7 +151,9 @@ def get_private_chat(chat_id):
         "messages": messages_list,
         "receiver": receiver.serialize() if receiver else {},
         "chat_image": receiver.profile_image if receiver else "",
-        "event": event.serialize()
+        "event": event.serialize(),
+        "member_status": Event_Member.query.filter_by(event_id=chat.event_id, user_id=user.id).first().member_status,
+        "group_chat_id": GroupChat.query.filter_by(event_id=chat.event_id).first().id,
     }    
     
     return jsonify(chat_data), 200
