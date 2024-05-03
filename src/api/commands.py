@@ -82,13 +82,13 @@ def setup_commands(app):
             db.session.commit()
             
             profile_images = [
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005598/samples/food/spices.jpg")
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1713005594/samples/animals/three-dogs.jpg")
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005613/samples/two-ladies.jpg")
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713897740/ImageUploaderReact/orcynw7vl2oi3mfnlzaj.jpg")
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1714498312/ImageUploaderReact/h9f9jzadlk4e6a3nbdzd.jpg")
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1714594866/bar-4656332_1920_rcdddw.jpg")
-                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1714633330/cat-7466429_1920_ixd8kb.jpg")
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005598/samples/food/spices.jpg"),
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1713005594/samples/animals/three-dogs.jpg"),
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713005613/samples/two-ladies.jpg"),
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1713897740/ImageUploaderReact/orcynw7vl2oi3mfnlzaj.jpg"),
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1714498312/ImageUploaderReact/h9f9jzadlk4e6a3nbdzd.jpg"),
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1714594866/bar-4656332_1920_rcdddw.jpg"),
+                            UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1714633330/cat-7466429_1920_ixd8kb.jpg"),
                             UserProfileImage(user=users[0], image_path="https://res.cloudinary.com/dkfphx3dm/image/upload/v1714633330/cat-7466429_1920_ixd8kb.jpg")
                              ]
             
@@ -151,48 +151,48 @@ def setup_commands(app):
                         Event_Member(user=users[0], event=events[8], member_status="Owner"),
                         Event_Member(user=users[4], event=events[9], member_status="Owner"),
                         Event_Member(user=users[3], event=events[10], member_status="Owner"),
-                        # Event_Member(user=users[1], event=events[3], member_status="Accepted"),
-                        # Event_Member(user=users[2], event=events[3], member_status="Accepted"),
-                        # Event_Member(user=users[3], event=events[3], member_status="Accepted"),
+                        Event_Member(user=users[1], event=events[3], member_status="Accepted"),
+                        Event_Member(user=users[2], event=events[3], member_status="Accepted"),
+                        Event_Member(user=users[3], event=events[3], member_status="Accepted"),
                     ]
             db.session.add_all(event_member)
             db.session.commit()
             
-            # private_chat = [
-            #     PrivateChat(event=events[3], user=users[1]),
-            #     PrivateChat(event=events[3], user=users[2]),
-            #     PrivateChat(event=events[3], user=users[3]),
-            #     ]
-            # db.session.add_all(private_chat)
-            # db.session.commit()
+            private_chat = [
+                PrivateChat(event=events[3], user=users[1]),
+                PrivateChat(event=events[3], user=users[2]),
+                PrivateChat(event=events[3], user=users[3]),
+                ]
+            db.session.add_all(private_chat)
+            db.session.commit()
             
-            # user_private_chat = [
-            #     UsersPrivateChat(user=users[1], private_chat=private_chat[0]),
-            #     UsersPrivateChat(user=users[0], private_chat=private_chat[0]),
-            #     UsersPrivateChat(user=users[2], private_chat=private_chat[1]),
-            #     UsersPrivateChat(user=users[0], private_chat=private_chat[1]),
-            #     UsersPrivateChat(user=users[3], private_chat=private_chat[2]),
-            #     UsersPrivateChat(user=users[0], private_chat=private_chat[2]),
-            #     ]
-            # private_messages = [
-            #     Message(sender=users[1], private_chat=private_chat[0], receiver=users[0] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
-            #     Message(sender=users[0], private_chat=private_chat[0], receiver=users[1] ,message="¡Claro! Sería genial contar contigo. ¿Has visto a qué hora es?" , group_type="Private"),
-            #     Message(sender=users[1], private_chat=private_chat[0], receiver=users[0] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
-            #     Message(sender=users[0], private_chat=private_chat[0], receiver=users[1] ,message="¡Perfecto! Nos vemos allí entonces." , group_type="Private"),
+            user_private_chat = [
+                UsersPrivateChat(user=users[1], private_chat=private_chat[0]),
+                UsersPrivateChat(user=users[0], private_chat=private_chat[0]),
+                UsersPrivateChat(user=users[2], private_chat=private_chat[1]),
+                UsersPrivateChat(user=users[0], private_chat=private_chat[1]),
+                UsersPrivateChat(user=users[3], private_chat=private_chat[2]),
+                UsersPrivateChat(user=users[0], private_chat=private_chat[2]),
+                ]
+            private_messages = [
+                Message(sender=users[1], private_chat=private_chat[0], receiver=users[0] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
+                Message(sender=users[0], private_chat=private_chat[0], receiver=users[1] ,message="¡Claro! Sería genial contar contigo. ¿Has visto a qué hora es?" , group_type="Private"),
+                Message(sender=users[1], private_chat=private_chat[0], receiver=users[0] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
+                Message(sender=users[0], private_chat=private_chat[0], receiver=users[1] ,message="¡Perfecto! Nos vemos allí entonces." , group_type="Private"),
                 
-            #     Message(sender=users[2], private_chat=private_chat[1], receiver=users[0] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
-            #     Message(sender=users[0], private_chat=private_chat[1], receiver=users[2] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
-            #     Message(sender=users[2], private_chat=private_chat[1], receiver=users[0] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
-            #     Message(sender=users[0], private_chat=private_chat[1], receiver=users[2] ,message="¡Excelente! Nos vemos allí." , group_type="Private"),
+                Message(sender=users[2], private_chat=private_chat[1], receiver=users[0] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
+                Message(sender=users[0], private_chat=private_chat[1], receiver=users[2] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
+                Message(sender=users[2], private_chat=private_chat[1], receiver=users[0] ,message="Sí, a las 8 PM. ¡Allí estaré!" , group_type="Private"),
+                Message(sender=users[0], private_chat=private_chat[1], receiver=users[2] ,message="¡Excelente! Nos vemos allí." , group_type="Private"),
                 
-            #     Message(sender=users[3], private_chat=private_chat[2], receiver=users[0] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
-            #     Message(sender=users[0], private_chat=private_chat[2], receiver=users[3] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
-            #     Message(sender=users[3], private_chat=private_chat[2], receiver=users[0] ,message="Lo siento, no podré asistir" , group_type="Private"),
-            #     Message(sender=users[0], private_chat=private_chat[2], receiver=users[3] ,message="Qué lástima, espero verte en el próximo evento." , group_type="Private"),
+                Message(sender=users[3], private_chat=private_chat[2], receiver=users[0] ,message="Hola, ¿cómo estás?, Me gustaría unirme a tu evento!" , group_type="Private"),
+                Message(sender=users[0], private_chat=private_chat[2], receiver=users[3] ,message="¡Hola! Claro, estás invitado. ¿Has visto a qué hora es?" , group_type="Private"),
+                Message(sender=users[3], private_chat=private_chat[2], receiver=users[0] ,message="Lo siento, no podré asistir" , group_type="Private"),
+                Message(sender=users[0], private_chat=private_chat[2], receiver=users[3] ,message="Qué lástima, espero verte en el próximo evento." , group_type="Private"),
                 
-            #     ]
-            # db.session.add_all(user_private_chat)
-            # db.session.commit()
+                ]
+            db.session.add_all(user_private_chat)
+            db.session.commit()
             
             group_chat = [
                  GroupChat(event=events[0]),
@@ -217,12 +217,12 @@ def setup_commands(app):
             db.session.add_all(user_group_chat)
             db.session.commit()
             
-            # group_messages = [
-            #     Message(sender=users[0], group_chat=group_chat[3], message="" , group_type="Group"),
-            #     Message(sender=users[1], group_chat=group_chat[3], message="¡Hola! Sí, estoy emocionado por la carrera." , group_type="Group"),
-            #     ]
-            # db.session.add_all(group_messages)
-            # db.session.commit()
+            group_messages = [
+                Message(sender=users[0], group_chat=group_chat[3], message="Hi, everyone!! you guys ready for the concert!" , group_type="Group"),
+                Message(sender=users[1], group_chat=group_chat[3], message="Hi! Yes, I am so excited" , group_type="Group"),
+                ]
+            db.session.add_all(group_messages)
+            db.session.commit()
 
         
             print("Demo database successfully created.")

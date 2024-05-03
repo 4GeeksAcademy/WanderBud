@@ -98,7 +98,7 @@ const Profile = () => {
                     <Col md={12} className='p-0'>
                         <button className='w-100 btn p-0 m-0 border-0' onClick={() => navigate(`/update-cover/${user_id}`)}>
                             <img
-                                src={profile.cover_image || queryRes?.photos[page].src.original || "https://via.placeholder.com/1000"}
+                                src={profile.cover_image || queryRes?.photos[page]?.src.original || "https://via.placeholder.com/1000"}
                                 alt="Cover"
                                 className="img-fluid rounded-top profile-banner"
                             />
