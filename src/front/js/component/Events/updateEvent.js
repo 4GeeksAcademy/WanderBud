@@ -38,6 +38,7 @@ export const UpdateEvent = () => {
                 markerPosition: data.coordinates,
                 location: data.location,
                 typeEvent: data.event_type_id,
+                event_type_name: data.event_type_name,
                 errors: data.errors || "",
                 owner: {
                     user_id: store.userAccount.id,
@@ -46,7 +47,7 @@ export const UpdateEvent = () => {
                     last_name: "Doe",
 
                 },
-                placeholder: "Place"
+                placeholder: "Edit"
 
             });
             setLoaded(true)
@@ -212,12 +213,9 @@ export const UpdateEvent = () => {
                             <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} address={eventData.location} />
                             {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
-                        <Button variant="primary" onClick={createEventHandler}>
-                            Update Event
-                        </Button>
                     </Card>
                 </Col>
-                {loaded ? <EventCard event={eventData} /> : null}
+                {loaded ? <EventCard event={eventData} handleClick={createEventHandler} /> : null}
             </Row>
         </Container>
     );

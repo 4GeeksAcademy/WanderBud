@@ -7,6 +7,7 @@ import { Spinner, Col } from "react-bootstrap";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MapContainer from "../../Events/mapContainer";
+import { createClient } from 'pexels';
 
 export default function EventPage() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function EventPage() {
   const { event_id } = useParams();
   const [user_id, setUser_id] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const client = createClient(process.env.PEXELS_API_KEY);
+  const [photo, setPhoto] = useState(null);
   useEffect(() => {
     actions.getAppliedEvents();
     actions.getOneEvent(event_id).then((data) => {
@@ -27,6 +30,7 @@ export default function EventPage() {
       setOwnerData(data.owner)
       setEventOwnerID(data.owner.user_id)
       setUser_id(store.userAccount.id)
+      getPhoto(data).then((photo) => setPhoto(photo)).catch((error) => console.error(error));
       setLoaded(true);
     })
   }, [])
@@ -46,6 +50,21 @@ export default function EventPage() {
       }
     } else {
       setEventStatus("");
+    }
+  };
+  const getPhoto = async (data) => {
+    try {
+      const query = data.event_type_name || data.title || "Event Name";
+      const response = await client.photos.search({ query, per_page: 1 });
+      if (response.photos.length > 0) {
+        console.log(response.photos[0]);
+        return response.photos[0].src.landscape;
+      } else {
+        throw new Error("No photos found for the query.");
+      }
+    } catch (error) {
+      console.error("Error fetching photo:", error);
+      return null; // Return null or a placeholder image URL
     }
   };
 
@@ -96,8 +115,7 @@ export default function EventPage() {
     (
       loaded && user_id !== 0 ?
         <div className="m-0 py-1 px-2 container-shadow">
-          < Card variant="soft" sx={{ width: "100%", gap: 1 }
-          }>
+          < Card variant="soft" sx={{ width: "100%", gap: 1 }}>
             <CardContent orientation="horizontal">
               <CardContent orientation="horizontal">
                 <Avatar
@@ -159,12 +177,18 @@ export default function EventPage() {
                     </Collapse>
                   </IconButton>
                 </Stack>
-                <div>
+                <Box sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginLeft: "1rem",
+                  width: "100%",
+                  mt: 0.8
+                }}>
                   <Typography level="h4">{eventData.name}</Typography>
-                  <Typography level="body-md">
-                    {eventData.location}
+                  <Typography level="body-sm" sx={{ mt: 0, fontWeight: "body-lg" }}>
+                    {formatDateRange(eventData.start_date, eventData.end_date)}
                   </Typography>
-                </div>
+                </Box>
               </CardContent>
               <AvatarGroup sx={{ "--Avatar-ringSize": 0 }}>
                 {eventData.members?.map((attendee, index) => (
@@ -173,18 +197,20 @@ export default function EventPage() {
                 ))}
               </AvatarGroup>
             </CardContent>
-            <AspectRatio ratio="21/9">
+            <AspectRatio ratio="21/9" sx={{
+              width: "100%", overflow: "hidden"
+            }}>
               <img
                 alt=""
-                src={eventData.image || "https://www.soycorredor.es/uploads/s1/10/96/70/78/como-entrenar-un-maraton.jpeg"}
+                src={photo || "https://images.pexels.com/photos/3184356/pexels-photo-3184356.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"}
               />
             </AspectRatio>
             <CardContent>
-              <Typography level="body-xs" sx={{ mt: 0 }}>
-                {formatDateRange(eventData.start_date, eventData.end_date)}
-              </Typography>
               <Typography level="body-md" fontWeight="md" sx={{ marginBottom: 0 }}>
                 {eventData.description}
+              </Typography>
+              <Typography level="body-xs">
+                {eventData.location}
               </Typography>
             </CardContent>
             <AspectRatio ratio="21/5">

@@ -169,6 +169,7 @@ def get_all_events():
         events_list = []
         for event in events:
             owner = User_Profile.query.get(event.owner_id)
+            event_type_name = Event_Type.query.get(event.event_type_id).name
             events_list.append({
                 "id": event.id,
                 "name": event.name,
@@ -185,6 +186,7 @@ def get_all_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
+                "event_type_name": event_type_name,
                 "budget_per_person": str(event.budget_per_person)
             })
         
@@ -267,6 +269,7 @@ def get_event(event_id):
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
+            "event_type_name": Event_Type.query.get(event.event_type_id).name,
             "budget_per_person": str(event.budget_per_person)
         }
         
@@ -330,6 +333,7 @@ def get_my_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
+                "event_type_name": Event_Type.query.get(event.event_type_id).name,
                 "budget_per_person": str(event.budget_per_person)
             })
             
@@ -392,6 +396,7 @@ def get_event_by_radius():
                     "status": event.status,
                     "description": event.description,
                     "event_type_id": event.event_type_id,
+                    "event_type_name": Event_Type.query.get(event.event_type_id).name,
                     "budget_per_person": str(event.budget_per_person)
                 }
                 events_list.append(event_details)
