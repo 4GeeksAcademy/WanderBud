@@ -618,7 +618,7 @@ def get_joined_events():
                 "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
-                    "last_name": owner.last_name if owner else "",
+                    "last_name": owner.last_name if owner else None,  # Handle potential missing owner
                     "profile_image": owner.profile_image if owner else None,
                     "user_id":owner.user_id if owner else None
                 },

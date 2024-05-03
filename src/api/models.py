@@ -92,6 +92,7 @@ class Event_Type(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    image = db.Column(db.String(250), nullable=False)
     events = db.relationship('Event', primaryjoin='Event.event_type_id==Event_Type.id', backref='event_type')
 
     def __repr__(self):
@@ -100,7 +101,8 @@ class Event_Type(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "image": self.image
         }
 
 class Event(db.Model):
