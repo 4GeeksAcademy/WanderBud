@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Context } from '../../store/appContext';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import ImageUploader from '../../component/signUp/imageUploader';
+import Select from 'react-select';
+import countryList from 'react-select-country-list';
+
+
 
 
 export const UpdateProfile = () => {
@@ -20,6 +24,8 @@ export const UpdateProfile = () => {
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
   };
+
+  const options = useMemo(() => countryList().getData(), []);
 
   useEffect(() => {
     actions.getUserProfile(user_id).then((data) => {
@@ -87,13 +93,13 @@ export const UpdateProfile = () => {
                   />
                 </Form.Group>
                 <Form.Group controlId="country">
-                  <Form.Control
-                    className="form-control mb-3"
-                    type="text"
-                    placeholder="Country"
-                    onChange={(e) => setLocation(e.target.value)}
-                    value={location}
-                    required
+                  <Select
+                    options={options}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value}
+                    value={options.find(c => c.label === location)}
+                    onChange={option => setLocation(option.label)}
+                    placeholder="Select your country"
                   />
                 </Form.Group>
                 <Form.Group controlId="birthdate">

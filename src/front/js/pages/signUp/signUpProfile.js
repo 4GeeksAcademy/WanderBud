@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../store/appContext';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import ImageUploader from '../../component/signUp/imageUploader';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
+import countryList from 'react-select-country-list';
 
 export const SignUpProfile = () => {
   const [name, setName] = useState('');
@@ -17,8 +19,10 @@ export const SignUpProfile = () => {
   const [message, setMessage] = useState(null);
   const { actions, store } = useContext(Context);
   const navigate = useNavigate();
-  
-  
+
+  const options = useMemo(() => countryList().getData(), []);
+
+
 
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
@@ -78,13 +82,13 @@ export const SignUpProfile = () => {
                   />
                 </Form.Group>
                 <Form.Group controlId="country">
-                  <Form.Control
-                    className="form-control mb-3"
-                    type="text"
-                    placeholder="Country"
-                    onChange={(e) => setLocation(e.target.value)}
-                    value={location}
-                    required
+                  <Select
+                    options={options}
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => option.value} 
+                    value={options.find(c => c.label === location)}
+                    onChange={option => setLocation(option.label)}
+                    placeholder="Select your country"
                   />
                 </Form.Group>
                 <Form.Group controlId="birthdate">
