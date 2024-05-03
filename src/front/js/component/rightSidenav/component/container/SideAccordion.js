@@ -20,9 +20,9 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
     };
     useEffect(() => {
         const interval = setInterval(() => {
-            if (title === "Solicitudes Enviadas") {
+            if (title === "My applications") {
                 actions.getAppliedEvents();
-            } else if (title === "Solicitudes Owner") {
+            } else if (title === "My event requests") {
                 actions.getOwnerRequest();
             } else {
                 actions.getGroupChat();
@@ -35,7 +35,7 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
 
     const renderUserRequests = () => {
         if (store.appliedPublicEvents === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
-        if (store.appliedPublicEvents.msg === "No applied events found" || store.appliedPublicEvents.lenght === 0) return <NoRequests title="No has enviado ninguna solicitud" />;
+        if (store.appliedPublicEvents.msg === "No applied events found" || store.appliedPublicEvents.lenght === 0) return <NoRequests title="No applied events found" />;
         return store.appliedPublicEvents.map((item, index) => (
             <ApplyCard key={index} username={`${item.owner_name} ${item.owner_last_name}`} eventname={item.name} img={item.owner_img} owner_id={item.owner_id} chatId={item.private_chat_id} event_id={item.id} />
         ));
@@ -43,14 +43,14 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
 
     const renderOwnerRequests = () => {
         if (store.ownerRequest === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
-        if (store.ownerRequest.msg === "No owner request found" || store.ownerRequest.lenght === 0) return <NoRequests title="No te han enviado ninguna solictud" />;
+        if (store.ownerRequest.msg === "No owner request found" || store.ownerRequest.lenght === 0) return <NoRequests title="You have no requests" />;
         return store.ownerRequest.map((item, index) => (
             <RequestsCard key={index} username={`${item.member_name} ${item.member_last_name}`} eventname={item.name} img={item.member_img} member_id={item.member_id} chatId={item.private_chat_id} event_id={item.id} />
         ));
     };
     const renderGroupChats = () => {
         if (store.groupChat === null) return <div className="d-flex w-100 justify-content-center py-2"><Spinner animation="border" variant="info" /></div>;
-        if (store.groupChat.msg === "No group chat found" || store.groupChat.lenght === 0) return <NoRequests title="No te has unido a ningun grupo" />;
+        if (store.groupChat.msg === "No group chat found" || store.groupChat.lenght === 0) return <NoRequests title="you haven't joined any groups" />;
         return store.groupChat.map((item, index) => (
             <GroupCard key={index} eventname={item.event_name} owner_id={item.owner_id} last_message={item.sender_last_message === "System" ? item.last_message : item.sender_last_message + ": " + item.last_message} img={item.owner_img} chatId={item.id} number_messages={item.number_of_messages} />
         ));
@@ -66,8 +66,8 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
                 </h2>
                 <div id={title.replace(" ", "")} className={`accordion-collapse collapse ${collapsed ? "" : "show"}`} data-bs-parent="#accordionExample">
                     <div className="accordion-body m-0 p-0">
-                        {title !== "Solicitudes Owner" ?
-                            (title === "Solicitudes Enviadas" ? renderUserRequests() :
+                        {title !== "My event requests" ?
+                            (title === "My applications" ? renderUserRequests() :
                                 renderGroupChats()
                             )
                             :

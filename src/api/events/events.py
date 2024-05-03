@@ -610,6 +610,7 @@ def get_joined_events():
                 "name": event.name,
                 "owner": {
                     "name": owner.name if owner else None,  # Handle potential missing owner
+                    "last_name": owner.last_name if owner else None,  # Handle potential missing owner
                     "profile_image": owner.profile_image if owner else None,
                     "user_id":owner.user_id if owner else None
                 },
@@ -626,6 +627,7 @@ def get_joined_events():
                 "status": event.status,
                 "description": event.description,
                 "event_type_id": event.event_type_id,
+                "event_type_name": Event_Type.query.get(event.event_type_id).name,
                 "budget_per_person": str(event.budget_per_person)
             }
             joined_events_list.append(event_details)
