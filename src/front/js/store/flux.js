@@ -299,6 +299,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const eventDataForBackend = {
 					name: eventData.title,
 					location: location,
+					location_name: eventData.place_name,
 					coords: eventData.markerPosition,
 					start_datetime: startDate + ' ' + startTime,
 					end_datetime: endDate + ' ' + endTime,
@@ -489,10 +490,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const eventDataForBackend = {
 					name: eventData.title,
 					location: eventData.location,
+					location_name: eventData.place_name,
 					coords: eventData.markerPosition,
 					start_datetime: startDate,
 					end_datetime: endDate,
-					descriptaion: eventData.description,
+					description: eventData.description,
 					event_type_id: parseInt(eventData.event_type_id) + 1,
 					budget_per_person: parseInt(eventData.budget),
 				};
@@ -509,7 +511,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (resp.status === 200) {
 						const data = await resp.json();
 						setStore({ message: data.msg });
-						window.location.href = '/feed';
+						window.location.href = '/event/' + event_id;
 						return true;
 					} else {
 						const data = await resp.json();

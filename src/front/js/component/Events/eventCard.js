@@ -36,7 +36,7 @@ export default function EventCard({ event, handleClick }) {
         }
         );
 
-    }, []);
+    }, [event.event_type_name]);
 
 
     const getPhoto = async () => {
@@ -184,7 +184,7 @@ export default function EventCard({ event, handleClick }) {
                     </IconButton>
                     <IconButton
                         aria-label="bookmark"
-                        variant="plain"
+                        variant="soft"
                         color={isFavorite ? "error.dark" : "neutral"}
                         size="sl"
                         disabled={event.placeholder === "Create" || event.placeholder === "Edit"}
@@ -232,7 +232,7 @@ export default function EventCard({ event, handleClick }) {
                         >
                             {event.description || event.description || "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet"}
                         </Typography>
-                        <Typography level="body-xs">{event.location || "New York, USA"}</Typography>
+                        <Typography level="body-xs">{event.location_name || event.place_name || "New York, USA"}</Typography>
                     </div>
                     <CardContent orientation="horizontal" sx={{ width: "100%" }}>
                         <div>
@@ -255,7 +255,7 @@ export default function EventCard({ event, handleClick }) {
                                     backgroundColor: event.placeholder === "Create" ? "#6a006a" : (event.placeholder === "Edit" ? "#106b7d" : "#05445e"),
                                 }
                             }}
-                            onClick={() => { event.placeholder === "Create" ? handleClick : (event.placeholder === "Edit" ? handleClick : navigate(`/event/${event.id}`)) }}
+                            onClick={() => { event.placeholder === "Create" ? handleClick() : (event.placeholder === "Edit" ? handleClick() : navigate(`/event/${event.id}`)) }}
                         >
                             {event.placeholder === "Create" ? "Post" : (event.placeholder === "Edit" ? "Edit" : "Explore")}
                         </Button>

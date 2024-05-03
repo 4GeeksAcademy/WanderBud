@@ -15,6 +15,7 @@ export const CreateEvent = () => {
         description: "",
         markerPosition: "",
         address: "",
+        place_name: "",
         typeEvent: "",
         event_type_name: "",
         errors: {},
@@ -31,6 +32,7 @@ export const CreateEvent = () => {
     const [eventTypeId, setEventTypeId] = useState([]);
 
 
+
     useEffect(() => {
         actions.getEventTypes().then(types => {
             if (types) {
@@ -43,12 +45,19 @@ export const CreateEvent = () => {
 
     const handleInputChange = e => {
         const { name, value } = e.target;
+        console.log(name, value);
+        console.log(eventData);
         setEventData(prevState => ({ ...prevState, [name]: value }));
+        if (name === "typeEvent") {
+            console.log(eventType[parseInt(value)]);
+            setEventData(prevState => ({ ...prevState, event_type_name: eventType[parseInt(value)] }));
+        }
     };
 
     const handleLocationSelect = location => {
         setEventData(prevState => ({ ...prevState, markerPosition: location.location }));
-        setEventData(prevState => ({ ...prevState, address: location.address }));
+        setEventData(prevState => ({ ...prevState, address: location.address.address }));
+        setEventData(prevState => ({ ...prevState, place_name: location.address.name || location.address.address }));
     };
 
     const validateForm = () => {
@@ -183,7 +192,7 @@ export const CreateEvent = () => {
                         </Col>
                     </Card>
                 </Col>
-                <EventCard event={eventData} handleClick={createEventHandler} />
+                <EventCard event={eventData} handleClick={(e) => createEventHandler()} />
             </Row>
         </Container>
     );

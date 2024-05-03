@@ -64,11 +64,15 @@ def create_event():
         event_type_id = request.json.get("event_type_id", None)
         budget_per_person = request.json.get("budget_per_person", None)
         coords = request.json.get("coords", None)
+        location_name = request.json.get("location_name", None)
+        if location_name != None:
+            location = location_name
         '''Check if the event type exists'''
         new_event = Event(
             name=name,
             owner_id=owner_id,
             location=location,
+            location_name=location_name,
             latitude=coords["lat"],
             longitude=coords["lng"],
             start_datetime=start_datetime,
@@ -260,6 +264,7 @@ def get_event(event_id):
                 },
             "members": members_list,
             "location": event.location,
+            "location_name": event.location_name if event.location_name else event.location,
             "coordinates": {
                 "lat": event.latitude,
                 "lng": event.longitude
@@ -326,6 +331,7 @@ def get_my_events():
                     "user_id":owner.user_id if owner else None
                 },
                 "location": event.location,
+                "location_name": event.location_name if event.location_name  else event.location,
                 "start_date": event.start_datetime.strftime("%Y-%m-%d"),
                 "start_time": event.start_datetime.strftime("%H:%M:%S"),
                 "end_date": event.end_datetime.strftime("%Y-%m-%d"),
@@ -385,6 +391,7 @@ def get_event_by_radius():
                         "user_id": owner.user_id if owner else None
                     },
                     "location": event.location,
+                    "location_name": event.location_name if event.location_name else event.location,
                     "coordinates": {
                         "lat": event.latitude,
                         "lng": event.longitude
@@ -449,6 +456,7 @@ def update_event(event_id):
         
         event.name = request.json.get("name")
         event.location = request.json.get("location")
+        event.location_name = request.json.get("location_name") if request.json.get("location_name") else request.json.get("location")
         event.latitude = request.json.get("coords").get("lat")
         event.longitude = request.json.get("coords").get("lng")
         event.start_datetime = request.json.get("start_datetime")
@@ -615,6 +623,7 @@ def get_joined_events():
                     "user_id":owner.user_id if owner else None
                 },
                 "location": event.location,
+                "location_name": event.location_name if event.location_name != "" else event.location,
                 "coordinates": {
                     "lat": event.latitude,
                     "lng": event.longitude

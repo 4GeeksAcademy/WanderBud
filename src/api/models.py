@@ -112,6 +112,7 @@ class Event(db.Model):
     owner_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(250), nullable=False)
+    location_name = db.Column(db.String(250), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     start_datetime = db.Column(db.DateTime(timezone=True), nullable=False)
@@ -154,6 +155,7 @@ class Event(db.Model):
             "owner": self.owner_id,
             "name": self.name,
             "location": self.location,
+            "location_name": self.location_name,
             "date": self.start_datetime.strftime('%Y-%m-%d %H:%M:%S GMT%z'),
             "status": self.status,
             "description": self.description,

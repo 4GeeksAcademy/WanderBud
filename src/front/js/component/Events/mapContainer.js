@@ -11,6 +11,7 @@ const libraries = ["places"];
 const MapContainer = ({ selectedLocation, onLocationSelect, address }) => {
     const [currentPosition, setCurrentPosition] = useState(null);
     const [autocomplete, setAutocomplete] = useState(address);
+    const [addressName, setAddress] = useState(address);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -58,7 +59,12 @@ const MapContainer = ({ selectedLocation, onLocationSelect, address }) => {
                 lng: place.geometry.location.lng()
             };
             setCurrentPosition(location);
-            onLocationSelect({ location, address: autocomplete.gm_accessors_.place.hs.formattedPrediction });
+            onLocationSelect({
+                location, address: {
+                    address: place.formatted_address,
+                    name: place.name
+                }
+            });
         } else {
             setError('Autocompletado aún no cargado.');
         }
@@ -77,7 +83,7 @@ const MapContainer = ({ selectedLocation, onLocationSelect, address }) => {
             >
                 {selectedLocation && <Marker position={selectedLocation} />}
                 {onLocationSelect && <Autocomplete onLoad={handleAutocompleteLoad} onPlaceChanged={handlePlaceChanged}>
-                    <Form.Control type="text" placeholder="Buscar lugares cerca..." style={searchStyles} defaultValue={address} onChange={(e) => address = e.target.value} />
+                    <Form.Control type="text" placeholder="Buscar lugares cerca..." style={searchStyles} defaultValue={address} />
                 </Autocomplete>}
             </GoogleMap>
             {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
