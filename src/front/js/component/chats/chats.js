@@ -7,6 +7,7 @@ import { RightMessage } from "./component/rightMessage";
 import { Context } from "../../store/appContext";
 import { CenterMessage } from "./component/centerMessage";
 import { MembersModal } from "./component/MembersModal";
+import { MessageModal } from "./component/messageModal";
 
 export const Chats = ({ chatData }) => {
     const { store, actions } = useContext(Context);
@@ -16,6 +17,7 @@ export const Chats = ({ chatData }) => {
     const messagesEndRef = useRef(null);
     const [chat, setChat] = useState(chatData);
     const [modalShow, setModalShow] = useState(false);
+    const [modalWarning, setModalWarning] = useState(false);
     const [messages, setMessages] = useState(chatData.messages);
     const [message, setMessage] = useState("");
     const user_id = store.userAccount.id;
@@ -82,6 +84,7 @@ export const Chats = ({ chatData }) => {
     useEffect(() => {
         setChat(chatData);
         setMessages(chatData.messages);
+        setModalWarning(chatData.member_status === "Accepted" || chatData.member_status === "Rejected" ? true : false);
     }, [chatData]);
 
 
@@ -198,6 +201,7 @@ export const Chats = ({ chatData }) => {
             <Row className="px-2 py-0">
                 <Col md={12} className="d-flex justify-content-center align-items-center">
                     <MembersModal handleClose={handleCloseModal} show={modalShow} members={chat.members} />
+                    <MessageModal handleClose={() => setModalWarning(false)} show={modalWarning} message={chat.member_status} group_chat_id={chat.group_chat_id} />
                 </Col>
                 <Col md={12} className="row container-card container-shadow justify-content-between align-items-center rounded m-0 p-2 chat-top" onLoad={(e) => { handleLoad(e) }} id="header-chat" >
                     <Col md={1} className="d-flex justify-content-center">
@@ -210,7 +214,7 @@ export const Chats = ({ chatData }) => {
                     </Col>
                     <Col md={8} className="d-flex align-items-center flex-column">
                         <h3 className="m-0">{chat.chat_name}'s Chat</h3>
-                        <span className="badge badge-pill badge-primary ml-2 text-muted">{chat.members.length} Members</span>
+                        <span className="badge badge-pill badge-primary ml-2 text-muted">{chat.members?.length} Members</span>
                     </Col>
                     <Col md={1} className="hidden">
                         .

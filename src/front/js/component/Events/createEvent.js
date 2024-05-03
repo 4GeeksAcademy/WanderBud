@@ -16,6 +16,7 @@ export const CreateEvent = () => {
         markerPosition: "",
         address: "",
         typeEvent: "",
+        event_type_name: "",
         errors: {},
         owner: {
             user_id: store.userAccount.id,
@@ -24,7 +25,7 @@ export const CreateEvent = () => {
             last_name: "Doe",
 
         },
-        placeholder: "Place"
+        placeholder: "Create"
     });
     const [eventType, setEventType] = useState([]);
     const [eventTypeId, setEventTypeId] = useState([]);
@@ -180,12 +181,9 @@ export const CreateEvent = () => {
                             <MapContainer selectedLocation={eventData.markerPosition} onLocationSelect={handleLocationSelect} />
                             {errors.markerPosition && <Form.Text className="text-danger">{errors.markerPosition}</Form.Text>}
                         </Col>
-                        <Button variant="primary" onClick={createEventHandler}>
-                            Create Event
-                        </Button>
                     </Card>
                 </Col>
-                <EventCard event={eventData} />
+                <EventCard event={eventData} handleClick={createEventHandler} />
             </Row>
         </Container>
     );

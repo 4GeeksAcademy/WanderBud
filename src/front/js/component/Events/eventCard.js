@@ -3,16 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { AspectRatio, Button, Card, Box, CardContent, CardOverflow, IconButton, Typography, Avatar, Stack } from "@mui/joy";
 import Collapse from "@mui/material/Collapse";
 import { BookmarkAdd, Image } from "@mui/icons-material";
-import { CssVarsProvider } from "@mui/joy";
+import { createClient } from 'pexels';
 import { Context } from "../../store/appContext";
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, handleClick }) {
     const { store, actions } = useContext(Context);
     const userId = store.userAccount.id;
     const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false)
     const [isExpandedF, setIsExpandedF] = useState(false)
     const [isFavorite, setIsFavorite] = useState(false)
+    const client = createClient(process.env.PEXELS_API_KEY);
+    const [photo, setPhoto] = useState(null);
 
     useEffect(() => {
         if (store.favorites !== null) {
@@ -22,7 +24,38 @@ export default function EventCard({ event }) {
             // O simplemente dejar que isFavorite se mantenga en su estado actual (probablemente false).
             console.log("Favorites is null");
         }
+
     }, [store.favorites, event.id]);
+
+    useEffect(() => {
+        new Promise((resolve, reject) => {
+            getPhoto().then((photo) => {
+                setPhoto(photo);
+                resolve();
+            });
+        }
+        );
+
+    }, []);
+
+
+    const getPhoto = async () => {
+        try {
+            const query = event.event_type_name || event.title || "Event Name";
+            const response = await client.photos.search({ query, per_page: 1 });
+            if (response.photos.length > 0) {
+                console.log(response.photos[0]);
+                return response.photos[0].src.landscape;
+            } else {
+                console.log("No photos found for query:", query);
+                return null; // Return null or a placeholder image URL
+
+            }
+        } catch (error) {
+            console.error("Error fetching photo:", error);
+            return null; // Return null or a placeholder image URL
+        }
+    };
 
     const handleMouseEnter = () => {
         setIsExpanded(true);
@@ -88,7 +121,7 @@ export default function EventCard({ event }) {
                 >
                     <Box
                         component="img"
-                        src={event.image || "https://via.placeholder.com/500"}
+                        src={photo || "https://via.placeholder.com/500"}
                         sx={{
                             objectPosition: "50% 50%",
                             borderRadius: 0,
@@ -122,6 +155,11 @@ export default function EventCard({ event }) {
                             p: 0.5,
                             borderRadius: 50,
                             width: "fit-content",
+                            backgroundColor: "#189ab4",
+                            "&:hover": {
+                                backgroundColor: "#189ab4",
+                                boxShadow: "0 0 5px 0.2rem rgba(24,154,180,0.5)",
+                            }
                         }}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
@@ -149,7 +187,7 @@ export default function EventCard({ event }) {
                         variant="plain"
                         color={isFavorite ? "error.dark" : "neutral"}
                         size="sl"
-                        disabled={event.placeholder}
+                        disabled={event.placeholder === "Create" || event.placeholder === "Edit"}
                         sx={{
                             ml: 2,
                             mr: 1,
@@ -162,6 +200,7 @@ export default function EventCard({ event }) {
                             "&:hover": {
                                 backgroundColor: isFavorite ? "#992d22" : "",
                                 color: isFavorite ? "#f3f6f6" : "black",
+                                boxShadow: isFavorite ? "0 0 5px 0.2rem rgba(153,45,34,0.5)" : "0 0 5px 0.2rem rgba(0,0,0,0.5)"
                             }
                         }}
                         onMouseEnter={handleMouseEnterF}
@@ -207,11 +246,18 @@ export default function EventCard({ event }) {
                             size="md"
                             color="primary"
                             aria-label="Explore Bahamas Islands"
-                            disabled={event.placeholder}
-                            sx={{ ml: "auto", alignSelf: "center", fontWeight: 600, backgroundColor: "#189ab4", color: "#f3f6f6", "&:hover": { backgroundColor: "#107c91" } }}
-                            onClick={() => { navigate(`/event/${event.id}`) }}
+                            sx={{
+                                ml: "auto", alignSelf: "center",
+                                fontWeight: 600,
+                                backgroundColor: event.placeholder === "Create" ? "#800080" : (event.placeholder === "Edit" ? "#189ab4" : "#189ab4"),
+                                color: "#f3f6f6",
+                                "&:hover": {
+                                    backgroundColor: event.placeholder === "Create" ? "#6a006a" : (event.placeholder === "Edit" ? "#106b7d" : "#05445e"),
+                                }
+                            }}
+                            onClick={() => { event.placeholder === "Create" ? handleClick : (event.placeholder === "Edit" ? handleClick : navigate(`/event/${event.id}`)) }}
                         >
-                            Explore
+                            {event.placeholder === "Create" ? "Post" : (event.placeholder === "Edit" ? "Edit" : "Explore")}
                         </Button>
                     </CardContent>
                 </Stack>
