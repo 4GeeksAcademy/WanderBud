@@ -308,7 +308,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					start_datetime: startDate + ' ' + startTime,
 					end_datetime: endDate + ' ' + endTime,
 					description: eventData.description,
-					event_type_id: parseInt(eventData.event_type_id) + 1,
+					event_type_id: parseInt(eventData.event_type_id),
 					budget_per_person: parseInt(eventData.budget),
 				};
 				try {
@@ -499,7 +499,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					start_datetime: startDate,
 					end_datetime: endDate,
 					description: eventData.description,
-					event_type_id: parseInt(eventData.event_type_id) + 1,
+					event_type_id: parseInt(eventData.event_type_id),
 					budget_per_person: parseInt(eventData.budget),
 				};
 				try {
