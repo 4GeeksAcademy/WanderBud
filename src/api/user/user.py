@@ -161,7 +161,10 @@ def update_user_profile():
         user_profile.location = data.get("location")
         user_profile.description = data.get("description")
         user_profile.profile_image = data.get("profile_image")
-        user_profile.cover_image = data.get("cover_image")
+        if data.get("cover_image"):
+            user_profile.cover_image = data.get("cover_image")
+        else:
+            user_profile.cover_image = user_profile.cover_image
         
        
         db.session.commit()

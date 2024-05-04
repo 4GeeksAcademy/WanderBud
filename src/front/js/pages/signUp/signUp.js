@@ -8,11 +8,11 @@ import * as Yup from 'yup';
 const SignUp = () => {
   const { actions } = useContext(Context);
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup.string() 
+    password: Yup.string()
       .required('Password is required')
       .min(6, 'Password must be at least 6 characters')
       .matches(/(?=.*[A-Z])(?=.*\W)/, 'Password must contain at least one uppercase letter and one symbol'),
@@ -25,10 +25,9 @@ const SignUp = () => {
     try {
       const { email, password } = values;
       const response = await actions.createUser({ email, password, is_active: true });
-  
+
       if (response) {
         navigate("/signup/profile");
-        alert('Usuario creado correctamente');
       } else {
         alert('Error al crear el usuario: ' + response.error);
       }
@@ -61,12 +60,12 @@ const SignUp = () => {
                     />
                     <ErrorMessage name="email" component="div" className="text-danger" />
                   </Form.Group>
-                  
+
                   <hr className="border border-secondary mb-3" />
-                  
-                  <Form.Group controlId="formPassword" className="mb-3"> 
+
+                  <Form.Group controlId="formPassword" className="mb-3">
                     <Form.Control
-                      type={showPassword ? "text" : "password"} 
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       value={values.password}
                       onChange={handleChange}
@@ -74,10 +73,10 @@ const SignUp = () => {
                     />
                     <ErrorMessage name="password" component="div" className="text-danger" />
                   </Form.Group>
-                  
-                  <Form.Group controlId="formConfirmPassword" className="mb-3"> 
+
+                  <Form.Group controlId="formConfirmPassword" className="mb-3">
                     <Form.Control
-                      type={showPassword ? "text" : "password"} 
+                      type={showPassword ? "text" : "password"}
                       name="confirmpassword"
                       value={values.confirmpassword}
                       onChange={handleChange}
@@ -89,7 +88,7 @@ const SignUp = () => {
                   <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} className="mb-3">
                     {showPassword ? 'Hide Password' : 'Show Password'}
                   </Button>
-                  
+
                   <Button variant="primary" type="submit" className="w-100">
                     Register
                   </Button>

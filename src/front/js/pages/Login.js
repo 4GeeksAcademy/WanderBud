@@ -19,7 +19,7 @@ export const Login = () => {
       if (response) {
         actions.validateToken();
       } else {
-        alert('Invalid credentials');
+        actions.wrongPassword()
       }
     });
   }
