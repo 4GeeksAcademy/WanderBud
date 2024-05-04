@@ -40,8 +40,26 @@ export const CreateEvent = () => {
                 setEventType(typesName);
                 setEventTypeId(types.map(type => type.id));
             }
-        });
-    }, []);
+        
+        }
+);
+
+ getUserData();
+
+
+    }, [store.userAccount.id]);
+
+    const getUserData = async () => { await actions.getUserProfile(store.userAccount.id).then((userData) => {
+        console.log(userData)
+        setEventData(prevState => ({ 
+            ...prevState, 
+            owner: {
+            profile_image: userData?.profile_image,
+            name: userData?.name,
+            last_name: userData?.last_name
+        } }));
+      
+    })}
 
     const handleInputChange = e => {
         const { name, value } = e.target;

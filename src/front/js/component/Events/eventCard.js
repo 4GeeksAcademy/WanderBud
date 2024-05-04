@@ -41,7 +41,7 @@ export default function EventCard({ event, handleClick }) {
 
     const getPhoto = async () => {
         try {
-            const query = event.event_type_name || event.title || "Event Name";
+            const query = event.event_type_name || event.title || "Mountain";
             const response = await client.photos.search({ query, per_page: 1 });
             if (response.photos.length > 0) {
                 console.log(response.photos[0]);
