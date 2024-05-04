@@ -46,14 +46,9 @@ export const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </Form.Group>
-              <Button
-                variant="secondary"
-                type="button" // Usar type="button" para evitar envío del formulario
-                className="w-100"
-                onClick={() => setShowPassword(!showPassword)} // Alternar estado de mostrar/ocultar contraseña
-              >
-                {showPassword ? 'Hide Password' : 'Show Password'}
-              </Button>
+              <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} >
+                    {showPassword ? 'Hide Password' : 'Show Password'}
+                  </Button>
               <Button variant="secondary" type="submit" className="w-100 mt-3">
                 Login
               </Button>
