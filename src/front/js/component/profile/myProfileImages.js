@@ -8,6 +8,7 @@ import { Context } from "../../store/appContext";
 export const MyProfileImages = (props) => {
     const { store, actions } = useContext(Context);
     const userId = store.userAccount.id;
+
   
     let myImages = store.profileImages
 
@@ -33,7 +34,7 @@ export const MyProfileImages = (props) => {
               <div style={{ position: 'relative', objectFit: 'cover' }}>
                 <Image src={photo.image_path} alt={`Photo ${index}`} style={{aspectRatio: '1', width: '100%', objectFit: "contain"}} fluid />
                 <div style={{ position: 'relative'}} className="d-flex justify-content-center">
-                  <Button variant="danger" className={'rounded-pill w-75 mt-1' + (parseInt(userId) === parseInt(props.user_id) ? "" : "hidden")} size="sm" onClick={() => handleDeleteImage(photo.id)} style={{ marginLeft: '5px' }}>
+                  <Button variant="danger" className={'rounded-pill w-75 mt-1' + (parseInt(userId) === parseInt(props.user_id) ? '' : ' hidden')} size="sm" onClick={() => handleDeleteImage(photo.id)} style={{ marginLeft: '5px' }}>
                     Delete
                   </Button>
                 </div>
