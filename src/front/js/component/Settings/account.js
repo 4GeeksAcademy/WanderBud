@@ -17,6 +17,7 @@ export const AccountContainer = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [email, setEmail] = useState(data.email);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [modal, setModal] = useState({
         show: false,
@@ -109,7 +110,7 @@ export const AccountContainer = () => {
                             <InputGroup>
                                 <Form.Control
                                     aria-describedby="passwordHelp"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="*********"
                                     disabled={displayPassword}
                                     value={password}
@@ -127,7 +128,7 @@ export const AccountContainer = () => {
                                 <Form.Control
                                     aria-describedby="confirmPasswordHelp"
                                     placeholder="Enter your password again"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
@@ -135,6 +136,9 @@ export const AccountContainer = () => {
                             {error.confirmPassword && <Form.Text variant="text-danger">{error.confirmPassword}</Form.Text>}
                         </Form.Group>
                         <div className="d-flex flex-row justify-content-center">
+                            <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} className="mb-3 me-2">
+                                {showPassword ? 'Hide Password' : 'Show Password'}
+                            </Button>
                             <Button variant="danger" className="me-2" onClick={(e) => {
                                 handleDelete(e);
                             }}>
