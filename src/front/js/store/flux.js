@@ -83,6 +83,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				store.redirect && window.location.replace(store.redirect);
 			},
+			wrongPassword: () => {
+				setStore({ storeShow: true, alertTitle: 'Invalid Credentials', alertBody: 'Invalid password or email, please try again', redirect: '' });
+			}
+			,
 
 			validateToken: async () => {
 				const store = getStore();

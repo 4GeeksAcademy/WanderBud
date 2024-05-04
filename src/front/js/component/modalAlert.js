@@ -24,10 +24,10 @@ export const ModalAlert = () => {
             </Modal.Header>
             <Modal.Body>{alertBody}</Modal.Body>
             <Modal.Footer>
-                <Button className={(store.alertTitle !== 'Welcome to WanderBud' ? "" : "hidden")} variant="google" onClick={handleClose}>
+                <Button className={(store.alertTitle !== 'Welcome to WanderBud' ? "" : "d-none")} variant="google" onClick={handleClose}>
                     Close
                 </Button>
-                <Button className={(store.alertTitle === 'Welcome to WanderBud' ? "" : "hidden")} variant="upload" onClick={handleClose}>
+                <Button className={(store.alertTitle === 'Welcome to WanderBud' ? "" : "d-none")} variant="upload" onClick={handleClose}>
                     Create your profile
                 </Button>
             </Modal.Footer>
