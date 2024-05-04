@@ -130,13 +130,13 @@ export const AccountContainer = () => {
                                     placeholder="Enter your password again"
                                     type={showPassword ? "text" : "password"}
                                     value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    onChange={(e) => setConfirmPassword(e.target.value)} 
                                 />
                             </InputGroup>
                             {error.confirmPassword && <Form.Text variant="text-danger">{error.confirmPassword}</Form.Text>}
                         </Form.Group>
                         <div className="d-flex flex-row justify-content-center">
-                            <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} className="mb-3 me-2">
+                            <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} className=" me-2 ">
                                 {showPassword ? 'Hide Password' : 'Show Password'}
                             </Button>
                             <Button variant="danger" className="me-2" onClick={(e) => {
