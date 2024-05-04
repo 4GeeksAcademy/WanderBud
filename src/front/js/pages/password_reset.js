@@ -9,6 +9,7 @@ export const PasswordReset = () => {
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
   const [message, setMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { actions, store } = useContext(Context);
   const navigate = useNavigate();
   const { token } = useParams();
@@ -41,7 +42,7 @@ export const PasswordReset = () => {
             <Form onSubmit={handleResetPassword} className='p-4 py-0 '>
               <Form.Group controlId="password1">
                 <Form.Control
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter a new password"
                   onChange={e => setPassword1(e.target.value)}
                   value={password1}
@@ -51,7 +52,7 @@ export const PasswordReset = () => {
               </Form.Group>
               <Form.Group controlId="password2">
                 <Form.Control
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Repeat your password"
                   onChange={e => setPassword2(e.target.value)}
                   value={password2}
@@ -59,6 +60,9 @@ export const PasswordReset = () => {
                   required
                 />
               </Form.Group>
+              <Button variant="secondary" onClick={() => setShowPassword(!showPassword)} className="mb-3 me-2">
+                    {showPassword ? 'Hide Password' : 'Show Password'}
+                  </Button>
               <Button variant="primary" type="submit" className='w-100'>Change Password</Button>
               {message && <p className="message">{message}</p>}
             </Form>
