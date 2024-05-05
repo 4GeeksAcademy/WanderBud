@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Row, Nav, Tab } from "react-bootstrap";
 import { EventCardHandler } from "./component/eventCardHandler";
+import { FaPlusCircle } from 'react-icons/fa';
+import LeftSidenavMobile from "../leftSidenav/leftSidenavMobile";
 
 
 
@@ -15,19 +17,19 @@ export const FeedMain = ({ children }) => {
             <Tab.Container defaultActiveKey="for-you">
                 <Row className="w-100">
                     <Col md={12} className="mt-4 p-2 navtabs">
-                        <Nav variant="pills" className="row">
+                        <Nav variant="pills" className="row align-items-center">
                             <Nav.Item className="col-4">
-                                <Nav.Link eventKey="for-you" className="btn btn-navtab w-100">
+                                <Nav.Link eventKey="for-you" className="btn btn-navtab w-100" style={{ textWrap: "nowrap", textOverflow: "ellipsis" }}>
                                     For you
                                 </Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="col-4">
-                                <Nav.Link eventKey="Joined" className="btn btn-navtab w-100">
+                                <Nav.Link eventKey="Joined" className="btn btn-navtab w-100" style={{ textWrap: "nowrap", textOverflow: "ellipsis" }}>
                                     Joined
                                 </Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="col-4">
-                                <Nav.Link eventKey="my-events" className="btn btn-navtab w-100">
+                                <Nav.Link eventKey="my-events" className="btn btn-navtab w-100" style={{ textWrap: "nowrap", textOverflow: "ellipsis" }}>
                                     My events
                                 </Nav.Link>
                             </Nav.Item>
@@ -46,6 +48,7 @@ export const FeedMain = ({ children }) => {
                     </Tab.Content>
                 </Row>
             </Tab.Container>
+            <LeftSidenavMobile />
         </Container>
     );
 }

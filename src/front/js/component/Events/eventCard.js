@@ -128,93 +128,93 @@ export default function EventCard({ event, handleClick }) {
                             backgroundColor: "transparent"
                         }}
                     />
-                </AspectRatio>
-                <Stack
-                    direction="row"
-                    alignItems="flex-start"
-                    justifyContent="space-between"
-                    sx={{
-                        p: 1,
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        zIndex: 1,
-                        width: "100%",
-                        mt: 0.5,
-                    }}
-                >
-                    <IconButton
-                        aria-label="bookmark Bahamas Islands"
-                        variant="soft"
-                        color="neutral"
-                        size="sx"
+                    <Stack
+                        direction="row"
+                        alignItems="flex-start"
+                        justifyContent="space-between"
                         sx={{
-                            ml: 2,
-                            mr: 1,
-                            my: 0.5,
-                            p: 0.5,
-                            borderRadius: 50,
-                            width: "fit-content",
-                            backgroundColor: "#189ab4",
-                            "&:hover": {
+                            p: 1,
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            zIndex: 1,
+                            width: "100%",
+                            height: "100%",
+                        }}
+                    >
+                        <IconButton
+                            aria-label="bookmark Bahamas Islands"
+                            variant="soft"
+                            color="neutral"
+                            size="sx"
+                            sx={{
+                                ml: 2,
+                                mr: 1,
+                                p: 0.5,
+                                borderRadius: 50,
+                                height: "100%",
                                 backgroundColor: "#189ab4",
-                                boxShadow: "0 0 5px 0.2rem rgba(24,154,180,0.5)",
-                            }
-                        }}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        onClick={() => { navigate(`/profile/${event.owner.user_id}`) }}
-                    >
-                        <Avatar
-                            alt="User"
-                            src={event.owner?.profile_image || "https://via.placeholder.com/500"}
-                            sx={{ width: 80, height: 80, aspectRatio: "1/1" }}
-                        />
-                        <Collapse in={isExpanded} orientation="horizontal">
-                            <div>
-                                <Typography
-                                    level="title-lg"
-                                    sx={{ ml: 0.5, pl: 1, pr: 2, color: "black" }}
-                                    noWrap
-                                >
-                                    {event.owner.name + " " + event.owner.last_name}
-                                </Typography>
-                            </div>
-                        </Collapse>
-                    </IconButton>
-                    <IconButton
-                        aria-label="bookmark"
-                        variant="soft"
-                        color={isFavorite ? "error.dark" : "neutral"}
-                        size="sl"
-                        disabled={event.placeholder === "Create" || event.placeholder === "Edit"}
-                        sx={{
-                            ml: 2,
-                            mr: 1,
-                            p: 0.5,
-                            borderRadius: 50,
-                            width: "fit-content",
-                            display: userId !== event.owner.user_id ? "flex" : "none",
-                            color: isFavorite ? "#f3f6f6" : "black",
-                            backgroundColor: isFavorite ? "#992d22" : "",
-                            "&:hover": {
-                                backgroundColor: isFavorite ? "#992d22" : "",
+                                "&:hover": {
+                                    backgroundColor: "#189ab4",
+                                    boxShadow: "0 0 5px 0.2rem rgba(24,154,180,0.5)",
+                                }
+                            }}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            onClick={() => { navigate(`/profile/${event.owner.user_id}`) }}
+                        >
+                            <Avatar
+                                alt="User"
+                                src={event.owner?.profile_image || "https://via.placeholder.com/500"}
+                                srcSet={event.owner?.profile_image || "https://via.placeholder.com/500"}
+                                sx={{ width: "auto", height: "100%" }}
+                            />
+                            <Collapse in={isExpanded} orientation="horizontal">
+                                <div>
+                                    <Typography
+                                        level="title-lg"
+                                        sx={{ ml: 0.5, pl: 1, pr: 2, color: "black" }}
+                                        noWrap
+                                    >
+                                        {event.owner.name + " " + event.owner.last_name}
+                                    </Typography>
+                                </div>
+                            </Collapse>
+                        </IconButton>
+                        <IconButton
+                            aria-label="bookmark"
+                            variant="soft"
+                            color={isFavorite ? "error.dark" : "neutral"}
+                            size="sl"
+                            disabled={event.placeholder === "Create" || event.placeholder === "Edit"}
+                            sx={{
+                                ml: 2,
+                                mr: 1,
+                                p: 0.5,
+                                borderRadius: 50,
+                                width: "fit-content",
+                                display: userId !== event.owner.user_id ? "flex" : "none",
                                 color: isFavorite ? "#f3f6f6" : "black",
-                                boxShadow: isFavorite ? "0 0 5px 0.2rem rgba(153,45,34,0.5)" : "0 0 5px 0.2rem rgba(0,0,0,0.5)"
-                            }
-                        }}
-                        onMouseEnter={handleMouseEnterF}
-                        onMouseLeave={handleMouseLeaveF}
-                        onClick={() => { handleFavorite() }}
-                    >
-                        <Collapse in={isExpandedF} orientation="horizontal">
-                            <Typography level="body-sm" sx={{ pl: 1, color: isFavorite ? "#f3f6f6" : "black" }} noWrap>
-                                {isFavorite ? "Remove favorites" : "Add to favorites"}
-                            </Typography>
-                        </Collapse>
-                        <BookmarkAdd />
-                    </IconButton>
-                </Stack>
+                                backgroundColor: isFavorite ? "#992d22" : "",
+                                "&:hover": {
+                                    backgroundColor: isFavorite ? "#992d22" : "",
+                                    color: isFavorite ? "#f3f6f6" : "black",
+                                    boxShadow: isFavorite ? "0 0 5px 0.2rem rgba(153,45,34,0.5)" : "0 0 5px 0.2rem rgba(0,0,0,0.5)"
+                                }
+                            }}
+                            onMouseEnter={handleMouseEnterF}
+                            onMouseLeave={handleMouseLeaveF}
+                            onClick={() => { handleFavorite() }}
+                        >
+                            <Collapse in={isExpandedF} orientation="horizontal">
+                                <Typography level="body-sm" sx={{ pl: 1, color: isFavorite ? "#f3f6f6" : "black" }} noWrap>
+                                    {isFavorite ? "Remove favorites" : "Add to favorites"}
+                                </Typography>
+                            </Collapse>
+                            <BookmarkAdd />
+                        </IconButton>
+                    </Stack>
+                </AspectRatio>
                 <Stack
                     direction="column"
                     alignItems="flex-start"
