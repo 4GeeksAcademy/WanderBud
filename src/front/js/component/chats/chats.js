@@ -25,6 +25,9 @@ export const Chats = ({ chatData }) => {
 
     const sendMessage = (event) => {
         const path = window.location.pathname;
+        if (message.trim() === "") {
+            return;
+        }
         let type = ""
         if (path.includes("request-chat")) {
             type = "private"
@@ -146,7 +149,7 @@ export const Chats = ({ chatData }) => {
             day: null,
             messages: []
         };
-        messages.forEach((message, index) => {
+        messages?.forEach((message, index) => {
             const date = new Date(message.sentAt).toLocaleDateString();
             if (messagesDay.day === null) {
                 messagesDay.day = date;
@@ -167,7 +170,7 @@ export const Chats = ({ chatData }) => {
 
 
         return (
-            messagesPerDay.map((day, index) => {
+            messagesPerDay?.map((day, index) => {
                 return (
                     <div key={index} className="p-0">
                         <CenterMessage day={day.day} />

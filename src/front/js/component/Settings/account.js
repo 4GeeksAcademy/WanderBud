@@ -57,7 +57,6 @@ export const AccountContainer = () => {
     };
     const handleDelete = (e) => {
         e.preventDefault();
-        alert("Are you sure you want to delete your account?");
         store.updateUser = true;
         setModal({
             show: true,
@@ -130,7 +129,7 @@ export const AccountContainer = () => {
                                     placeholder="Enter your password again"
                                     type={showPassword ? "text" : "password"}
                                     value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
                             </InputGroup>
                             {error.confirmPassword && <Form.Text variant="text-danger">{error.confirmPassword}</Form.Text>}

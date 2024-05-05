@@ -13,15 +13,15 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     is_active = db.Column(db.Boolean(), nullable=False)
-    user_profile = db.relationship('User_Profile', backref='user', lazy=True)
-    user_event = db.relationship('Event', backref='owner', lazy=True)
-    event_member = db.relationship('Event_Member', backref='user', lazy=True)
-    user_private_chats = db.relationship('UsersPrivateChat', backref='user', lazy=True)
-    private_chats = db.relationship('PrivateChat', backref='user', lazy=True)
-    group_chats = db.relationship('UsersGroupChat', backref='user', lazy=True)
-    sender = db.relationship('Message', foreign_keys='Message.sender_id' ,backref='sender', lazy=True)
-    receiver = db.relationship('Message', foreign_keys='Message.receiver_id',backref='receiver', lazy=True)
-    profile_image = db.relationship('UserProfileImage', backref='user', lazy=True)
+    user_profile = db.relationship('User_Profile', backref='user', lazy=True, cascade='all, delete')
+    user_event = db.relationship('Event', backref='owner', lazy=True, cascade='all, delete')
+    event_member = db.relationship('Event_Member', backref='user', lazy=True, cascade='all, delete')
+    user_private_chats = db.relationship('UsersPrivateChat', backref='user', lazy=True, cascade='all, delete')
+    private_chats = db.relationship('PrivateChat', backref='user', lazy=True, cascade='all, delete')
+    group_chats = db.relationship('UsersGroupChat', backref='user', lazy=True, cascade='all, delete')
+    sender = db.relationship('Message', foreign_keys='Message.sender_id' ,backref='sender', lazy=True, cascade='all, delete')
+    receiver = db.relationship('Message', foreign_keys='Message.receiver_id',backref='receiver', lazy=True, cascade='all, delete')
+    profile_image = db.relationship('UserProfileImage', backref='user', lazy=True, cascade='all, delete')
 
     def generate_unique_id(self):
         while True:
@@ -121,9 +121,9 @@ class Event(db.Model):
     description = db.Column(db.String(250), nullable=True)
     budget_per_person = db.Column(db.Float, nullable=True)
     event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.id'), nullable=False)
-    members = db.relationship('Event_Member', backref='event', lazy=True)
-    private_chats = db.relationship('PrivateChat', backref='event', lazy=True)
-    group_chats = db.relationship('GroupChat', backref='event', lazy=True)
+    members = db.relationship('Event_Member', backref='event', lazy=True, cascade='all, delete')
+    private_chats = db.relationship('PrivateChat', backref='event', lazy=True, cascade='all, delete')
+    group_chats = db.relationship('GroupChat', backref='event', lazy=True, cascade='all, delete')
 
     def generate_unique_id(self):
         while True:
@@ -202,8 +202,8 @@ class PrivateChat(db.Model):
     event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
     user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     createdAt = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    users_chat = db.relationship('UsersPrivateChat', backref='private_chat', lazy=True)
-    messages = db.relationship('Message', backref='private_chat', lazy=True)
+    users_chat = db.relationship('UsersPrivateChat', backref='private_chat', lazy=True, cascade='all, delete')
+    messages = db.relationship('Message', backref='private_chat', lazy=True, cascade='all, delete')
     
     def generate_unique_id(self):
         while True:
@@ -247,8 +247,8 @@ class GroupChat(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
     createdAt = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    users_chat = db.relationship('UsersGroupChat', backref='group_chat', lazy=True)
-    messages = db.relationship('Message', backref='group_chat', lazy=True)
+    users_chat = db.relationship('UsersGroupChat', backref='group_chat', lazy=True, cascade='all, delete')
+    messages = db.relationship('Message', backref='group_chat', lazy=True, cascade='all, delete')
     
     def generate_unique_id(self):
         while True:
@@ -322,8 +322,8 @@ class Favorite(db.Model):
     user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     event_id = db.Column(db.BigInteger, db.ForeignKey('event.id'), nullable=False)
 
-    user = db.relationship('User', backref=db.backref('favorite_events', lazy='dynamic'))
-    event = db.relationship('Event', backref=db.backref('favorited_by', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('favorite_events', lazy='dynamic'), cascade='all, delete')
+    event = db.relationship('Event', backref=db.backref('favorited_by', lazy='dynamic'), cascade='all, delete')
 
     def __repr__(self):
         return f'<Favorite user_id={self.user_id}, event_id={self.event_id}>'

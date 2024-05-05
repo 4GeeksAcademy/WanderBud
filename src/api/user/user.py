@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, url_for
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.models import db, User, User_Profile, Event, Event_Member, UserProfileImage
+from api.models import db, User, User_Profile, Event, Event_Member, UserProfileImage, PrivateChat, UsersGroupChat, GroupChat, Message as Chat_Messages, UsersPrivateChat, Favorite
 from flask_mail import Message
 from api.utils import mail
 from flask_cors import CORS
@@ -213,19 +213,55 @@ def update_user():
 def delete_user():
     current_user = get_jwt_identity()
     user = User.query.filter_by(email=current_user).first()
-    if user is None:
-        return jsonify({"msg": "this user does not exist or is not logged in"}), 404
-    user_membership = Event_Member.query.filter_by(user_id=user.id).all()
-    for membership in user_membership:
-        db.session.delete(membership)
-    user_events = Event.query.filter_by(owner_id=user.id).all()
-    for event in user_events:
-        members = Event_Member.query.filter_by(event_id=event.id).all()
-        for member in members:
-            db.session.delete(member)
-        db.session.delete(event)
-    user_profile = User_Profile.query.filter_by(user_id=user.id).first()
-    db.session.delete(user_profile)
+    # if user is None:
+    #     return jsonify({"msg": "this user does not exist or is not logged in"}), 404
+    # '''Delete all user data from the database'''
+    # user_membership = Event_Member.query.filter_by(user_id=user.id).all()
+    # for membership in user_membership:
+    #     db.session.delete(membership)
+    # '''Delete Messages , receiver messages'''
+    # messages = Chat_Messages.query.filter_by(sender_id=user.id).all()
+    # receiver_messages = Chat_Messages.query.filter_by(receiver_id=user.id).all()
+    # for message in messages:
+    #     db.session.delete(message)
+    # for message in receiver_messages:
+    #     db.session.delete(message)
+    # '''Delete chats and chat members'''
+    # user_group_chats = UsersGroupChat.query.filter_by(user_id=user.id).all()
+    # for group_chat in user_group_chats:
+    #     db.session.delete(group_chat)
+    # privatechats = PrivateChat.query.filter_by(user_id=user.id).all()
+    # for privatechat in privatechats:
+    #     members = UsersPrivateChat.query.filter_by(chat_id=privatechat.id).all()
+    #     for member in members:
+    #         db.session.delete(member)
+    #     db.session.delete(privatechat)
+    # user_privatechats = UsersPrivateChat.query.filter_by(user_id=user.id).all()
+    # for user_privatechat in user_privatechats:
+    #     db.session.delete(user_privatechat)
+    # '''Delete favorites'''
+    # favorites = Favorite.query.filter_by(user_id=user.id).all()
+    # for favorite in favorites:
+    #     db.session.delete(favorite)
+    # '''Delete user profile images'''
+    # images = UserProfileImage.query.filter_by(user_id=user.id).all()
+    # for image in images:
+    #     db.session.delete(image)
+    # '''Delete user profile and Events'''
+    # user_events = Event.query.filter_by(owner_id=user.id).all()
+    # for event in user_events:
+    #     members = Event_Member.query.filter_by(event_id=event.id).all()
+    #     for member in members:
+    #         db.session.delete(member)
+    #     event_chats = GroupChat.query.filter_by(event_id=event.id).all()
+    #     for chat in event_chats:
+    #         members = UsersGroupChat.query.filter_by(chat_id=chat.id).all()
+    #         for member in members:
+    #             db.session.delete(member)
+    #         db.session.delete(chat)
+    #     db.session.delete(event)
+    # user_profile = User_Profile.query.filter_by(user_id=user.id).first()
+    # db.session.delete(user_profile)
     db.session.delete(user)
     db.session.commit()
     return jsonify({"msg": "user successfully deleted"}), 200

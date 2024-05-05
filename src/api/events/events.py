@@ -1103,6 +1103,7 @@ def list_favorites(user_id):
             "status": event.status,
             "description": event.description,
             "event_type_id": event.event_type_id,
+            "event_type_name": Event_Type.query.get(event.event_type_id).name,
             "budget_per_person": str(event.budget_per_person)
         }
         list_favorites.append(event_details)
