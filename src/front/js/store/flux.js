@@ -31,6 +31,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			updateUser: false,
 			userData: {},
 			accessToken: null,
+			googleData: null,
 		},
 		actions: {
 			setLoaded: (value) => {
@@ -374,7 +375,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'Authorization': `Bearer ${accessToken}`
 						}
 					});
-					console.log("ValidateProfile:" + response.status)
 					if (response.status !== 200 && window.location.pathname !== '/signup/profile') {
 						setStore({ authProfile: false });
 						setStore({ storeShow: true, alertTitle: 'Welcome to WanderBud', alertBody: 'Please complete your profile and join our community!', redirect: '/signup/profile' });
@@ -1121,6 +1121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getGoogleOauth: async (googleData) => {
+				localStorage.setItem("googleData", JSON.stringify(googleData));
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/api/google-oauth', {
 						method: 'POST',

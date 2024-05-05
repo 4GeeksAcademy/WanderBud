@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../store/appContext';
@@ -9,20 +9,19 @@ import Select from 'react-select';
 import countryList from 'react-select-country-list';
 
 export const SignUpProfile = () => {
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const { actions, store } = useContext(Context);
+  const googleData = JSON.parse(localStorage.getItem('googleData'));
+  const [name, setName] = useState(googleData?.given_name || '');
+  const [lastName, setLastName] = useState(googleData?.family_name || '');
   const [location, setLocation] = useState('');
   const [birthdate, setBirthdate] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(googleData?.picture || '');
   const [coverImage, setCoverImage] = useState('');
   const [message, setMessage] = useState(null);
-  const { actions, store } = useContext(Context);
   const navigate = useNavigate();
 
   const options = useMemo(() => countryList().getData(), []);
-
-
 
   const handleImageChange = (imageUrl) => {
     setImage(imageUrl);
@@ -44,6 +43,7 @@ export const SignUpProfile = () => {
 
     if (newProfile) {
       setMessage(store.message);
+      localStorage.removeItem('googleData');
       navigate(`/profile/${store.userAccount.id}`);
     } else {
       setMessage('Failed to create profile, please try again');
@@ -58,7 +58,7 @@ export const SignUpProfile = () => {
             <Card.Body>
               <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Create Profile</h4></Card.Title>
               <div className="image mb-3">
-                <ImageUploader onImageUpload={handleImageChange} />
+                <ImageUploader onImageUpload={handleImageChange} initialImageUrl={image} />
               </div>
               <Form onSubmit={handleProfileCreation} className="p-4 py-0 form">
                 <Form.Group controlId="firstName">
@@ -85,7 +85,7 @@ export const SignUpProfile = () => {
                   <Select
                     options={options}
                     getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => option.value} 
+                    getOptionValue={(option) => option.value}
                     value={options.find(c => c.label === location)}
                     onChange={option => setLocation(option.label)}
                     placeholder="Select your country"
