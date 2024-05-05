@@ -40,7 +40,7 @@ export const EventCardHandler = ({ tab }) => {
                 <Col md={12} className="d-flex justify-content-center">
                     <Spinner animation="border" variant="primary" />
                 </Col>
-            ) : events.map((item, index) => (
+            ) : events?.map((item, index) => (
                 <Col md={12} key={index} className="d-flex justify-content-center">
                     <EventCard event={item} />
                 </Col>
