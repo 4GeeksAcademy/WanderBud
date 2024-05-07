@@ -13,6 +13,7 @@ function GoogleApp({ width }) {
         const responseDecoded = jwtDecode(response.credential);
         actions.getGoogleOauth(responseDecoded);
       }}
+      theme="filled_black"
       onError={() => {
         console.log('Login Failed');
       }}
