@@ -16,6 +16,7 @@ function GoogleApp() {
       onError={() => {
         console.log('Login Failed');
       }}
+      width="100%"
       useOneTap
     />
 
