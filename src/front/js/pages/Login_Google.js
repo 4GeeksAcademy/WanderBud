@@ -16,9 +16,7 @@ function GoogleApp({ width }) {
       onError={() => {
         console.log('Login Failed');
       }}
-      width={width || ""}
       shape="pill"
-      useOneTap
     />
 
   );
