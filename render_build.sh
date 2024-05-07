@@ -7,4 +7,6 @@ npm run build
 
 pipenv install
 
+pipenv run insert-test-data
+
 pipenv run upgrade
