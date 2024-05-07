@@ -27,6 +27,9 @@ import { AccountContainer } from "./component/Settings/account";
 import { HandleProfileImages } from "./component/profile/handleProfileImages";
 import EventCard from "./component/Events/eventCard";
 import EventPage from "./component/mainFeed/component/eventPage";
+import { GroupChatView } from "./component/chats/groupChatView";
+import { NotificationsView } from "./component/chats/notificationsView";
+import SettingsView from "./component/leftSidenav/settingsView";
 
 
 
@@ -62,8 +65,10 @@ const Layout = () => {
                         <Route element={<FeedLayout children={<UpdateEvent />} />} path="/update-event/:event_id" />privacy
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/request-chat/:chat_id" />
                         <Route element={<FeedLayout children={<ChatHandler />} />} path="/event-chat/:chat_id" />
-                        <Route element={<FeedLayout children={<EventCard />} />} path="/demo" />
+                        <Route element={<FeedLayout children={<GroupChatView />} />} path="/messages" />
+                        <Route element={<FeedLayout children={<NotificationsView />} />} path="/notifications" />
                         <Route element={<FeedLayout children={<EventPage />} />} path="/event/:event_id" />
+                        <Route element={<FeedLayout children={<SettingsView />} />} path="/settings" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Background />} path="/googleOAuth" />
                         <Route element={<Background />} path="/*" />

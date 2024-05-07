@@ -18,18 +18,18 @@ export const RequestsCard = ({ username, member_id, eventname, img, chatId, even
 
     return (
         <div className="m-0 py-2 px-1 row w-100 request-container">
-            <Col md={2} className="p-1">
+            <Col xs={2} className="p-1">
                 <Button variant="request" onClick={(e) => navigate("/profile/" + member_id)} className="p-0 h-100 ratio ratio-1x1">
-                    <img src={img} alt={username + "'s Photo"} className="rounded img-fluid h-100" style={{ objectFit: "cover" }} />
+                    <img src={img} alt={username + "'s Photo"} className="rounded-circle img-fluid h-100" style={{ objectFit: "cover" }} />
                 </Button>
             </Col>
-            <Col md={7}>
+            <Col xs={7}>
                 <Button variant="request" className="w-100" onClick={(e) => navigate("/request-chat/" + chatId)}>
                     <p className="m-0">{username}</p>
                     <span className="m-0 text-muted">{eventname}</span>
                 </Button>
             </Col>
-            <Col md={3} className="d-flex align-items-center justify-content-end">
+            <Col xs={3} className="d-flex align-items-center justify-content-end">
                 <Button variant="accept" className="rounded-circle me-1" onClick={(e) => handleAccept(member_id, event_id)}><FiCheck /></Button>
                 <Button variant="reject" className="rounded-circle" onClick={(e) => handleReject(member_id, event_id)}><FiX /></Button>
             </Col>

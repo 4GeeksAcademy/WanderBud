@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Col, Container, Row, Nav, Tab } from "react-bootstrap";
 import { EventCardHandler } from "./component/eventCardHandler";
 import { FaPlusCircle } from 'react-icons/fa';
-import LeftSidenavMobile from "../leftSidenav/leftSidenavMobile";
 
 
 
@@ -16,7 +15,7 @@ export const FeedMain = ({ children }) => {
         <Container fluid className="vh-100 d-flex align-items-start justify-content-center main-feed">
             <Tab.Container defaultActiveKey="for-you">
                 <Row className="w-100">
-                    <Col md={12} className="mt-4 p-2 navtabs">
+                    <Col md={12} className="mt-2 p-2 navtabs">
                         <Nav variant="pills" className="row align-items-center">
                             <Nav.Item className="col-4">
                                 <Nav.Link eventKey="for-you" className="btn btn-navtab w-100" style={{ textWrap: "nowrap", textOverflow: "ellipsis" }}>
@@ -48,7 +47,6 @@ export const FeedMain = ({ children }) => {
                     </Tab.Content>
                 </Row>
             </Tab.Container>
-            <LeftSidenavMobile />
         </Container>
     );
 }

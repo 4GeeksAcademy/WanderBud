@@ -653,6 +653,9 @@ a {
 .xs-show {
   display: none;
 }
+.feed-row{
+  height: 100vh;
+}
 
 @media only screen and (max-width: 992px) {
 .sidenav-right {
@@ -675,6 +678,12 @@ a {
 }
 .xs-hide {
   display: none;
+}
+.chat-bottom {
+  width: 100%!important;
+}
+.feed-row{
+  height: 85vh;
 }
 
 }

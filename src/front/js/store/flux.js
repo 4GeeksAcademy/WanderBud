@@ -546,6 +546,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 								id: data.id
 							}
 						})
+						localStorage.setItem("user_id", data.id)
 						return data
 							;
 					} else {

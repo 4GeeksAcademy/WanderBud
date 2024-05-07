@@ -55,8 +55,8 @@ const LeftSidenav = ({ changeContent }) => {
             <Nav className="p-0 d-flex flex-column w-100 justify-content-start align-items-center h-100">
                 <SidebarButton to='/feed' icon={<FaHome className='me-2' />} text='Feed' w="75" variant={'sidenav'} handlePath={handlePath} />
                 <SidebarButton to={'/profile/' + userID} icon={<FaUser className='me-2' />} text='Profile' w="75" variant={'sidenav'} handlePath={handlePath} />
-                <SidebarButton to={'/notifications' + userID} icon={<FaBell className='me-2' />} text='Notifications' w="75" variant={'sidenav'} handlePath={handlePath} className="md-show" />
-                <SidebarButton to={'/messages' + userID} icon={<FaEnvelope className='me-2' />} text='Messages' w="75" variant={'sidenav'} handlePath={handlePath} className="md-show" />
+                <SidebarButton to={'/notifications'} icon={<FaBell className='me-2' />} text='Notifications' w="75" variant={'sidenav'} handlePath={handlePath} />
+                <SidebarButton to={'/messages'} icon={<FaEnvelope className='me-2' />} text='Messages' w="75" variant={'sidenav'} handlePath={handlePath} />
                 <SettingsButton settings={settings} settingsBtn={settingsBtn} handleSettings={handleSettings} settingsOptions={settingsOptions} handlePath={handlePath} handleLogout={handleLogout} />
                 <SidebarButton to={'/create-event'} icon={<FaUser className='me-2' />} text='Create Event' w="75" variant={'create'} handlePath={handlePath} className="md-show rounded-pill" />
             </Nav>
