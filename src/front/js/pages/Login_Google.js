@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 
-function GoogleApp() {
+function GoogleApp({ width }) {
   const { actions, store } = useContext(Context)
 
   return (
@@ -16,7 +16,8 @@ function GoogleApp() {
       onError={() => {
         console.log('Login Failed');
       }}
-      width="100%"
+      width={width || ""}
+      shape="pill"
       useOneTap
     />
 

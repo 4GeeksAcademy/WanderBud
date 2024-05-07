@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
@@ -15,6 +15,7 @@ export const Home = () => {
     const navigate = useNavigate();  // Hook para navegar
 
 
+
     return (
         <Container fluid className="container-fluid">
             <Row className="justify-content-center align-items-center min-vh-100">
@@ -23,19 +24,16 @@ export const Home = () => {
                     <img src={img} className="img-fluid home-logo" alt="Logo de WanderBud" />
                 </Col>
                 <Col md={5} className="d-flex flex-column justify-content-center py-5">
-                    <Card className="p-4 d-flex flex-column justify-content-between align-items-center card h-100 container-card container-shadow">
+                    <Card className="p-4 justify-content-between h-100 container-card container-shadow">
                         <Card.Title className="text-center mb-4 subtitle subtitle-bold">Connect. Create. Celebrate.</Card.Title>
-                        <Link to="/login" className="btn btn-secondary btn-block rounded-pill mb-3 w-75">Login</Link>
-                        <div className="btn p-0 btn-google rounded-pill mb-3 w-75" style={{ overflow: "hidden" }}>
-                            <GoogleApp />
-                        </div>
-
-                        <div className="d-flex w-75 mb-3 justify-content-center ">
+                        <Link to="/login" className="btn btn-secondary btn-block rounded-pill mb-3 w-100">Login</Link>
+                        <GoogleApp />
+                        <div className="d-flex w-100 mb-3 mt-2 justify-content-center ">
                             <hr className="w-25 me-2" />
                             <span className="text-center align-content-center">If you don't have one</span>
                             <hr className="w-25 ms-2 " />
                         </div>
-                        <Link to="/signup/user" className="btn btn-primary btn-block rounded-pill border w-75">Sign Up</Link>
+                        <Link to="/signup/user" className="btn btn-primary btn-block rounded-pill border w-100">Sign Up</Link>
                     </Card>
                 </Col>
             </Row>
