@@ -202,27 +202,33 @@ export const Chats = ({ chatData }) => {
     return (
         <Container fluid className="vh-100">
             <Row className="px-2 py-0">
-                <Col md={12} className="d-flex justify-content-center align-items-center">
+                <Col xs={12} className="d-flex justify-content-center align-items-center">
                     <MembersModal handleClose={handleCloseModal} show={modalShow} members={chat.members} />
                     <MessageModal handleClose={() => setModalWarning(false)} show={modalWarning} message={chat.member_status} group_chat_id={chat.group_chat_id} />
                 </Col>
-                <Col md={12} className="row container-card container-shadow justify-content-between align-items-center rounded m-0 p-2 chat-top" onLoad={(e) => { handleLoad(e) }} id="header-chat" >
-                    <Col md={1} className="d-flex justify-content-center">
+                <Col xs={12} className="row container-card container-shadow justify-content-between align-items-center rounded m-0 p-2 chat-top" onLoad={(e) => { handleLoad(e) }} id="header-chat" >
+                    <Col xs={1} className="d-flex justify-content-center">
                         <Button variant="request" className="p-0" onClick={(e) => { navigate(-1) }}>
                             <h3><FaArrowLeft /></h3>
                         </Button>
                     </Col>
-                    <Col md={1} className="p-0">
-                        <img src={chat.chat_image !== undefined ? chat.chat_image : "https://via.placeholder.com/150"} alt="profile" className="rounded-circle w-100 ratio ratio-1x1" style={{ objectFit: "cover", aspectRatio: "1" }} />
+                    <Col xs={1} className="p-0">
+                        <img src={chat.chat_image !== undefined ? chat.chat_image : "https://via.placeholder.com/150"} alt="profile" className="rounded-circle w-100 ratio ratio-1x1" style={{ objectFit: "cover", aspectRatio: "1", backgroundColor: "transparent" }} />
                     </Col>
-                    <Col md={8} className="d-flex align-items-center flex-column">
-                        <h3 className="m-0">{chat.chat_name}'s Chat</h3>
+                    <Col xs={8} className="d-flex align-items-center flex-column">
+                        <h3 className="m-0" style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            width: "100%",
+
+                        }}>{chat.chat_name}'s Chat</h3>
                         <span className="badge badge-pill badge-primary ml-2 text-muted">{chat.members?.length} Members</span>
                     </Col>
-                    <Col md={1} className="hidden">
+                    <Col xs={1} className="hidden">
                         .
                     </Col>
-                    <Col md={1} className="d-flex justify-content-center">
+                    <Col xs={1} className="d-flex justify-content-center">
                         <Dropdown show={dropdownOpen} onToggle={toggleDropdown} className="dropdown-left h-100">
                             <Dropdown.Toggle variant="request" className="h-100 p-0 d-flex justify-content-center" id="dropdown-basic">
                                 <h3 ><FaEllipsisV /></h3>
@@ -234,23 +240,27 @@ export const Chats = ({ chatData }) => {
                         </Dropdown>
                     </Col>
                 </Col>
-                <Col md={12} className="row align-content-start m-0 p-0" style={{ height: "90vh" }}>
+                <Col xs={12} className="row align-content-start m-0 p-0" style={{ height: "90vh" }}>
                     <RenderMessages />
                     <div ref={messagesEndRef} className="row justify-content-end align-items-center m-0 pe-0 ps-2" style={{ height: `${height}px` }} >
                         .
                     </div>
                 </Col>
-                <Col md={12} className="row container-card container-shadow justify-content-between align-items-center rounded m-0 p-2 chat-bottom" style={{ width: `${widht}px` }} id="chat-input">
-                    <Col md={11} className="d-flex align-items-center">
+                <Col xs={12} className="d-flex container-card container-shadow justify-content-between align-items-center rounded m-0 p-2 chat-bottom" style={{ width: `${widht}px` }} id="chat-input">
+                    <div className="d-flex align-items-center" style={{
+                        width: "90%",
+                    }}>
                         <input type="text" className="form-control" placeholder="Escribe un mensaje" value={message} onChange={(e) => { setMessage(e.target.value) }} onKeyUp={(e) => { sendMessage(e) }} />
-                    </Col>
-                    <Col md={1} className="d-flex justify-content-center">
-                        <Button variant="request" className="p-0" onClick={(e) => { sendMessage(e) }}>
+                    </div>
+                    <div className="d-flex justify-content-center" style={{
+                        width: "10%"
+                    }}>
+                        <Button variant="request" className="p-1" onClick={(e) => { sendMessage(e) }}>
                             <h3><FaTelegramPlane /></h3>
                         </Button>
-                    </Col>
+                    </div>
                 </Col>
             </Row>
-        </Container>
+        </Container >
     );
 }

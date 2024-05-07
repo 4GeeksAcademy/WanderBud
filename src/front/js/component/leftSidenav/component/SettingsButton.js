@@ -5,7 +5,7 @@ import SidebarButton from './SidebarButton';
 import { FaCog } from 'react-icons/fa';
 
 const SettingsButton = ({ settings, settingsBtn, handleSettings, settingsOptions, handlePath, handleLogout }) => (
-    <Nav.Item className={settings}>
+    <Nav.Item className={settings + " mb-2"}>
         <Link to='#'>
             <Button variant="sidenav" className={settingsBtn} onClick={handleSettings}>
                 <FaCog className="me-2" /> Settings

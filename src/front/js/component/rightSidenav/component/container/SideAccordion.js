@@ -60,11 +60,11 @@ export const SideAccordion = ({ extraClass, title, show, handler, collapsed, scr
         <div className={`accordion w-100 mt-3 ${scrollbar ? "scrollbar" : ""}`} id="accordionExample">
             <div className={`accordion-item border-0 ${extraClass}`}>
                 <h2 className="accordion-header position-sticky top-0">
-                    <button className={`accordion-button ${collapsed ? "collapsed" : ""}`} type="button" data-bs-toggle="collapse" data-bs-target={`#${title.replace(" ", "")}`} aria-expanded="true" aria-controls={title.replace(" ", "")}>
+                    <button className={`accordion-button ${collapsed ? "collapsed" : ""}`} type="button" data-bs-toggle="collapse" data-bs-target={`#${title.replaceAll(" ", "-")}`} aria-expanded="true" aria-controls={title.replaceAll(" ", "-")}>
                         {title}
                     </button>
                 </h2>
-                <div id={title.replace(" ", "")} className={`accordion-collapse collapse ${collapsed ? "" : "show"}`} data-bs-parent="#accordionExample">
+                <div id={title.replaceAll(" ", "-")} className={`accordion-collapse collapse ${collapsed ? "" : "show"}`} data-bs-parent="#accordionExample">
                     <div className="accordion-body m-0 p-0">
                         {title !== "My event requests" ?
                             (title === "My applications" ? renderUserRequests() :
