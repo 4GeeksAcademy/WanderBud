@@ -11,8 +11,8 @@ import countryList from 'react-select-country-list';
 export const SignUpProfile = () => {
   const { actions, store } = useContext(Context);
   const googleData = JSON.parse(localStorage.getItem('googleData'));
-  const [name, setName] = useState(googleData?.given_name || '');
-  const [lastName, setLastName] = useState(googleData?.family_name || '');
+  const [name, setName] = useState(googleData?.name.split(" ")[0] || '');
+  const [lastName, setLastName] = useState(googleData?.name.split(" ")[1] || '');
   const [location, setLocation] = useState('');
   const [birthdate, setBirthdate] = useState('');
   const [description, setDescription] = useState('');
