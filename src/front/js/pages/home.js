@@ -27,9 +27,9 @@ export const Home = () => {
                     <Card className="p-4 justify-content-between h-100 container-card container-shadow">
                         <Card.Title className="text-center mb-4 subtitle subtitle-bold">Connect. Create. Celebrate.</Card.Title>
                         <Link to="/login" className="btn btn-secondary btn-block rounded-pill mb-3 w-100">Login</Link>
-                        <div className="d-flex justify-content-center" style={{
+                        <div className="d-flex justify-content-center rounded-pill" style={{
                             width: "100%",
-                            backgroundColor: "rgb(0,0,0)",
+                            backgroundColor: "rgb(32,33,36)",
                         }}>
                             <GoogleApp />
                         </div>
