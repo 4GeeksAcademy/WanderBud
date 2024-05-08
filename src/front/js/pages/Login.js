@@ -31,12 +31,7 @@ export const Login = () => {
           <Card className="p-4 justify-content-center w-100 card container-card container-shadow">
             <Card.Title className="text-center mb-3 subtitle subtitle-bold"><h4>Log In</h4></Card.Title>
             <Form onSubmit={handleSubmit} className="p-4 py-0">
-              <div className="d-flex justify-content-end rounded-pill" style={{
-                width: "100%",
-                backgroundColor: "rgb(32,33,36)",
-              }}>
-                <GoogleApp />
-              </div>
+              <GoogleApp />
               <hr className="border border-secondary mb-3" />
               <Form.Group controlId="formBasicEmail" className="mb-3">
                 <Form.Control type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />

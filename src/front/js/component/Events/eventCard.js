@@ -238,7 +238,7 @@ export default function EventCard({ event, handleClick }) {
                         <div>
                             <Typography level="body-xs">Budget:</Typography>
                             <Typography fontSize="lg" fontWeight="lg">
-                                ${event.budget_per_person || event.budget || "10"}
+                                €{event.budget_per_person || event.budget || "10"}
                             </Typography>
                         </div>
                         <Button

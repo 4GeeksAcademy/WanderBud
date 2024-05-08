@@ -223,7 +223,7 @@ export default function EventPage() {
               <div>
                 <Typography level="body-xs">Budget:</Typography>
                 <Typography fontSize="lg" fontWeight="lg">
-                  ${eventData.budget_per_person}
+                  €{eventData.budget_per_person}
                 </Typography>
               </div>
               <ButtonGroup
